@@ -5,8 +5,9 @@ The dashboard is served at the root of your DriftGuard server
 question it answers, what each card and column means, and where the numbers
 come from.
 
-The screenshots use the **Showcase** sample project
-(`examples/seed_showcase.py`, last 7 days).
+The screenshots use a sample project filled by `examples/seed_showcase.py`
+(last 7 days). The same data is what you get from the steps in
+[SETUP.md](../SETUP.md).
 
 **One rule for the whole dashboard:** every number comes from the API.
 Nothing is estimated or filled in by the browser. A missing value shows as
@@ -77,6 +78,8 @@ have a dialog open.
 | `r` | Refresh data |
 | `?` | Show the shortcut list |
 
+![The keyboard shortcut sheet](images/dashboard-shortcuts.png)
+
 ## Overview
 
 ![Overview of the Showcase project](images/dashboard-overview.png)
@@ -145,17 +148,23 @@ rows Logs lists.
 This view replays each task's **tool calls** and finds the ones that are stuck.
 Prompts, answers and session events don't affect it; they're in Logs.
 
-| Card | Meaning |
+Three instruments sit across the top. A collapsed **All counts** list holds the
+rest.
+
+| Reading | Meaning |
 | --- | --- |
 | Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. |
 | Failing tasks | A shorter run of failures in a row. |
-| Failures | All failed tool attempts. |
-| Repeated attempts | Failures right after a failure of the same tool: the agent retrying something that just failed. |
-| Redundant attempts | Successful calls that repeated an identical input that had already succeeded in the task. |
 | Wasted tokens | Tokens of failed attempts plus redundant ones. |
+| Failures *(All counts)* | All failed tool attempts. |
+| Repeated attempts *(All counts)* | Failures right after a failure of the same tool: the agent retrying something that just failed. |
+| Redundant attempts *(All counts)* | Successful calls that repeated an identical input that had already succeeded in the task. |
 
-**Most urgent** repeats the top task's diagnosis and recommendation. The
-recommendation depends on the error: timeouts, permissions, not found, rate
+**Most urgent** repeats the top task's diagnosis and recommendation, with its
+**track**: each tool the task used as a block section, in the order it was
+first used. The blocking tool is lit red under a signal and says how many
+failures in a row. Selecting a task in the table shows the same track at the top
+of its drawer. The recommendation depends on the error: timeouts, permissions, not found, rate
 limits and malformed input each get their own advice.
 
 **Tasks table**, most urgent first:
@@ -274,6 +283,8 @@ Charts over the latest 500 events in the window:
 - **Severity distribution** for the window.
 
 ## Policy
+
+![Policy, with what each threshold flags in the loaded data](images/dashboard-policy.png)
 
 The project's thresholds. Saving changes how **new** events are scored and how
 the diagnosis runs, on the server and in any SDK that calls `fetch_policy()`.

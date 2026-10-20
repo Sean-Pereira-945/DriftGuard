@@ -122,6 +122,12 @@ All notable changes to DriftGuard are recorded here. The format follows
   Existing agent events become `tool_call` events.
 
 ### Documentation
+- **Documentation refresh.** The architecture diagram is restyled to the new
+  look (SVG and PNG) and notes the dashboard's shortcuts and shared links. The
+  dashboard guide, demo outline, setup guides and architecture page use the new
+  names (**Env**, **Range**, instruments, track), and every screenshot is
+  retaken with a full week of data, plus new ones for Policy and the shortcut
+  sheet. `docs/development.md` lists the design files.
 - **`PRODUCT.md`** records the product's users, purpose, positioning and
   constraints for design work.
 - **Design system** (`docs/design-system.md`) rewritten for the signal box

@@ -26,6 +26,9 @@ quality.
 - **Drop-in adapters.** A `@driftguard_tool` decorator, MCP session
   instrumentation, token extraction from OpenAI, Anthropic, and Gemini
   responses, and a no-code [Claude Code hook](integrations/claude_code/README.md).
+- **Fast to operate.** A status plate and a track diagram tell you what is
+  blocked first. Keyboard shortcuts, links that carry your filters, bulk
+  resolve, and a Policy page that shows what each threshold would flag.
 - **Self-hostable.** A FastAPI server, a React dashboard, and SQLite or
   PostgreSQL, with Redis when you scale out. One `docker compose up`.
 

@@ -86,7 +86,7 @@ It adds a week of sample data:
   holding the prompt, the answer, the task's duration and its tokens.
 
 Turn on content storage for the project first if you want Logs to show inputs
-and outputs. Set the time range to **Last 7 days** to see all of it.
+and outputs. Set **Range** to **Last 7 days** to see all of it.
 
 ## Presenting the project (10–15 minutes)
 
@@ -96,13 +96,17 @@ you start, with the **Showcase** project loaded and **Last 7 days** selected.
 | Min | Show | Say |
 | ---: | --- | --- |
 | 0–2 | [The architecture diagram](images/architecture.png) | The problem (quiet drift, stuck agents), and the three parts: sources, server, dashboard. |
-| 2–4 | **Overview** | Status, open alerts, tokens at stake, and the agent activity row. Every number is a query over stored events. |
+| 2–4 | **Overview** | The status plate (one lamp, one word), the track of the most urgent task, then the four instruments drawn against their floors. Every number is a query over stored events. |
 | 4–6 | **Agent Diagnosis** | A blocked task: which tool, how many tries, the wasted tokens and the advice. Open a task to show each attempt. |
 | 6–7 | **Alerts** | Agent alerts resolve themselves when the task recovers. Drift alerts carry a root cause and a fix. |
 | 7–9 | **Events** and **Analytics** | How one LLM call is scored: rules → risk → severity ([worked examples](concepts.md#how-a-telemetry-event-is-scored)). |
 | 9–11 | **Logs**, switching to the **Claude Code** project | This is real data: the Claude Code session that built the project, with each command, its duration and its tokens. |
 | 11–13 | Live: `demo.bat` or `live_demo.py` | Play steps 2–4. Show a drift alert popping up, then an agent blocking and recovering live. |
 | 13–15 | Questions | Limits: it sees only what's reported, it recommends rather than acts, and quality needs an evaluator. |
+
+Tip: press `?` for the keyboard shortcuts, and use `g` then a letter to jump
+between views without the mouse. Copy the address bar to send someone the same
+view with the same filters.
 
 For the explanations themselves, use [How DriftGuard works](concepts.md),
 which ends with a 60-second summary you can read out.

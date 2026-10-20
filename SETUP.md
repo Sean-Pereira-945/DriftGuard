@@ -138,7 +138,7 @@ In a **second** terminal, activate `.venv` (step 3), then run:
 python examples/seed_showcase.py --api-key dg_live_PASTE_YOUR_KEY --project-id showcase
 ```
 
-Back in the browser, set the time range to **Last 7 days**. Every view now
+Back in the browser, set **Range** (at the top) to **Last 7 days**. Every view now
 has data: drift episodes, blocked and recovered agent tasks, alerts and full
 logs.
 
@@ -243,7 +243,7 @@ The full developer guide is [docs/development.md](docs/development.md).
 | `driftguard-server` is not recognized | `.venv` isn't active. Activate it (step 3). |
 | `/` says "The dashboard has not been built" | Run step 4. |
 | `address already in use` on port 8000 | A server is already running. Stop it, or use `--port 8001` and open that port instead. |
-| The dashboard is empty after seeding | Set the time range to **Last 7 days**, check the environment is **All**, and click **Refresh**. |
+| The dashboard is empty after seeding | Set **Range** to **Last 7 days**, check **Env** is **All**, and click **Refresh**. |
 | My project isn't in the picker | You're signed in as a different account. Projects belong to the account that created them. |
 | `429 Too Many Requests` when signing in | The limit is 10 sign-ins per minute. Wait a minute. |
 | `npm ci` fails | Check `node --version` is 22. Delete `frontend/node_modules` and try again. |

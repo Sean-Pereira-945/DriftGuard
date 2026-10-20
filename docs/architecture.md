@@ -118,7 +118,7 @@ enforces this.
 ```mermaid
 flowchart TB
   Session["state/session.tsx<br/>sign-in, token in localStorage"]
-  Workspace["state/workspace.tsx<br/>project, environment, time range,<br/>summary, refresh keys"]
+  Workspace["state/workspace.tsx<br/>project, environment, time range<br/>(also in the URL), summary, refresh keys"]
   Realtime["lib/useRealtime.ts<br/>WebSocket: alert · activity"]
   Queries["state/queries.ts<br/>per-view data hooks"]
   API["api.ts<br/>typed fetch client"]
@@ -128,7 +128,11 @@ flowchart TB
   Queries --> Views
 ```
 
-- **Routing** is by URL hash (`#/logs`), so a reload keeps the current view.
+- **Routing** is by URL hash with a query (`#/logs?env=prod&range=7d&project=showcase`).
+  A reload keeps the view, and a copied link opens the same view with the same
+  filters and project. `lib/route.ts` parses and writes it.
+- **Shortcuts.** `lib/shortcuts.ts` listens for `g` then a letter, `/`, `r`
+  and `?`, and ignores keys while you type or have a dialog open.
 - **State.** The workspace holds the selected project and filters, which are
   remembered in `localStorage`, and the Overview summary. Each view loads its
   own data through `state/queries.ts`.
@@ -147,7 +151,7 @@ flowchart TB
 | Events | `GET /projects/{id}/events` (100 at a time) |
 | Analytics | `GET /projects/{id}/events?limit=500`, `…/summary` |
 | Alerts | `GET`/`POST`/`PATCH /projects/{id}/alerts` |
-| Policy | `GET`/`PUT /projects/{id}/policy` |
+| Policy | `GET`/`PUT /projects/{id}/policy`, and for the impact preview `…/events?limit=500` and `…/agent-diagnosis` |
 | Project Settings | `PATCH /projects/{id}`, `POST /projects/{id}/api-key`, `DELETE /projects/{id}` |
 
 ## Flows
@@ -300,7 +304,7 @@ and `wasted_tokens` keep working.
 
 ## Agent activity totals
 
-The Overview's *Agent activity* row is computed in SQL over the same rows that
+The Overview's *Tool failure rate* instrument and its *All readings* list (tool calls, tasks, tokens used, average tool duration, agent events) are computed in SQL over the same rows that
 Logs lists, for the selected environment and time range:
 
 - **tool calls** and **failed tool calls**: rows of kind `tool_call`, with

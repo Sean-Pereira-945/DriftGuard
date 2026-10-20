@@ -100,6 +100,7 @@ transcript, because hooks don't report them.
 | **How DriftGuard works** (`docs/concepts.md`), the architecture diagram as an image, and a dashboard guide with screenshots | Merged with PR #9 |
 | **`SETUP.md`**: a step-by-step guide from a fresh laptop to a running DriftGuard with sample data, on Windows, macOS and Linux | Pushed on `docs/team-setup`. Not merged. |
 | **Showcase seeder** (`examples/seed_showcase.py`): a week of varied sample data so every view has something to show | Merged with PR #9 |
+| **Documentation refresh (2026-10-20):** the architecture diagram (SVG and PNG) restyled to the new look, all dashboard screenshots retaken from a seeded project with a week of data, new Policy and shortcut screenshots, and the dashboard guide, demo outline, setup guides, architecture page and development guide brought in line with the redesign | On `feature/signal-box-redesign` |
 
 ## Dashboard redesign (branch `feature/signal-box-redesign`, 2026-10-20)
 

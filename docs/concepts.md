@@ -40,7 +40,7 @@ application (or an integration) sends.
 | **Carries** | `prompt_tokens`, `context_length`, `retrieval_score`, `response_quality` | task, tool, status, error, attempt, duration, tokens, optionally the input and output |
 | **Used for** | Drift scoring and drift alerts | Agent diagnosis, agent alerts, Logs |
 | **Sent to** | `POST /events/{project}` | `POST /agent-events/{project}` |
-| **Dashboard views** | Overview, Events, Analytics | Agent Diagnosis, Logs, Overview's *Agent activity* row |
+| **Dashboard views** | Overview, Events, Analytics | Agent Diagnosis, Logs, Overview's *Tool failure rate* and *All readings* |
 
 Both are sent with the **project API key** and stored in the same database.
 

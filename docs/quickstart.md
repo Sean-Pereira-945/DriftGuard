@@ -146,7 +146,7 @@ python examples/seed_showcase.py --api-key dg_live_... --project-id showcase
 This adds a week of realistic traffic. You get about 420 LLM requests over
 three environments, with three drift episodes, and five agents whose tasks are
 blocked, failing, recovered and healthy. Alerts and full Logs come with it.
-Set the time range to **Last 7 days**. To also see inputs and outputs in Logs,
+Set **Range** to **Last 7 days**. To also see inputs and outputs in Logs,
 turn on **Content storage** in Project Settings **before** running it.
 
 ### 2. Live demo script (a story in four steps)
@@ -231,7 +231,7 @@ raw HTTP are covered in [agent-integration.md](agent-integration.md).
 | `/` says "The dashboard has not been built" | Run `cd frontend && npm ci && npm run build`, then reload. |
 | `address already in use` on port 8000 | A server is already running. Use it, stop it, or start this one with `--port 8001`. |
 | The project picker doesn't list your project | You're signed in as a different account. Projects belong to the account that created them. Sign out and back in as the owner. |
-| Data was sent but the dashboard is empty | Check the **time range** and **environment** filters in the header, then click **Refresh**. The sample data needs **Last 7 days**. |
+| Data was sent but the dashboard is empty | Check the **Range** and **Env** filters in the header, then click **Refresh**. The sample data needs **Last 7 days**. |
 | Retrieval or quality shows "—" or "Not reported by this source" | The source doesn't send that metric. Claude Code has no retrieval step and no answer grader, so DriftGuard leaves it blank instead of guessing. |
 | Logs shows no inputs or outputs | Content storage is off. Turn it on in Project Settings. The sender must also allow it (`capture_content`). |
 | `429 Too Many Requests` when signing in | The login limit is 10 per minute per IP. Wait a minute. |
