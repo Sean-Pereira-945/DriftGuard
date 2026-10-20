@@ -202,6 +202,9 @@ print(client.check_drift())               # instant local verdict: severity, ris
 client.sync_metrics()                     # send the queued events
 ```
 
+Not sure how to get the two scores? See
+[Measuring retrieval score and response quality](scoring-guide.md).
+
 **Agent tool calls**, one event per call:
 
 ```python
@@ -233,7 +236,7 @@ raw HTTP are covered in [agent-integration.md](agent-integration.md).
 | The project picker doesn't list your project | You're signed in as a different account. Projects belong to the account that created them. Sign out and back in as the owner. |
 | Data was sent but the dashboard is empty | Check the **Range** and **Env** filters in the header, then click **Refresh**. The sample data needs **Last 7 days**. |
 | Retrieval or quality shows "—" or "Not reported by this source" | The source doesn't send that metric. Claude Code has no retrieval step and no answer grader, so DriftGuard leaves it blank instead of guessing. |
-| Logs shows no inputs or outputs | Content storage is off. Turn it on in Project Settings. The sender must also allow it (`capture_content`). |
+| Logs shows no inputs or outputs, and the **Details** column is a dash for successful calls | Content storage is off, so the server discards inputs and outputs even if the sender includes them. Turn it on in Project Settings. The sender must also allow it (`capture_content`). It only applies to events sent afterwards. Failed calls still show their error. |
 | `429 Too Many Requests` when signing in | The login limit is 10 per minute per IP. Wait a minute. |
 | Claude Code activity isn't arriving | The server must be running when Claude Code works; events sent while it's down are dropped. Errors are written to `.claude/driftguard-hook.log`. Open `/hooks` in Claude Code once after editing the hook settings. |
 | A Python change has no effect | Restart the server, or run it with `--reload`. |

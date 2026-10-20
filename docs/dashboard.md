@@ -117,7 +117,7 @@ between the marker and the tick.
 | --- | --- |
 | Open alerts | Unresolved alerts in the window, split into critical and warning. |
 | Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). Ticks at 0.40 (warning) and 0.75 (critical). |
-| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked. It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
+| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
 | Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
 
 **Compared with before.** Under **Mean risk score** and **Response quality**
@@ -220,7 +220,7 @@ and session start or end rows aren't in the filter. If your SDK or the hook
 | Status | `success`, `failed`, `error`, `timeout`, or `info` for non-tool rows. |
 | Task | The task it belongs to. |
 | Tool / model | The tool for a tool call; the model for model calls and responses. |
-| Details | The error for failures; otherwise the stored output or input, if any. |
+| Details | The error for failures; otherwise the stored output or input, if any. A dash means there is nothing to show, which for successful calls usually means **Content storage** is off (see [Project Settings](#project-settings)). It applies only to events sent after you turn it on. |
 | Agent | The agent's name, for example `claude-code`. |
 | Attempt | The attempt number of this tool call within the task. Empty for non-tool rows. |
 | Duration | How long it took. For a response, the whole turn. |

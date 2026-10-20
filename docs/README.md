@@ -10,6 +10,7 @@ New here? Read [How DriftGuard works](concepts.md), then
 - [Getting started](quickstart.md): run it (one click, from source, or Docker), send data, troubleshooting
 - [How DriftGuard works](concepts.md): the problem, the data, scoring and diagnosis in plain language
 - [Dashboard guide](dashboard.md): every view, card and column, with screenshots
+- [Measuring retrieval score and response quality](scoring-guide.md): how to calculate the two scores, what to do without an evaluator, choosing floors, and what the numbers can't tell you
 - [Agent integration](agent-integration.md): instrument an agent's tools (decorator, MCP, HTTP, Claude Code)
 - [Claude Code hook](../integrations/claude_code/README.md): report Claude Code sessions with no code
 - [Giving a demo](demo.md): a live demo, a presentation outline, talking points

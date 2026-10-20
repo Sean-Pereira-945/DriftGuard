@@ -224,7 +224,8 @@ What it doesn't do:
   such as GitHub Copilot.
 - It doesn't judge answers on its own. Response quality has to come from the
   app's own evaluator, so sources without one (like Claude Code) leave it
-  blank.
+  blank. [Measuring retrieval score and response quality](scoring-guide.md)
+  explains how to calculate both.
 - It **recommends**; it never acts on your prompts or providers.
 
 ## Explaining it in 60 seconds

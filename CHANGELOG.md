@@ -136,6 +136,12 @@ All notable changes to DriftGuard are recorded here. The format follows
   Existing agent events become `tool_call` events.
 
 ### Documentation
+- **New guide: Measuring retrieval score and response quality**
+  (`docs/scoring-guide.md`). How to calculate each score, what to do when a source
+  has no evaluator (and why a proxy from telemetry is only a rough signal),
+  choosing the floors from your own data, how the scores become alerts, and what
+  the numbers can't tell you. The Logs Details column and its troubleshooting row
+  now explain that a dash means content storage is off.
 - **Documentation refresh.** The architecture diagram is restyled to the new
   look (SVG and PNG) and notes the dashboard's shortcuts and shared links. The
   dashboard guide, demo outline, setup guides and architecture page use the new
