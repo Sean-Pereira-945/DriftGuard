@@ -101,6 +101,9 @@ All notable changes to DriftGuard are recorded here. The format follows
 - **True-black canvas and brighter colours.** The page background is pure black
   with panels lifted a shade, ivory text and the route colour are brighter, and
   the red, amber, green and steel lamp colours are more luminous.
+- The Logs kind filter now offers only Tool call, Prompt and Response. Model
+  call, Session start and Session end are no longer listed there, though rows of
+  those kinds still appear under All activity.
 - **Themed dropdowns.** Every select uses a themed control. In Chrome and Edge
   the open list is a black panel with a hairline border, a highlighted row and a
   check mark on the chosen item. Other browsers keep their own list in the same

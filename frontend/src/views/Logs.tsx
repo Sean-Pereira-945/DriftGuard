@@ -13,7 +13,7 @@ import { useToast } from '../components/Toasts';
 import type { ViewId } from '../lib/route';
 import { DASH, fmtDateTime, fmtDuration, fmtInt } from '../lib/format';
 import { useProject, useWorkspace } from '../state/workspace';
-import { AGENT_EVENT_KINDS, type ActivityQuery, type AgentEvent, type AgentEventKind, type Outcome } from '../types';
+import { type ActivityQuery, type AgentEvent, type AgentEventKind, type Outcome } from '../types';
 
 const PAGE_SIZE = 100;
 const SEARCH_DELAY_MS = 300;
@@ -27,9 +27,13 @@ const KIND_META: Record<AgentEventKind, { label: string; tone: 'neutral' | 'rout
   session_end: { label: 'Session end', tone: 'neutral' },
 };
 
+// The filter offers the kinds people look for. Model calls and session start and end can still
+// arrive and are labelled in the table, but they don't get a filter entry.
+const FILTER_KINDS: AgentEventKind[] = ['tool_call', 'prompt', 'response'];
+
 const KIND_OPTIONS = [
   { value: '', label: 'All activity' },
-  ...AGENT_EVENT_KINDS.map((kind) => ({ value: kind, label: KIND_META[kind].label })),
+  ...FILTER_KINDS.map((kind) => ({ value: kind, label: KIND_META[kind].label })),
 ];
 
 const OUTCOME_OPTIONS = [

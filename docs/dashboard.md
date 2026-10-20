@@ -191,6 +191,10 @@ recovers.
 The full history of what your agents did, newest first, 100 rows at a time,
 with **Load more** for older rows.
 
+The kind filter offers **Tool call**, **Prompt** and **Response**. Model calls
+and session start or end rows aren't in the filter. If your SDK or the hook
+(`session_events`) sends them, they still appear under **All activity**.
+
 | Column | Meaning |
 | --- | --- |
 | Time | When it happened. |
