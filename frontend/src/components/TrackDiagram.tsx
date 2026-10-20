@@ -28,7 +28,7 @@ export function TrackDiagram({ task }: { task: AgentTask }) {
             {tools.map((tool) => {
               const blocking = tool === task.blocking_tool;
               return (
-                <li key={tool} className="relative min-w-[220px] max-w-[340px] flex-1 pr-3">
+                <li key={tool} className="relative min-w-[220px] flex-1 pr-3">
                   {blocking && (
                     <span className="absolute -top-14 left-1 flex flex-col items-center">
                       <Lamp state="critical" size="lg" />
@@ -50,7 +50,7 @@ export function TrackDiagram({ task }: { task: AgentTask }) {
                 </li>
               );
             })}
-            <li aria-hidden className="min-w-16 flex-1">
+            <li aria-hidden className="w-24 shrink-0">
               <div className="h-2 rounded-sm bg-hairline-strong" />
               <div className="sleepers mt-1 h-2 opacity-60" />
             </li>

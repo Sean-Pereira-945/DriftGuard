@@ -119,6 +119,12 @@ All notable changes to DriftGuard are recorded here. The format follows
   the open list is a black panel with a hairline border, a highlighted row and a
   check mark on the chosen item. Other browsers keep their own list in the same
   colours.
+- **Layout fixes from the design review.** The track diagram's sections share the
+  full width. Agent Diagnosis gains a gauge of the longest run of failures in a
+  row against the block threshold. Top Root Causes moves under Drift Risk
+  Breakdown and Open Alerts runs full width, so there are no empty gaps. On a
+  phone the chart legend is one scrolling line, Test Telemetry is an icon, and the
+  filter row wraps.
 - The baseline line says **No clear change** instead of "Steady", and every verdict
   shows the events it rests on, for example "(89 events now, 93 before)". Under 30
   events on a side it adds that a small drop could be missed. The research study

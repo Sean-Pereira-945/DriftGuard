@@ -80,7 +80,7 @@ Square-ish corners (4px), 40px minimum height. The primary action is a push-butt
 
 ### Navigation
 
-Fixed 248px rail. Items are grouped by a rule into **Monitor** (Overview, Agent Diagnosis, Logs, Events, Alerts, Analytics) and **Configure** (Policy, SDK Integration, Project Settings). The active item has a raised surface and an ivory marker. The alert count is a small plate, amber or red, whose screen-reader text says whether any alert is critical. Disabled items stay readable and say why in a tooltip. On mobile the rail collapses into a labeled menu.
+Fixed 248px rail. Items are grouped by a rule into **Monitor** (Overview, Agent Diagnosis, Logs, Events, Alerts, Analytics) and **Configure** (Policy, SDK Integration, Project Settings). The active item has a raised surface and an ivory marker. The alert count is a small plate, amber or red, whose screen-reader text says whether any alert is critical. Disabled items stay readable and say why in a tooltip. On mobile the rail collapses into a labeled menu. In the header, **Test Telemetry** becomes an icon on a phone and the filter row wraps, so the Range select stays readable.
 
 ### Filters
 

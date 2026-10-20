@@ -102,7 +102,7 @@ amber line adds it, for example "Worse than usual. Response quality is 0.08
 lower than the 24 hours before." This is advice only: it doesn't change the
 lamp or raise an alert. See [the baseline comparison](concepts.md#is-it-worse-than-usual-baseline-comparison).
 
-**Track.** The most urgent task drawn as a track. Each tool the task used is a
+**Track.** The most urgent task drawn as a track, with its sections sharing the full width. Each tool the task used is a
 block section, in the order it was first used. The blocking tool is lit red
 under a red signal, with the number of failures in a row. Other tools say "No
 block reported". Below it you see the latest error, and how many more tasks the
@@ -171,7 +171,7 @@ rest.
 
 | Reading | Meaning |
 | --- | --- |
-| Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. |
+| Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. A gauge under it draws the longest run of failures in a row against that threshold. |
 | Failing tasks | A shorter run of failures in a row. |
 | Wasted tokens | Tokens of failed attempts plus redundant ones. |
 | Failures *(All counts)* | All failed tool attempts. |

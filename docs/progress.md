@@ -167,16 +167,21 @@ evaluation.
 It is advice only. It raises no alert and doesn't change the status, and it
 treats events as independent and mixes all models and routes together.
 
-### Open items from the review
+### Review items, and what was done about them
 
-- The track diagram is sparse for a task that used one tool: a single red
-  section and a long empty rail. A task with several tools fills it better.
-- The Agent Diagnosis instruments have no gauges, and its panels are still plain
-  bordered boxes.
-- On the Overview, two panels below the fold leave empty space, and they are
-  plain boxes rather than part of the signal box look.
-- On a phone, the timeline legend takes up much of the plot, and the header
-  **Test** button is cramped.
+- **Track diagram sparse for a one-tool task.** Fixed: sections now share the full
+  width, so a task with one tool fills the track with its red section.
+- **Agent Diagnosis instruments had no gauges.** Fixed for the headline reading:
+  **Blocked tasks** now carries a gauge of the longest run of failures in a row
+  against the block threshold from Policy. The other instruments are counts, so
+  they have no baseline to draw.
+- **Empty space below the Overview's charts.** Fixed: Top Root Causes now sits under
+  Drift Risk Breakdown, beside the timeline, and Open Alerts runs full width.
+- **Phone layout.** Fixed: the chart legend is one scrolling line instead of
+  three, **Test Telemetry** is an icon on a phone, and the filter row wraps so the
+  Range select stays readable.
+- **Still open:** the panels below the Overview's first screen are still plain
+  bordered boxes rather than plates, which is a matter of taste.
 
 ## What still needs to be done
 

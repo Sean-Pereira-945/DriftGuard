@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { api } from '../api';
 import { Badge, SeverityBadge, TaskStatusBadge, attemptTone } from '../components/Badges';
 import { CodeBlock } from '../components/Copy';
+import { BaselineGauge } from '../components/BaselineGauge';
 import { Instrument, InstrumentStrip } from '../components/Instrument';
 import { TrackDiagram } from '../components/TrackDiagram';
 import { Drawer } from '../components/Overlay';
@@ -11,6 +12,7 @@ import { EmptyState, ResourceView } from '../components/States';
 import { ClickableRow, TableScroll, Td, Th } from '../components/Table';
 import { DASH, fmtDateTime, fmtDuration, fmtInt, fmtRelative } from '../lib/format';
 import { useProjectQuery } from '../state/queries';
+import { useWorkspace } from '../state/workspace';
 import type { AgentDiagnosis as Diagnosis, AgentEvent, AgentTask } from '../types';
 
 const EMIT_SNIPPET = `client.capture_agent_event(
@@ -25,6 +27,10 @@ const EMIT_SNIPPET = `client.capture_agent_event(
 client.sync_agent_events()`;
 
 function DiagnosisStats({ data }: { data: Diagnosis }) {
+  const { summary } = useWorkspace();
+  const threshold = summary.data?.policy.blocked_after_failures;
+  const run = data.tasks.reduce((most, task) => Math.max(most, task.consecutive_failures), 0);
+  const scaleMax = Math.max((threshold ?? 3) * 2, run + 1);
   return (
     <div className="space-y-3">
       <InstrumentStrip label="Diagnosis instruments" columns={3}>
@@ -32,8 +38,23 @@ function DiagnosisStats({ data }: { data: Diagnosis }) {
           label="Blocked tasks"
           figure={fmtInt(data.blocked_tasks)}
           figureTone={data.blocked_tasks ? 'text-coral' : 'text-ink'}
-          note={`of ${fmtInt(data.task_count)} tasks`}
-        />
+          note={
+            threshold === undefined
+              ? `of ${fmtInt(data.task_count)} tasks`
+              : `of ${fmtInt(data.task_count)} tasks. Longest run of failures in a row: ${run}. A task blocks at ${threshold}.`
+          }
+        >
+          {threshold !== undefined && (
+            <BaselineGauge
+              summary={`Longest run of failures in a row is ${run}. A task is blocked at ${threshold}.`}
+              value={run}
+              max={scaleMax}
+              marks={[{ at: threshold, label: `blocks at ${threshold}` }]}
+              bad={{ from: threshold, to: scaleMax }}
+              tone={run >= threshold ? 'critical' : run > 0 ? 'warning' : 'ok'}
+            />
+          )}
+        </Instrument>
         <Instrument
           label="Failing tasks"
           figure={fmtInt(data.failing_tasks)}

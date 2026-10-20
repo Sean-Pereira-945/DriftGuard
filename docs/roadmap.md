@@ -90,6 +90,9 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
+  gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
+  phone layout.
 - [x] The baseline line reads "No clear change" and shows its sample size, after the
   [baseline study](../research/BASELINE_STUDY.md) found "steady" over-claimed.
 - [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
@@ -113,9 +116,8 @@ runs, not by unit tests: the frontend has none yet.
   didn't repeat the request) as a quality proxy.
 
 ### Dashboard
-- [ ] Finish the redesign review items: a fuller track diagram, gauges and the
-  same look on Agent Diagnosis and the lower Overview panels, and a better phone
-  layout for the timeline legend and header.
+- [ ] Give the panels below the Overview's first screen the same plate look as the
+  status plate and instruments.
 - [ ] Frontend unit tests, starting with shortcuts, URL filters and the Policy
   preview.
 - [ ] Saved views, and tab and search state in the address.

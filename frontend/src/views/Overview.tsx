@@ -382,71 +382,70 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
             </ResourceView>
           </Panel>
 
-          <Panel title="Drift Risk Breakdown" description="Share of events violating each policy rule.">
-            <ResourceView
-              resource={summary}
-              isEmpty={(data) => data.total_events === 0}
-              empty={<EmptyState title="No telemetry in this window">Rates appear once events are scored.</EmptyState>}
-            >
-              {(data) => <RiskBreakdown rates={data.violation_rates} policy={data.policy} />}
-            </ResourceView>
-          </Panel>
+          <div className="space-y-6">
+            <Panel title="Drift Risk Breakdown" description="Share of events violating each policy rule.">
+              <ResourceView
+                resource={summary}
+                isEmpty={(data) => data.total_events === 0}
+                empty={<EmptyState title="No telemetry in this window">Rates appear once events are scored.</EmptyState>}
+              >
+                {(data) => <RiskBreakdown rates={data.violation_rates} policy={data.policy} />}
+              </ResourceView>
+            </Panel>
+
+            <Panel title="Top Root Causes" description="Most frequent causes among warning and critical events.">
+              <ResourceView
+                resource={summary}
+                isEmpty={(data) => data.top_root_causes.length === 0}
+                empty={<EmptyState title="No drift detected">No warning or critical events in this window.</EmptyState>}
+              >
+                {(data) => {
+                  const max = Math.max(...data.top_root_causes.map((c) => c.count));
+                  return (
+                    <ol className="space-y-3">
+                      {data.top_root_causes.map((cause) => (
+                        <li key={cause.root_cause}>
+                          <div className="mb-1 flex items-start justify-between gap-3 text-sm">
+                            <span className="text-body">{cause.root_cause}</span>
+                            <span className="tabular shrink-0 font-mono text-muted">{fmtInt(cause.count)}</span>
+                          </div>
+                          <div className="h-1.5 rounded-sm bg-white/[0.05]" aria-hidden>
+                            <div className="h-full rounded-sm bg-route/70" style={{ width: `${(cause.count / max) * 100}%` }} />
+                          </div>
+                        </li>
+                      ))}
+                    </ol>
+                  );
+                }}
+              </ResourceView>
+            </Panel>
+          </div>
         </div>
 
-        <div className="grid items-start gap-6 xl:grid-cols-3">
-          <Panel title="Top Root Causes" description="Most frequent causes among warning and critical events.">
-            <ResourceView
-              resource={summary}
-              isEmpty={(data) => data.top_root_causes.length === 0}
-              empty={<EmptyState title="No drift detected">No warning or critical events in this window.</EmptyState>}
-            >
-              {(data) => {
-                const max = Math.max(...data.top_root_causes.map((c) => c.count));
-                return (
-                  <ol className="space-y-3">
-                    {data.top_root_causes.map((cause) => (
-                      <li key={cause.root_cause}>
-                        <div className="mb-1 flex items-start justify-between gap-3 text-sm">
-                          <span className="text-body">{cause.root_cause}</span>
-                          <span className="tabular shrink-0 font-mono text-muted">{fmtInt(cause.count)}</span>
-                        </div>
-                        <div className="h-1.5 rounded-sm bg-white/[0.05]" aria-hidden>
-                          <div className="h-full rounded-sm bg-route/70" style={{ width: `${(cause.count / max) * 100}%` }} />
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                );
-              }}
-            </ResourceView>
-          </Panel>
-
-          <Panel
-            title="Open Alerts"
-            description="Latest open alerts."
-            className="xl:col-span-2"
-            bodyClassName=""
-            actions={
-              <Button size="sm" variant="ghost" onClick={() => onNavigate('alerts')} icon={<ArrowRight aria-hidden className="size-3.5" />}>
-                All alerts
-              </Button>
-            }
+        <Panel
+          title="Open Alerts"
+          description="Latest open alerts."
+          bodyClassName=""
+          actions={
+            <Button size="sm" variant="ghost" onClick={() => onNavigate('alerts')} icon={<ArrowRight aria-hidden className="size-3.5" />}>
+              All alerts
+            </Button>
+          }
+        >
+          <ResourceView
+            resource={alerts}
+            isEmpty={(data) => data.length === 0}
+            empty={<EmptyState title="No open alerts">Critical drift and blocked agent tasks raise alerts here.</EmptyState>}
           >
-            <ResourceView
-              resource={alerts}
-              isEmpty={(data) => data.length === 0}
-              empty={<EmptyState title="No open alerts">Critical drift and blocked agent tasks raise alerts here.</EmptyState>}
-            >
-              {(data) => (
-                <ul>
-                  {data.map((alert) => (
-                    <AlertRow key={alert.id} alert={alert} />
-                  ))}
-                </ul>
-              )}
-            </ResourceView>
-          </Panel>
-        </div>
+            {(data) => (
+              <ul>
+                {data.map((alert) => (
+                  <AlertRow key={alert.id} alert={alert} />
+                ))}
+              </ul>
+            )}
+          </ResourceView>
+        </Panel>
       </div>
     </>
   );
