@@ -286,6 +286,9 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   "agent_activity": {"events": 24, "tool_calls": 23, "failed_tool_calls": 0, "failure_rate": 0.0,
                      "turns": 1, "tasks": 2, "total_tokens": 120600, "avg_tool_duration_ms": 12400.0,
                      "last_activity": "2026-10-01T07:29:25Z"},
+  "spread": {"response_quality": {"n": 107, "median": 0.8123, "p10": 0.62, "p90": 0.9351},
+             "retrieval_score": {"n": 107, "median": 0.7, "p10": 0.31, "p90": 0.93},
+             "risk_score": {"n": 107, "median": 0.0, "p10": 0.0, "p90": 0.6}},
   "baseline": {"available": true, "reason": null, "window_seconds": 86400, "start": "2026-09-29T04:13:48Z",
                "end": "2026-09-30T04:13:48Z", "min_sample": 10,
                "metrics": {"response_quality": {"current": 0.8124, "baseline": 0.8962, "n_current": 107, "n_baseline": 78,
@@ -305,6 +308,10 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   - `turns` counts `response` events, which are finished turns.
   - `total_tokens` takes each finished task's `response` total, or the sum of
     its tool calls while the task is unfinished.
+- `spread` gives, for `retrieval_score`, `response_quality` and `risk_score`, the
+  count `n` of readings and their `median`, 10th (`p10`) and 90th (`p90`)
+  percentiles. They use the latest 5,000 readings in the window, and are `null`
+  without any. A mean can hide a split distribution; these show it.
 - `baseline` compares the window's averages with the period just before it. See
   [How DriftGuard works](concepts.md#is-it-worse-than-usual-baseline-comparison).
   - It covers `retrieval_score`, `response_quality` and `risk_score`. The

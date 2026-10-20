@@ -93,6 +93,8 @@ runs, not by unit tests: the frontend has none yet.
 - [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
   gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
   phone layout.
+- [x] The median, the weak end and the share under the floor beneath each average,
+  so a mean can't hide a split.
 - [x] The baseline line reads "No clear change" and shows its sample size, after the
   [baseline study](../research/BASELINE_STUDY.md) found "steady" over-claimed.
 - [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
@@ -108,8 +110,8 @@ runs, not by unit tests: the frontend has none yet.
   least 3 checks in a row plus a cooldown, and to consider a sequential method
   (CUSUM or EWMA), because a 3-sigma check repeated at every event raises false
   alarms in about 5 percent of streams.
-- [ ] Percentiles (median and 10th) beside each mean, and a breakdown by model,
-  route and environment so a drift can be pinned to one cause.
+- [ ] A breakdown by model and route so a drift can be pinned to one cause. This
+  needs those fields stored on telemetry events.
 - [ ] Weights and thresholds that can be fitted to labelled data, and exposed in
   Policy.
 - [ ] Outcome signals for Claude Code (tests pass at the end of a turn, the user

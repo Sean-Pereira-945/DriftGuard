@@ -183,6 +183,13 @@ export interface AgentActivity {
   last_activity: string | null;
 }
 
+/** The middle and the ends of a window's readings, so a mean can't hide a split. */
+export interface Spread {
+  n: number;
+  median: number | null;
+  p10: number | null;
+  p90: number | null;
+}
 export type BaselineStatus = 'insufficient' | 'steady' | 'worse' | 'better';
 export interface BaselineMetric {
   current: number | null;
@@ -219,6 +226,7 @@ export interface Summary {
   warning_alerts: number;
   saved_tokens: number;
   agent_activity: AgentActivity;
+  spread: Record<'retrieval_score' | 'response_quality' | 'risk_score', Spread>;
   baseline: Baseline;
   last_updated: string | null;
   policy: Policy;

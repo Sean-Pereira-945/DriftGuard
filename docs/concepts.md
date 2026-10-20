@@ -183,6 +183,15 @@ card numbers first, and cut to 2,000 characters. Data older than 30 days is
 deleted automatically. Passwords are hashed with scrypt, API keys are stored
 only as hashes, and one account can never see another account's projects.
 
+## Averages and spread
+
+The Overview shows averages, but an average can hide how readings are spread. A
+mean quality of 0.80 could be every answer near 0.80, or half near 1.0 and half
+near 0.60. So each average has a line beneath it with the **median** (the typical
+event), the **weak end** (the lowest 10% of scores, or the highest 10% of risk),
+and the share of events under the floor. If the mean and the median are far
+apart, a few extreme events are pulling the average.
+
 ## Is it worse than usual? (baseline comparison)
 
 A floor says "below a line". It can't say "worse than normal". A project whose

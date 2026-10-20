@@ -120,6 +120,14 @@ between the marker and the tick.
 | Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
 | Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
 
+**The spread behind each average.** Under **Mean risk score** and **Response quality**
+(and **Mean retrieval score** in All readings) a line gives the **median**, the
+weak end (the lowest 10% for scores, the highest 10% for risk) and, for scores,
+the share of events under the floor. A mean can hide a split: half the answers
+near 1.0 and half near 0.6 average to 0.8, but the median and the weak end show
+it. The line appears from 10 events. These use the latest 5,000 readings in the
+window.
+
 **Compared with before.** Under **Mean risk score** and **Response quality**
 (and **Mean retrieval score** in All readings) a line compares the window with
 the same length of time just before it, at least 24 hours:

@@ -32,6 +32,11 @@ All notable changes to DriftGuard are recorded here. The format follows
     retrieval score, and adds a "Worse than usual" line to the status plate. It is
     advice only: it raises no alert and doesn't change the status.
   - `driftguard/baseline.py` holds the maths, with 14 new tests.
+- **Spread behind each average.** `GET /projects/{id}/summary` gains `spread`:
+  the median and the 10th and 90th percentiles of each metric, from the latest
+  5,000 readings in the window. The Overview shows them under Mean risk score,
+  Response quality and Mean retrieval score, with the share of events under the
+  floor, so an average can't hide a split. It appears from 10 events. 6 new tests.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.

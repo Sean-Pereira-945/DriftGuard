@@ -6,6 +6,7 @@ import { toPoints } from '../charts/points';
 import { AlertRow } from '../components/AlertRow';
 import { BaselineGauge } from '../components/BaselineGauge';
 import { BaselineLine } from '../components/BaselineLine';
+import { SpreadLine } from '../components/SpreadLine';
 import { Button } from '../components/Button';
 import { Lamp, worst, type LampState } from '../components/Lamp';
 import type { ReactNode } from 'react';
@@ -75,7 +76,12 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
       </Instrument>
       <Instrument
         label="Mean risk score"
-        extra={<BaselineLine metric={summary.baseline.metrics.risk_score} baseline={summary.baseline} total={summary.total_events} />}
+        extra={
+          <>
+            <BaselineLine metric={summary.baseline.metrics.risk_score} baseline={summary.baseline} total={summary.total_events} />
+            <SpreadLine spread={summary.spread.risk_score} minSample={summary.baseline.min_sample} tail="high" />
+          </>
+        }
         figure={fmtScore(risk)}
         figureTone={TONE_TEXT[riskTone]}
         note={risk === null ? 'No scored events in this window' : 'Warning from 0.40, critical from 0.75'}
@@ -94,7 +100,17 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
       </Instrument>
       <Instrument
         label="Response quality"
-        extra={<BaselineLine metric={summary.baseline.metrics.response_quality} baseline={summary.baseline} total={summary.total_events} />}
+        extra={
+          <>
+            <BaselineLine metric={summary.baseline.metrics.response_quality} baseline={summary.baseline} total={summary.total_events} />
+            <SpreadLine
+              spread={summary.spread.response_quality}
+              minSample={summary.baseline.min_sample}
+              tail="low"
+              belowFloorRate={summary.violation_rates.response_quality_floor}
+            />
+          </>
+        }
         figure={fmtScore(quality)}
         figureTone={qualityBelow ? 'text-amber' : 'text-ink'}
         note={
@@ -166,6 +182,12 @@ function AllReadings({ summary }: { summary: Summary }) {
       <>
         {summary.total_events > 0 && avg.retrieval_score == null ? 'Not reported by this source' : `Floor ${fmtScore(p.retrieval_score_floor)}`}
         <BaselineLine metric={summary.baseline.metrics.retrieval_score} baseline={summary.baseline} total={summary.total_events} />
+        <SpreadLine
+          spread={summary.spread.retrieval_score}
+          minSample={summary.baseline.min_sample}
+          tail="low"
+          belowFloorRate={summary.violation_rates.retrieval_score_floor}
+        />
       </>,
     ],
   ];

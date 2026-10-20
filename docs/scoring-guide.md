@@ -144,8 +144,9 @@ Read the dashboard with these limits in mind.
   0.99 to 0.85 never crosses it. That is why the Overview also
   [compares the window with the period before it](concepts.md#is-it-worse-than-usual-baseline-comparison).
 - **An average hides the spread.** A mean quality of 0.81 can be a steady 0.81, or
-  half the answers near 1.0 and half near 0.6. The share of events below the
-  floor, in the Drift Risk Breakdown, shows that better than the mean does.
+  half the answers near 1.0 and half near 0.6. The Overview shows the median, the
+  weak end and the share of events under the floor beneath each average, and the
+  Drift Risk Breakdown shows the share that broke each rule.
 - **Few events make noisy averages.** The comparison refuses to judge with fewer
   than 10 events on either side, and the Overview says when an average rests on
   only a handful.
@@ -159,6 +160,6 @@ Read the dashboard with these limits in mind.
 How often the checks catch a real problem, and how often they raise a false one, is
 measured in [the baseline study](../research/BASELINE_STUDY.md).
 
-Not built yet, and listed in the [roadmap](roadmap.md): percentiles beside each
-mean, a breakdown by model and route, alerts on a sustained drop from the
-baseline, and weights that can be fitted to labelled data.
+Not built yet, and listed in the [roadmap](roadmap.md): a breakdown by model and
+route, alerts on a sustained drop from the baseline, and weights that can be
+fitted to labelled data.

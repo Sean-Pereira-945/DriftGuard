@@ -18,7 +18,7 @@ from sqlalchemy.engine import Connection, Engine, RowMapping
 from sqlalchemy.exc import IntegrityError
 
 from driftguard.agent_analysis import FAILED_STATUSES, SUCCESS_STATUSES, analyze_agent_events
-from driftguard.baseline import METRICS, MIN_BASELINE_HOURS, MIN_SAMPLE, compare
+from driftguard.baseline import METRICS, MIN_BASELINE_HOURS, MIN_SAMPLE, SPREAD_SAMPLE, compare, spread
 from driftguard.policy import DEFAULT_POLICY, evaluate_drift
 
 from . import db
@@ -631,6 +631,20 @@ class DriftGuardService:
             ).all()
             activity = self._agent_activity(conn, project_id, environment, cutoff)
             baseline = self._baseline(conn, project_id, environment, time_range, cutoff)
+            spreads = {
+                metric: spread(
+                    [
+                        row[0]
+                        for row in conn.execute(
+                            select(events.c[metric])
+                            .where(*event_filter, events.c[metric].is_not(None))
+                            .order_by(events.c.created_at.desc())
+                            .limit(SPREAD_SAMPLE)
+                        )
+                    ]
+                )
+                for metric in METRICS
+            }
 
         open_alerts = self.list_alerts(
             project_id, severity=severity, environment=environment, time_range=time_range, resolved=False
@@ -669,6 +683,7 @@ class DriftGuardService:
             "warning_alerts": warning,
             "saved_tokens": saved,
             "agent_activity": activity,
+            "spread": spreads,
             "baseline": baseline,
             "last_updated": max(filter(None, (last_event, last_alert, last_activity)), default=None),
             "policy": policy,

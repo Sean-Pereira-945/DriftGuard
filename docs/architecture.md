@@ -323,6 +323,10 @@ and `wasted_tokens` keep working.
    Otherwise it is `steady`. Under 10 events on either side it is `insufficient`
    and `delta` and `z` are `null`.
 
+`summary` also returns `spread`: for each of the three metrics, the median and the
+10th and 90th percentiles of up to the latest 5,000 readings in the window
+(`baseline.spread`, interpolating between neighbours).
+
 The constants live at the top of `baseline.py`. Nothing is stored: it is
 recomputed on each request from the events table, and it doesn't create alerts.
 
