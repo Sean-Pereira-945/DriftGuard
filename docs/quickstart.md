@@ -42,7 +42,7 @@ To stop, close the window titled **DriftGuard server**. Your data stays in
 ### 1. Install once
 
 ```bash
-git clone https://github.com/Sean-Pereira-945/tokepi.git driftguard
+git clone https://github.com/Sean-Pereira-945/DriftGuard.git driftguard
 cd driftguard
 
 python -m venv .venv
@@ -106,7 +106,7 @@ Next, [send some data](#send-data).
 ## C. Docker Compose
 
 ```bash
-git clone https://github.com/Sean-Pereira-945/tokepi.git driftguard && cd driftguard
+git clone https://github.com/Sean-Pereira-945/DriftGuard.git driftguard && cd driftguard
 cp .env.example .env
 # In .env set:
 #   DRIFTGUARD_SECRET_KEY=<python -c "import secrets; print(secrets.token_urlsafe(48))">
@@ -146,7 +146,7 @@ python examples/seed_showcase.py --api-key dg_live_... --project-id showcase
 This adds a week of realistic traffic. You get about 420 LLM requests over
 three environments, with three drift episodes, and five agents whose tasks are
 blocked, failing, recovered and healthy. Alerts and full Logs come with it.
-Set the time range to **Last 7 days**. To also see inputs and outputs in Logs,
+Set **Range** to **Last 7 days**. To also see inputs and outputs in Logs,
 turn on **Content storage** in Project Settings **before** running it.
 
 ### 2. Live demo script (a story in four steps)
@@ -202,6 +202,9 @@ print(client.check_drift())               # instant local verdict: severity, ris
 client.sync_metrics()                     # send the queued events
 ```
 
+Not sure how to get the two scores? See
+[Measuring retrieval score and response quality](scoring-guide.md).
+
 **Agent tool calls**, one event per call:
 
 ```python
@@ -231,9 +234,9 @@ raw HTTP are covered in [agent-integration.md](agent-integration.md).
 | `/` says "The dashboard has not been built" | Run `cd frontend && npm ci && npm run build`, then reload. |
 | `address already in use` on port 8000 | A server is already running. Use it, stop it, or start this one with `--port 8001`. |
 | The project picker doesn't list your project | You're signed in as a different account. Projects belong to the account that created them. Sign out and back in as the owner. |
-| Data was sent but the dashboard is empty | Check the **time range** and **environment** filters in the header, then click **Refresh**. The sample data needs **Last 7 days**. |
+| Data was sent but the dashboard is empty | Check the **Range** and **Env** filters in the header, then click **Refresh**. The sample data needs **Last 7 days**. |
 | Retrieval or quality shows "—" or "Not reported by this source" | The source doesn't send that metric. Claude Code has no retrieval step and no answer grader, so DriftGuard leaves it blank instead of guessing. |
-| Logs shows no inputs or outputs | Content storage is off. Turn it on in Project Settings. The sender must also allow it (`capture_content`). |
+| Logs shows no inputs or outputs, and the **Details** column is a dash for successful calls | Content storage is off, so the server discards inputs and outputs even if the sender includes them. Turn it on in Project Settings. The sender must also allow it (`capture_content`). It only applies to events sent afterwards. Failed calls still show their error. |
 | `429 Too Many Requests` when signing in | The login limit is 10 per minute per IP. Wait a minute. |
 | Claude Code activity isn't arriving | The server must be running when Claude Code works; events sent while it's down are dropped. Errors are written to `.claude/driftguard-hook.log`. Open `/hooks` in Claude Code once after editing the hook settings. |
 | A Python change has no effect | Restart the server, or run it with `--reload`. |

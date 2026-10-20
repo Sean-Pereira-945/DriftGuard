@@ -72,7 +72,7 @@ export function QualityScatter({ points, promptTokenLimit, qualityFloor }: Props
               <ReferenceLine y={qualityFloor} stroke={COLORS.amber} strokeDasharray="4 4" strokeOpacity={0.7} />
             )}
             <Tooltip
-              cursor={{ strokeDasharray: '3 3', stroke: '#3f3f46' }}
+              cursor={{ strokeDasharray: '3 3', stroke: '#4b6e60' }}
               isAnimationActive={false}
               content={({ active, payload }) => {
                 const point = active ? (payload?.[0]?.payload as EventPoint | undefined) : undefined;
@@ -97,7 +97,7 @@ export function QualityScatter({ points, promptTokenLimit, qualityFloor }: Props
                 data={group.data}
                 fill={group.color}
                 shape={group.shape}
-                stroke="#050505"
+                stroke="#080d0b"
                 strokeWidth={1}
                 isAnimationActive={false}
               />

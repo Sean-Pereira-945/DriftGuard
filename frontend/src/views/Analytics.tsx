@@ -29,7 +29,7 @@ function EventCharts({ points, policy }: { points: EventPoint[]; policy: Policy 
             points={points}
             dataKey="context_length"
             label="Context length"
-            color={COLORS.cyan}
+            color={COLORS.route}
             format={fmtInt}
             threshold={policy ? { value: policy.context_length_limit, label: 'Context length limit' } : undefined}
           />

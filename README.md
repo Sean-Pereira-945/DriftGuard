@@ -19,13 +19,17 @@ quality.
   if you opt in per project.
 - **Drift scoring.** Four normalized metrics are checked against per-project
   thresholds and turned into a severity, a root cause, and a recommended
-  mitigation.
+  mitigation. The Overview also compares each window with the period before it,
+  and says so when there are too few events to judge.
 - **Alerts that manage themselves.** Critical drift and blocked tasks raise
   alerts. Agent alerts resolve themselves when the task recovers. Alerts are
   pushed live to the dashboard, Slack, or any webhook.
 - **Drop-in adapters.** A `@driftguard_tool` decorator, MCP session
   instrumentation, token extraction from OpenAI, Anthropic, and Gemini
   responses, and a no-code [Claude Code hook](integrations/claude_code/README.md).
+- **Fast to operate.** A status plate and a track diagram tell you what is
+  blocked first. Keyboard shortcuts, links that carry your filters, bulk
+  resolve, and a Policy page that shows what each threshold would flag.
 - **Self-hostable.** A FastAPI server, a React dashboard, and SQLite or
   PostgreSQL, with Redis when you scale out. One `docker compose up`.
 
@@ -40,11 +44,13 @@ it never changes prompts or providers. See
 
 | I want to… | Do this |
 | --- | --- |
+| Set it up on a teammate's laptop | Follow **[SETUP.md](SETUP.md)** |
 | See it running in two minutes (Windows) | Double-click **`demo.bat`**. Sign in as `demo@driftguard.local` / `driftguard-demo`. |
 | Run it from this repo | `pip install -e ".[server]"`, `cd frontend && npm ci && npm run build`, then `driftguard-server`. Details in [Getting started](docs/quickstart.md#b-from-source-windows-macos-linux). |
 | Fill the dashboard with sample data | `python examples/seed_showcase.py --api-key dg_live_... --project-id showcase` |
 | Watch my own Claude Code sessions | [Claude Code hook](integrations/claude_code/README.md) |
 | Understand how it works | [How DriftGuard works](docs/concepts.md), then [Architecture](docs/architecture.md) |
+| Send retrieval and quality scores | [Measuring retrieval score and response quality](docs/scoring-guide.md) |
 
 ![The Overview view, with sample data](docs/images/dashboard-overview.png)
 
@@ -96,11 +102,16 @@ walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 | [Giving a demo](docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
 | [Agent integration](docs/agent-integration.md) | Decorator, MCP, raw events, and what can't be observed |
 | [Dashboard guide](docs/dashboard.md) | Every view, card and column, with screenshots |
+| [Measuring scores](docs/scoring-guide.md) | How to calculate retrieval score and response quality, choosing floors, and what the numbers can't tell you |
 | [API reference](docs/api.md) | Every endpoint, with real request and response bodies |
 | [Architecture](docs/architecture.md) | Diagrams, components, request flows, algorithms, data model, security |
 | [Configuration](docs/configuration.md) | Environment variables and policy settings |
 | [Deployment](docs/deployment.md) | Docker Compose, TLS, scaling, backups, upgrading from 0.3 |
 | [Development](docs/development.md) | Repo layout, tests on SQLite/Postgres/Redis, CI, releasing |
+| [Design system](docs/design-system.md) | The dashboard's look, in plain language ([DESIGN.md](DESIGN.md) has the tokens) |
+| [Product context](docs/PRODUCT.md) | Who it is for, what it does, and the constraints work must keep |
+| [Research](research/README.md) | A simulation study of floors against the baseline comparison, plus the Phase 1 prototypes |
+| [Progress report](docs/progress.md) | What is done, what changed, and what is next |
 | [Roadmap](docs/roadmap.md) | What's done and what's next |
 | [Changelog](CHANGELOG.md) | Release history |
 
@@ -109,11 +120,13 @@ walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 ```text
 driftguard/     the Python package: SDK, adapters, and driftguard.server
 frontend/       dashboard source (React + Vite); builds into driftguard/server/static
-research/       Phase 1 synthetic drift research prototypes
+research/       the baseline study (simulation) and the Phase 1 drift prototypes
 integrations/   no-code integrations, starting with Claude Code hooks
 tests/          SDK and server test suite
 examples/       runnable scripts, including the live demo (demo.bat runs it on Windows)
-docs/           documentation
+docs/           documentation, including PRODUCT.md and the screenshots in docs/images
+DESIGN.md       the dashboard's design tokens and components
+.impeccable/    design direction and critique records
 ```
 
 ## Development

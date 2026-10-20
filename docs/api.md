@@ -286,6 +286,10 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   "agent_activity": {"events": 24, "tool_calls": 23, "failed_tool_calls": 0, "failure_rate": 0.0,
                      "turns": 1, "tasks": 2, "total_tokens": 120600, "avg_tool_duration_ms": 12400.0,
                      "last_activity": "2026-10-01T07:29:25Z"},
+  "baseline": {"available": true, "reason": null, "window_seconds": 86400, "start": "2026-09-29T04:13:48Z",
+               "end": "2026-09-30T04:13:48Z", "min_sample": 10,
+               "metrics": {"response_quality": {"current": 0.8124, "baseline": 0.8962, "n_current": 107, "n_baseline": 78,
+                                                "delta": -0.0838, "z": -6.72, "status": "worse"}}},
   "last_updated": "2026-09-30T04:13:48.601517Z",
   "policy": {"prompt_token_limit": 3000.0, "…": "…"},
   "filters": {"environment": "all", "severity": "all", "time_range": "all"}
@@ -301,6 +305,17 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   - `turns` counts `response` events, which are finished turns.
   - `total_tokens` takes each finished task's `response` total, or the sum of
     its tool calls while the task is unfinished.
+- `baseline` compares the window's averages with the period just before it. See
+  [How DriftGuard works](concepts.md#is-it-worse-than-usual-baseline-comparison).
+  - It covers `retrieval_score`, `response_quality` and `risk_score`. The
+    comparison period is the same length as the window, at least 24 hours,
+    ending where the window starts. `window_seconds`, `start` and `end` describe it.
+  - `status` is `insufficient` (under `min_sample` events with the metric on
+    either side), `steady`, `worse` or `better`. `delta` is current minus
+    baseline, and `z` is a two-sample z-score. Both are `null` when
+    insufficient.
+  - For `time_range=all` it is `{"available": false, "reason": "all_time", …}`
+    with no metrics.
 - `last_updated` is the newest of the last event, alert and agent activity.
 - `violation_rates` gives the share of events in the window that broke each rule
   in the current policy.

@@ -183,6 +183,28 @@ export interface AgentActivity {
   last_activity: string | null;
 }
 
+export type BaselineStatus = 'insufficient' | 'steady' | 'worse' | 'better';
+export interface BaselineMetric {
+  current: number | null;
+  baseline: number | null;
+  n_current: number;
+  n_baseline: number;
+  delta: number | null;
+  z: number | null;
+  status: BaselineStatus;
+}
+/** The window's averages compared with the period just before it. */
+export interface Baseline {
+  available: boolean;
+  /** `all_time` when there is no earlier period to compare with. */
+  reason: string | null;
+  window_seconds?: number;
+  start?: string | null;
+  end?: string | null;
+  /** Readings needed on each side before a verdict is given. */
+  min_sample: number;
+  metrics: Partial<Record<'retrieval_score' | 'response_quality' | 'risk_score', BaselineMetric>>;
+}
 export interface Summary {
   project_id: string;
   status: Severity;
@@ -197,6 +219,7 @@ export interface Summary {
   warning_alerts: number;
   saved_tokens: number;
   agent_activity: AgentActivity;
+  baseline: Baseline;
   last_updated: string | null;
   policy: Policy;
   filters: SummaryFilters;

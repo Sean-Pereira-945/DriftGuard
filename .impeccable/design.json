@@ -1,0 +1,499 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T07:11:13.656179+00:00",
+  "title": "Design System: DriftGuard",
+  "extensions": {
+    "colorMeta": {
+      "enamel": {
+        "role": "neutral",
+        "displayName": "Enamel",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#1d302b",
+          "#34564d",
+          "#4b7c70",
+          "#63a192",
+          "#89b8ac",
+          "#afcfc7",
+          "#cfe2de",
+          "#eff5f4"
+        ]
+      },
+      "enamel-sidebar": {
+        "role": "neutral",
+        "displayName": "Enamel Sidebar",
+        "canonical": "#030504",
+        "tonalRamp": [
+          "#1c312b",
+          "#32584d",
+          "#487f6f",
+          "#5fa591",
+          "#86bbac",
+          "#add1c7",
+          "#cee3dd",
+          "#eff6f4"
+        ]
+      },
+      "enamel-panel": {
+        "role": "neutral",
+        "displayName": "Enamel Panel",
+        "canonical": "#080d0b",
+        "tonalRamp": [
+          "#1d302b",
+          "#34564d",
+          "#4b7c6f",
+          "#64a190",
+          "#8ab8ab",
+          "#b0cfc6",
+          "#cfe2dd",
+          "#eff5f4"
+        ]
+      },
+      "enamel-raised": {
+        "role": "neutral",
+        "displayName": "Enamel Raised",
+        "canonical": "#101915",
+        "tonalRamp": [
+          "#1e2f29",
+          "#355449",
+          "#4d7a6a",
+          "#669e8a",
+          "#8bb6a7",
+          "#b1cec3",
+          "#d0e1db",
+          "#eff5f3"
+        ]
+      },
+      "enamel-input": {
+        "role": "neutral",
+        "displayName": "Enamel Input",
+        "canonical": "#040706",
+        "tonalRamp": [
+          "#1c302b",
+          "#33574d",
+          "#4a7d6f",
+          "#62a290",
+          "#88b9ab",
+          "#afd0c6",
+          "#cfe3dd",
+          "#eff6f4"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#1e2d27",
+        "tonalRamp": [
+          "#1f2e29",
+          "#375349",
+          "#50776a",
+          "#699b8a",
+          "#8eb4a7",
+          "#b3ccc3",
+          "#d1e0db",
+          "#f0f5f3"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Hairline Strong",
+        "canonical": "#324a40",
+        "tonalRamp": [
+          "#1e2e28",
+          "#375348",
+          "#4f7869",
+          "#699b89",
+          "#8db4a6",
+          "#b2ccc3",
+          "#d1e1db",
+          "#f0f5f3"
+        ]
+      },
+      "hairline-hover": {
+        "role": "neutral",
+        "displayName": "Hairline Hover",
+        "canonical": "#4b6e60",
+        "tonalRamp": [
+          "#1f2d28",
+          "#395147",
+          "#527567",
+          "#6c9886",
+          "#90b1a4",
+          "#b4cbc1",
+          "#d2e0da",
+          "#f0f5f3"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#fffbea",
+        "tonalRamp": [
+          "#393014",
+          "#665724",
+          "#937d34",
+          "#bea346",
+          "#ceb974",
+          "#ded0a1",
+          "#ebe3c6",
+          "#f8f6ec"
+        ]
+      },
+      "body": {
+        "role": "neutral",
+        "displayName": "Body",
+        "canonical": "#e4dec8",
+        "tonalRamp": [
+          "#302c1d",
+          "#564f33",
+          "#7d734a",
+          "#a29562",
+          "#b8af89",
+          "#cfc9af",
+          "#e2dfcf",
+          "#f5f4ef"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#aebab1",
+        "tonalRamp": [
+          "#242925",
+          "#404a42",
+          "#5d6a60",
+          "#798b7e",
+          "#9aa79d",
+          "#bbc4bd",
+          "#d6dbd7",
+          "#f1f3f2"
+        ]
+      },
+      "faint": {
+        "role": "neutral",
+        "displayName": "Faint",
+        "canonical": "#8a988f",
+        "tonalRamp": [
+          "#242926",
+          "#414944",
+          "#5e6963",
+          "#7b8a81",
+          "#9ba6a0",
+          "#bbc3bf",
+          "#d6dbd8",
+          "#f1f3f2"
+        ]
+      },
+      "route": {
+        "role": "primary",
+        "displayName": "Route Ivory",
+        "canonical": "#fff2b8",
+        "tonalRamp": [
+          "#393113",
+          "#675922",
+          "#958032",
+          "#c1a644",
+          "#d0bc71",
+          "#dfd29f",
+          "#fff2b8",
+          "#f9f6ec"
+        ]
+      },
+      "lamp-red": {
+        "role": "secondary",
+        "displayName": "Lamp Red",
+        "canonical": "#ff5a47",
+        "tonalRamp": [
+          "#4c0800",
+          "#8a0f00",
+          "#c71600",
+          "#ff2005",
+          "#ff5742",
+          "#ff8d80",
+          "#ffbbb2",
+          "#ffe8e5"
+        ]
+      },
+      "lamp-amber": {
+        "role": "secondary",
+        "displayName": "Lamp Amber",
+        "canonical": "#ffc83d",
+        "tonalRamp": [
+          "#483104",
+          "#825807",
+          "#bc7f0b",
+          "#f1a513",
+          "#f5bb4d",
+          "#f8d186",
+          "#fbe3b7",
+          "#fef6e7"
+        ]
+      },
+      "lamp-green": {
+        "role": "secondary",
+        "displayName": "Lamp Green",
+        "canonical": "#34e89a",
+        "tonalRamp": [
+          "#103c26",
+          "#1d6c44",
+          "#2a9d63",
+          "#3aca81",
+          "#6bd7a0",
+          "#9be4bf",
+          "#c3efd8",
+          "#ebfaf2"
+        ]
+      },
+      "steel": {
+        "role": "tertiary",
+        "displayName": "Steel",
+        "canonical": "#86d4ff",
+        "tonalRamp": [
+          "#162b37",
+          "#284d62",
+          "#39708e",
+          "#4d92b7",
+          "#79acc9",
+          "#a4c7da",
+          "#c8dee9",
+          "#edf4f8"
+        ]
+      },
+      "violet": {
+        "role": "tertiary",
+        "displayName": "Signal Violet",
+        "canonical": "#c4b2ff",
+        "tonalRamp": [
+          "#1b0f3d",
+          "#311b6f",
+          "#4727a0",
+          "#5e36ce",
+          "#8667da",
+          "#ad99e6",
+          "#cec2f0",
+          "#efebfa"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Instrument figures, 52px condensed."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel headings."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text."
+      },
+      "label": {
+        "displayName": "Plate Label",
+        "purpose": "Engraved instrument and field names."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Identifiers, tool names, errors."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float-tooltip",
+        "value": "shadow-xl shadow-black/60",
+        "purpose": "Chart tooltips and toasts."
+      },
+      {
+        "name": "float-modal",
+        "value": "shadow-2xl shadow-black",
+        "purpose": "Modals and the slide-over."
+      },
+      {
+        "name": "lamp-glow",
+        "value": "0 0 14px 2px rgb(255 90 71 / 0.55)",
+        "purpose": "A critical lamp glows once as it lights."
+      },
+      {
+        "name": "live-pulse",
+        "value": "0 0 0 6px rgb(52 232 154 / 0)",
+        "purpose": "Live-connection indicator ring."
+      }
+    ],
+    "motion": [
+      {
+        "name": "rise",
+        "value": "200ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Panels and toasts entering."
+      },
+      {
+        "name": "fade",
+        "value": "160ms ease-out",
+        "purpose": "Scrims."
+      },
+      {
+        "name": "slide-in",
+        "value": "200ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Slide-over panel."
+      },
+      {
+        "name": "control-transition",
+        "value": "150ms ease-out",
+        "purpose": "Colour changes on controls."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all durations 0.01ms",
+        "purpose": "Honoured under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per view.",
+      "html": "<button class=\"ds-btn-primary\">Open diagnosis</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#fff2b8;color:#000000;border-color:#fff2b8;font-weight:600}.ds-btn-primary:hover{background:#fff;border-color:#fff}.ds-btn-primary:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Default control.",
+      "html": "<button class=\"ds-btn-secondary\">Export</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#080d0b;color:#e4dec8;border-color:#324a40}.ds-btn-secondary:hover{background:#101915;border-color:#4b6e60}.ds-btn-secondary:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Destructive action.",
+      "html": "<button class=\"ds-btn-danger\">Delete key</button>",
+      "css": ".ds-btn-danger{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:rgba(255,99,80,.1);color:#ff5a47;border-color:rgba(255,99,80,.5)}.ds-btn-danger:hover{background:rgba(255,99,80,.2);border-color:#ff5a47}.ds-btn-danger:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Inset field well with label.",
+      "html": "<label class=\"ds-field\"><span>Project name</span><input placeholder=\"checkout-agent\"></label>",
+      "css": ".ds-field span{display:block;margin-bottom:6px;font:600 13px Barlow,sans-serif;color:#e4dec8}.ds-field input{width:100%;box-sizing:border-box;min-height:40px;padding:0 12px;background:#040706;color:#fffbea;border:1px solid #324a40;border-radius:6px;font:14px Barlow,sans-serif}.ds-field input::placeholder{color:#8a988f}.ds-field input:hover{border-color:#4b6e60}.ds-field input:focus{border-color:#fff2b8;outline:2px solid #fff2b8}"
+    },
+    {
+      "name": "Active Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Sidebar item with the Route bar.",
+      "html": "<a class=\"ds-nav\" href=\"#\">Overview</a>",
+      "css": ".ds-nav{position:relative;display:flex;align-items:center;min-height:40px;padding:0 12px;border-radius:4px;background:#101915;color:#fffbea;font:500 15px Barlow,sans-serif;text-decoration:none}.ds-nav:before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:#fff2b8}.ds-nav:hover{color:#fff}.ds-nav:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "State or category tag with tinted fill.",
+      "html": "<span class=\"ds-badge\">Critical</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid rgba(255,99,80,.4);border-radius:4px;background:rgba(255,99,80,.1);color:#ff5a47;font:600 13px Barlow,sans-serif}"
+    },
+    {
+      "name": "Lamp",
+      "kind": "custom",
+      "refersTo": "lamp",
+      "description": "Lit state lamp; always written in words beside it.",
+      "html": "<span class=\"ds-lamp-row\"><span class=\"ds-lamp\"></span> Blocked</span>",
+      "css": ".ds-lamp-row{display:inline-flex;align-items:center;gap:8px;color:#fffbea;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-lamp{width:16px;height:16px;border-radius:9999px;background:#ff5a47;box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 14px 2px rgba(255,99,80,.55)}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Ruled enamel panel with header.",
+      "html": "<section class=\"ds-panel\"><header><h2>Recent alerts</h2></header><p>No open alerts.</p></section>",
+      "css": ".ds-panel{background:#080d0b;border:1px solid #1e2d27;border-radius:6px;color:#e4dec8;font:15px Barlow,sans-serif}.ds-panel header{padding:12px 20px;border-bottom:1px solid #1e2d27}.ds-panel h2{margin:0;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif;color:#fffbea}.ds-panel p{margin:0;padding:16px 20px}"
+    },
+    {
+      "name": "Instrument",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "Plate label, poster figure and baseline gauge in one ruled cell.",
+      "html": "<div class=\"ds-inst\"><span class=\"ds-pl\">Quality score</span><p>0.42</p><div class=\"ds-gauge\"><i class=\"ds-hatch\"></i><b></b><em></em></div><small>0.18 below the 0.60 floor</small></div>",
+      "css": ".ds-inst{width:260px;padding:20px;background:#080d0b;border:1px solid #1e2d27;border-radius:6px;font-family:Barlow,sans-serif}.ds-pl{font:600 13px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#aebab1}.ds-inst p{margin:4px 0;font:600 52px/1.05 'Barlow Condensed','Arial Narrow',sans-serif;color:#fffbea;font-variant-numeric:tabular-nums}.ds-gauge{position:relative;height:30px}.ds-gauge:before{content:'';position:absolute;left:0;right:0;top:12px;height:1px;background:#324a40}.ds-hatch{position:absolute;left:42%;width:18%;top:7px;height:11px;background:repeating-linear-gradient(135deg,rgba(255,99,80,.38) 0 2px,transparent 2px 6px)}.ds-gauge em{position:absolute;left:60%;top:0;width:1px;height:25px;background:#e4dec8}.ds-gauge b{position:absolute;left:42%;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);background:#ff5a47;border:1px solid #ff5a47}.ds-inst small{font-size:14px;color:#aebab1}"
+    },
+    {
+      "name": "Track Section",
+      "kind": "custom",
+      "refersTo": "lamp",
+      "description": "One tool as a block section on the track; the blocking one is red.",
+      "html": "<div class=\"ds-sec\"><div class=\"ds-bar\"></div><div class=\"ds-sl\"></div><p class=\"ds-tool\">search_inventory</p><p class=\"ds-fail\">4 failures</p></div>",
+      "css": ".ds-sec{width:240px}.ds-bar{height:8px;border-radius:4px;background:#ff5a47}.ds-sl{height:8px;margin-top:4px;background:repeating-linear-gradient(to right,#324a40 0 1px,transparent 1px 10px)}.ds-tool{margin:8px 0 0;font:15px 'JetBrains Mono',monospace;color:#fffbea}.ds-fail{margin:0;font:600 20px/1.15 'Barlow Condensed','Arial Narrow',sans-serif;color:#ff5a47}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Signal Box Panel",
+    "overview": "DriftGuard is drawn as the illuminated track diagram in a railway signal box. Each agent task is a train on a line, tools are block sections, and the tool that holds the line is the section lit red. Drift is distance from a baseline, drawn as a gauge with the floor engraved on it. The surface is a dark green-black enamel panel with ivory engraved lettering and hairline rules, never pure black and never a grid of equal KPI cards.\n\nColour is quarantined. A healthy view is ink on enamel; the lamp colours (red, amber, green) appear only where state deviates, and always as a lit lamp with an icon and a word. Density is that of an operator's desk: compact, ruled, legible at a glance, with poster-scale condensed figures for the numbers that matter.",
+    "keyCharacteristics": [
+      "Enamel panel surfaces separated by 1px hairline rules, not by shadow or fill contrast.",
+      "Ivory \"route\" colour carries selection, the primary action, focus and the lit track.",
+      "Lamps, never decorative colour, carry state; state is never colour alone (icon, word, hatch).",
+      "Engraved plate labels (condensed, uppercase, open tracking) name every instrument.",
+      "Instruments sit in one ruled strip, not in separate cards."
+    ],
+    "rules": [
+      {
+        "name": "The Quarantine Rule",
+        "body": "Lamp red, amber and green mean a state. They never decorate, and a healthy screen has none of them lit.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Colour-Alone Rule",
+        "body": "Every lamp state is also written in words with an icon, and out-of-limit spans are hatched.",
+        "section": "colors"
+      },
+      {
+        "name": "The Engraved Label Rule",
+        "body": "Names of instruments and field groups are plate labels: condensed, uppercase, 0.08em tracking, Muted. Nothing else is set that way.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every number that changes is set with tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Plate Rule",
+        "body": "Resting panels carry no shadow. If it is not floating, it is ruled, not lifted.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep healthy views as Ink and Route on Enamel, and let lamp colour appear only where state deviates.",
+      "**Do** pair every lamp or red/amber/green tone with an icon and a word.",
+      "**Do** separate surfaces with 1px Hairline rules and tonal steps (canvas, panel, raised).",
+      "**Do** set instrument names as plate labels and large readings as condensed tabular figures.",
+      "**Do** keep a visible 2px Route focus outline and honour `prefers-reduced-motion`.",
+      "**Do** set identifiers, tool names and error strings in JetBrains Mono."
+    ],
+    "donts": [
+      "**Don't** build a grid of equal KPI cards over a dark console; group readings in a ruled instrument strip.",
+      "**Don't** use pure black, or lamp colours as decoration or chart fill for non-state data.",
+      "**Don't** convey state by colour alone.",
+      "**Don't** add resting shadows to panels, or corners larger than 8px.",
+      "**Don't** introduce another accent beside Route Ivory for actions."
+    ]
+  }
+}

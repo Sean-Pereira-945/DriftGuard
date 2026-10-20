@@ -24,6 +24,7 @@ which writes to `driftguard/server/static/`. That folder is gitignored.
 driftguard/            installable package
   client.py            SDK client
   policy.py            drift thresholds and scoring (shared by SDK and server)
+  baseline.py          comparison of a window with the period before it
   agent_analysis.py    agent diagnosis algorithm
   adapters/            Python decorator, MCP middleware, provider usage extraction
   server/              FastAPI app, schema, service, auth, realtime, retention
@@ -33,9 +34,10 @@ frontend/              React dashboard source (builds into driftguard/server/sta
 integrations/
   claude_code/         Claude Code hook (stdlib only) and its README
 examples/              live_demo.py (scripted demo), seed_showcase.py (sample data)
-research/              Phase 1 synthetic drift prototypes and their tests
+research/              baseline study (simulation) and Phase 1 drift prototypes, with tests
 tests/                 SDK, server, adapter and hook tests
-docs/                  documentation; docs/images holds the diagram and screenshots
+docs/                  documentation, including PRODUCT.md; docs/images holds the diagram and screenshots
+DESIGN.md              dashboard design tokens and components
 demo.bat               one-click Windows demo
 ```
 
@@ -102,3 +104,21 @@ cd frontend && npm run lint && npm run build
   in `CHANGELOG.md` in the same change.
 - Only mark something done in `docs/roadmap.md` once the code path is wired up
   and tested.
+
+## Design files
+
+The dashboard's look is recorded in files you should read before changing it.
+
+| File | What it holds |
+| --- | --- |
+| [PRODUCT.md](PRODUCT.md) | Who the product is for, what it does, and constraints future work must keep |
+| [DESIGN.md](../DESIGN.md) | Tokens and components, written from the built code |
+| [design-system.md](design-system.md) | The same system in plain language |
+| `.impeccable/design.json` | Machine-readable design system |
+| `.impeccable/surfaces/`, `.impeccable/critique/` | The recorded design direction and the latest critique. Committed. |
+| `.impeccable/review/`, `.impeccable/questions/` | Working screenshots and logs. Ignored by git. |
+
+Colours, fonts and motion are `@theme` tokens in `frontend/src/index.css`.
+Change them there, not in components. After a visual change, retake the images
+in `docs/images/` (see [docs/dashboard.md](dashboard.md)) and update the design
+files above.

@@ -7,6 +7,43 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Signal box redesign of the dashboard.** The Overview now leads with one
+  status plate, then a track diagram of the most urgent task, then four
+  instruments.
+  - The status plate shows one lamp and one word (`Critical`, `Warning`,
+    `Stable` or `No data`), the diagnosis sentence, the recommendation and a
+    single action.
+  - The track draws each tool a task used as a block section, with the
+    blocking tool held at a red signal. It also appears on Agent Diagnosis and
+    in the task drawer.
+  - Open alerts, mean risk score, response quality and tool failure rate sit in
+    one strip. Gauges draw each reading against its policy floor or limit.
+    Everything else is under a collapsed **All readings**.
+  - The timeline draws the prompt-token limit and both score floors as dashed
+    lines, hatches the span below the floors, and offers its data as a table.
+- **Baseline comparison and sample-size guard.** `GET /projects/{id}/summary`
+  gains `baseline`: the window's mean retrieval score, response quality and risk
+  score against the same length of time just before it (at least 24 hours).
+  - A change counts only when it is at least 3 standard errors wide (a Welch
+    two-sample z-test) and at least 0.05 in size.
+  - With under 10 events on either side it says "too few events to compare"
+    instead of giving a verdict. "All time" has no comparison.
+  - The Overview shows it under Mean risk score, Response quality and Mean
+    retrieval score, and adds a "Worse than usual" line to the status plate. It is
+    advice only: it raises no alert and doesn't change the status.
+  - `driftguard/baseline.py` holds the maths, with 14 new tests.
+- **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
+  between views, `/` focuses the search box, `r` refreshes and `?` lists them.
+  They are off while typing or with a dialog open.
+- **Shareable links.** The address carries the view, the project and both
+  filters (`#/alerts?env=prod&range=7d&project=showcase`). Opening a link
+  applies them. **Reset filters** appears when a filter is not at its default.
+- **Bulk resolve and reopen** on Alerts, with select-all. The Alerts tabs now
+  respond to arrow keys, Home and End, and the new-alert form opens from a
+  **New alert** button.
+- **Policy impact preview.** Each threshold says how many of the loaded events
+  or tasks it flags, before and after your edit. Fields validate as you leave
+  them. The save bar lists every change and warns when coverage drops.
 - **Logs view** in the dashboard: the full history of agent activity, newest
   first.
   - Server-side search, plus kind and outcome filters.
@@ -65,6 +102,32 @@ All notable changes to DriftGuard are recorded here. The format follows
     Claude Code, and logs problems to `.claude/driftguard-hook.log`.
 
 ### Changed
+- **New look.** The dashboard moves from a pure-black graphite console to a dark
+  black enamel panel with ivory type. Colour now appears only where
+  something deviates (red, amber, green lamps, each with an icon and a word).
+  Fonts are Barlow, Barlow Condensed and JetBrains Mono, replacing Space
+  Grotesk and Plus Jakarta Sans. The logo is the text "DriftGuard" alone, with no
+  symbol, and the browser-tab icon is a plain "D". The decorative background grid
+  is removed.
+- **True-black canvas and brighter colours.** The page background is pure black
+  with panels lifted a shade, ivory text and the route colour are brighter, and
+  the red, amber, green and steel lamp colours are more luminous.
+- The Logs kind filter now offers only Tool call, Prompt and Response. Model
+  call, Session start and Session end are no longer listed there, though rows of
+  those kinds still appear under All activity.
+- **Themed dropdowns.** Every select uses a themed control. In Chrome and Edge
+  the open list is a black panel with a hairline border, a highlighted row and a
+  check mark on the chosen item. Other browsers keep their own list in the same
+  colours.
+- Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
+  The header selects have visible labels (**Env**, **Range**), and the
+  **Updated** time shows from tablet width up. The sidebar groups its nine
+  views into Monitor and Configure.
+- The Overview moves Total events, Tokens at stake, retrieval score and the
+  agent counts into a collapsed **All readings** list. The "Active Alerts"
+  panel is now **Open Alerts**, and the Alerts panel title follows the tab.
+- Agent Diagnosis shows three headline instruments, with the other counts
+  under **All counts**.
 - The dashboard's Refresh button also reloads the project list, and the list
   reloads when you return to the tab. A project created through the API or a
   script no longer needs a page reload to appear.
@@ -73,6 +136,36 @@ All notable changes to DriftGuard are recorded here. The format follows
   Existing agent events become `tool_call` events.
 
 ### Documentation
+- **Research: the baseline study** (`research/baseline_study.py`,
+  `research/BASELINE_STUDY.md`). A seeded simulation of the product's own rules,
+  fixed floors against the baseline comparison, with known truth. It reports
+  detection rates, false alarms and delays for one decision per window, for
+  noisier data, for checking after every event, and for slow decline, with 11
+  tests. Findings: the two rules fail in opposite places so both stay; the
+  10-event guard works but "Steady" over-claims at low counts; and a 3-sigma
+  check repeated at every event raises false alarms in 5 percent of streams, which
+  needs a rule of several checks in a row before anything alerts. The research
+  README now explains what each part can and can't show.
+- **New guide: Measuring retrieval score and response quality**
+  (`docs/scoring-guide.md`). How to calculate each score, what to do when a source
+  has no evaluator (and why a proxy from telemetry is only a rough signal),
+  choosing the floors from your own data, how the scores become alerts, and what
+  the numbers can't tell you. The Logs Details column and its troubleshooting row
+  now explain that a dash means content storage is off.
+- **Documentation refresh.** The architecture diagram is restyled to the new
+  look (SVG and PNG) and notes the dashboard's shortcuts and shared links. The
+  dashboard guide, demo outline, setup guides and architecture page use the new
+  names (**Env**, **Range**, instruments, track), and every screenshot is
+  retaken with a full week of data, plus new ones for Policy and the shortcut
+  sheet. `docs/development.md` lists the design files.
+- **`PRODUCT.md`** records the product's users, purpose, positioning and
+  constraints for design work.
+- **Design system** (`docs/design-system.md`) rewritten for the signal box
+  look. The **dashboard guide** covers the new Overview, shortcuts, shared
+  links, bulk actions and the policy preview, and its screenshots are
+  retaken.
+- **`SETUP.md`**: a step-by-step guide for teammates, from a fresh laptop to
+  a running DriftGuard with sample data, on Windows, macOS and Linux.
 - **Getting started** (`docs/quickstart.md`) rewritten: three ways to run it
   (`demo.bat`, from source, Docker), four ways to send data (sample data, live
   demo, Claude Code, SDK), and a troubleshooting table.

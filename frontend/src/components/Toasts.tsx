@@ -20,7 +20,7 @@ const TONE: Record<ToastTone, { icon: typeof Info; className: string; label: str
   success: { icon: CheckCircle2, className: 'border-green/40 text-green', label: 'Success' },
   error: { icon: AlertOctagon, className: 'border-coral/50 text-coral', label: 'Error' },
   warning: { icon: TriangleAlert, className: 'border-amber/40 text-amber', label: 'Warning' },
-  info: { icon: Info, className: 'border-cyan/40 text-cyan', label: 'Info' },
+  info: { icon: Info, className: 'border-route/40 text-route', label: 'Info' },
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -55,7 +55,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               role={toast.tone === 'error' ? 'alert' : 'status'}
-              className={`pointer-events-auto flex animate-rise gap-3 rounded-lg border bg-raised p-3 shadow-xl shadow-black/60 ${tone.className}`}
+              className={`pointer-events-auto flex animate-rise gap-3 rounded-md border bg-raised p-3 shadow-xl shadow-black/60 ${tone.className}`}
             >
               <Icon aria-hidden className="mt-0.5 size-4 shrink-0" />
               <div className="min-w-0 flex-1">

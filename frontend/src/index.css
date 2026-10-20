@@ -1,34 +1,43 @@
 @import "tailwindcss";
 
+/*
+ * Signal Box Panel: a true-black enamel panel with ivory engraved lettering.
+ * Colour is quarantined. Healthy views are ink on enamel; lamp colours (red, amber,
+ * green) appear only where state deviates, always with an icon and a word.
+ */
 @theme {
   --color-canvas: #000000;
-  --color-sidebar: #020202;
-  --color-panel: #050505;
-  --color-raised: #0a0a0a;
-  --color-input: #030303;
-  --color-hairline: #171717;
-  --color-hairline-strong: #262626;
+  --color-sidebar: #030504;
+  --color-panel: #080d0b;
+  --color-raised: #101915;
+  --color-input: #040706;
+  --color-hairline: #1e2d27;
+  --color-hairline-strong: #324a40;
+  --color-hairline-hover: #4b6e60;
 
-  --color-ink: #ffffff;
-  --color-body: #f4f4f5;
-  --color-muted: #a1a1aa;
+  --color-ink: #fffbea;
+  --color-body: #e4dec8;
+  --color-muted: #aebab1;
+  --color-faint: #8a988f;
 
-  --color-cyan: #28c7d9;
-  --color-green: #42d392;
-  --color-amber: #f2b84b;
-  --color-coral: #f06464;
-  --color-violet: #a78bfa;
+  /* The route: lit track, current selection, primary action. */
+  --color-route: #fff2b8;
+  --color-steel: #86d4ff;
+  --color-green: #34e89a;
+  --color-amber: #ffc83d;
+  --color-coral: #ff5a47;
+  --color-violet: #c4b2ff;
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --animate-rise: rise 220ms ease-out both;
-  --animate-fade: fade 180ms ease-out both;
-  --animate-slide-in: slide-in 200ms ease-out both;
+  --animate-rise: rise 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 160ms ease-out both;
+  --animate-slide-in: slide-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @keyframes rise {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: none; }
   }
   @keyframes fade {
@@ -51,65 +60,190 @@
     background-color: var(--color-canvas);
     color: var(--color-body);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3 {
     font-family: var(--font-display);
     color: var(--color-ink);
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
   }
   ::selection {
-    background: rgb(40 199 217 / 0.3);
+    background: rgb(255 242 184 / 0.28);
     color: #fff;
   }
   :focus-visible {
-    outline: 2px solid var(--color-cyan);
+    outline: 2px solid var(--color-route);
     outline-offset: 2px;
   }
   input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline-offset: 0;
+  }
+  input, textarea {
+    caret-color: var(--color-route);
   }
   button:not(:disabled), [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #262626 transparent;
+    scrollbar-color: var(--color-hairline-strong) transparent;
   }
   input[type="number"] {
     font-family: var(--font-mono);
   }
+  input[type="checkbox"] {
+    accent-color: var(--color-route);
+  }
 }
 
-/* Faint 32px technical grid behind the workspace. */
-.workspace-grid {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* An engraved plate label: condensed, uppercase, slightly open. */
+.plate-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.select-chevron {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a1a1aa' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
+/* A thin sleeper-tie rule used between instrument cells and on the track diagram. */
+.sleepers {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-hairline-strong) 0 1px,
+    transparent 1px 10px
+  );
+}
+
+/* Region past the floor on a gauge: diagonal hatch, so it never depends on colour alone. */
+.hatch-bad {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(255 90 71 / 0.38) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+/*
+ * Dropdowns. Chrome and Edge can style the open list (appearance: base-select), so the
+ * list is a panel: black enamel, hairline border, ivory selected row, a check mark.
+ * Other browsers keep their own list but get the same closed control and colours.
+ */
+select option {
+  background: var(--color-raised);
+  color: var(--color-ink);
+}
+
+.themed-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23aebab1' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
   background-size: 16px;
   background-position: right 10px center;
   background-repeat: no-repeat;
+  padding-right: 2rem;
 }
-select option {
-  background: #0a0a0a;
-  color: #f4f4f5;
+
+@supports (appearance: base-select) {
+  .themed-select,
+  .themed-select::picker(select) {
+    appearance: base-select;
+  }
+  .themed-select {
+    background-image: none;
+    padding-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .themed-select::picker-icon {
+    content: "";
+    width: 16px;
+    height: 16px;
+    flex: none;
+    background-color: var(--color-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>") center / 16px no-repeat;
+    transition: rotate 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .themed-select:open::picker-icon {
+    rotate: 180deg;
+  }
+  .themed-select::picker(select) {
+    background: var(--color-panel);
+    color: var(--color-body);
+    border: 1px solid var(--color-hairline-strong);
+    border-radius: 6px;
+    padding: 4px;
+    margin-block: 4px;
+    min-width: anchor-size(width);
+    max-height: min(320px, 60vh);
+    box-shadow: 0 14px 36px rgb(0 0 0 / 0.85);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 150ms allow-discrete,
+      display 150ms allow-discrete;
+  }
+  .themed-select:open::picker(select) {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .themed-select:open::picker(select) {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  .themed-select option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-body);
+    font: inherit;
+    cursor: pointer;
+  }
+  .themed-select option:hover,
+  .themed-select option:focus-visible {
+    background: var(--color-raised);
+    color: var(--color-ink);
+    outline: none;
+  }
+  .themed-select option:checked {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .themed-select option::checkmark {
+    order: 1;
+    margin-left: auto;
+    color: var(--color-route);
+  }
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
+/* A lamp that turns critical glows once as it lights. */
+@keyframes lamp-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(255 90 71 / 0); }
+  50% { box-shadow: 0 0 14px 2px rgb(255 90 71 / 0.55); }
+}
+.lamp-critical {
+  animation: lamp-glow 1.6s ease-out 1;
+}
+
 @keyframes status-pulse {
-  0% { box-shadow: 0 0 0 0 rgb(66 211 146 / 0.5); }
-  70% { box-shadow: 0 0 0 6px rgb(66 211 146 / 0); }
-  100% { box-shadow: 0 0 0 0 rgb(66 211 146 / 0); }
+  0% { box-shadow: 0 0 0 0 rgb(52 232 154 / 0.5); }
+  70% { box-shadow: 0 0 0 6px rgb(52 232 154 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(52 232 154 / 0); }
 }
 .pulse-live {
   animation: status-pulse 2s ease-out infinite;

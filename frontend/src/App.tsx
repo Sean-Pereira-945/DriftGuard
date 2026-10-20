@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { Header } from './components/Header';
+import { ShortcutSheet } from './components/ShortcutSheet';
 import { Sidebar } from './components/Sidebar';
 import { ErrorState, LoadingState } from './components/States';
 import { TestTelemetryModal } from './components/TestTelemetryModal';
 import { ToastProvider } from './components/Toasts';
 import { useHashRoute, VIEWS, type ViewId } from './lib/route';
+import { useShortcuts } from './lib/shortcuts';
 import { SessionProvider, useSession } from './state/session';
 import { useWorkspace, WorkspaceProvider } from './state/workspace';
 import { AgentDiagnosis } from './views/AgentDiagnosis';
@@ -44,11 +46,23 @@ function CurrentView({ view, onNavigate }: { view: ViewId; onNavigate: (view: Vi
 }
 
 function Shell() {
-  const { projectsState, reloadProjects, project } = useWorkspace();
+  const { projectsState, reloadProjects, project, refreshAll } = useWorkspace();
   const [view, navigate] = useHashRoute();
   const [menuOpen, setMenuOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [shortcuts, setShortcuts] = useState(false);
+
+  useShortcuts({
+    enabled: true,
+    navigate: (next) => {
+      if (project) navigate(next);
+    },
+    refresh: () => {
+      if (project) refreshAll();
+    },
+    showSheet: () => setShortcuts(true),
+  });
 
   useEffect(() => {
     const label = VIEWS.find((v) => v.id === view)?.label ?? 'Overview';
@@ -65,12 +79,18 @@ function Shell() {
     <div className="min-h-dvh bg-canvas">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[80] focus:rounded-md focus:bg-cyan focus:px-3 focus:py-2 focus:text-black"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[80] focus:rounded-md focus:bg-route focus:px-3 focus:py-2 focus:text-canvas"
       >
         Skip to content
       </a>
-      <Sidebar view={view} onNavigate={navigate} open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <div className="workspace-grid min-h-dvh lg:pl-[248px]">
+      <Sidebar
+        view={view}
+        onNavigate={navigate}
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onShowShortcuts={() => setShortcuts(true)}
+      />
+      <div className="min-h-dvh lg:pl-[248px]">
         <Header
           onOpenMenu={() => setMenuOpen(true)}
           menuOpen={menuOpen}
@@ -81,6 +101,7 @@ function Shell() {
           {main}
         </main>
       </div>
+      <ShortcutSheet open={shortcuts} onClose={() => setShortcuts(false)} />
       <CreateProjectModal open={creating} onClose={() => setCreating(false)} />
       {project && testing && <TestTelemetryModal key={project.project_id} open onClose={() => setTesting(false)} />}
     </div>

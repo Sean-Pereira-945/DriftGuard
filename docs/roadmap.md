@@ -22,6 +22,9 @@ are for planning only; they aren't commitments.
 ### Phase 1: research foundation (June 2026)
 - [x] Synthetic feature-drift model, benchmark against baselines, experiment
   runner, and Markdown reporting. These now live in `research/`.
+- [x] **Baseline study (October 2026):** a seeded simulation of floors against the
+  baseline comparison, with detection rates, false alarms and delays
+  (`research/BASELINE_STUDY.md`).
 
 ### Phase 2: SaaS core and SDK (July 2026)
 - [x] SDK client with local drift checks and server sync
@@ -63,7 +66,7 @@ are for planning only; they aren't commitments.
 - [x] **Dashboard** rebuilt against the real API under the DriftGuard brand:
   sign-in, live alerts, agent diagnosis, and no mock data.
 
-### Activity log (unreleased, branch `feature/logs`)
+### Activity log (merged as PR #9, not yet released)
 - [x] **Logs view**: every agent activity newest first, with server-side search,
   kind and outcome filters, live updates, a detail drawer, and CSV/JSON export.
 - [x] **Event kinds** beyond tool calls: model calls, prompts, responses and
@@ -74,7 +77,51 @@ are for planning only; they aren't commitments.
 - [x] **Claude Code integration** through hooks: real sessions appear in Logs
   and Agent Diagnosis, and a command Claude keeps retrying is flagged as blocked.
 
+### Dashboard redesign (October 2026, branch `feature/signal-box-redesign`, not merged)
+These are checked by the type check, the build, the design detector and browser
+runs, not by unit tests: the frontend has none yet.
+
+- [x] **Signal box look.** A dark enamel panel where colour appears only where
+  state deviates. `PRODUCT.md` and `DESIGN.md` record the product and the design.
+- [x] **Overview rebuilt** around a status plate, a track diagram of the most
+  urgent task, and four instruments drawn against their policy floors.
+- [x] **Drift made visible** on the timeline (limit, floors, a hatched breach
+  span, a table view).
+- [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
+  the view, project and filters, bulk resolve and reopen, arrow-key tabs.
+- [x] **Policy impact preview**, inline validation and a change summary.
+- [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
+  before the window, with a minimum sample of 10 events and a z-test, shown on the
+  Overview as advice.
+- [x] Contrast, visible filter labels and grouped navigation.
+
 ## Next
+
+### Analytics
+- [ ] Reword "Steady" to "No clear change" and show the sample size beside it. The
+  [baseline study](../research/BASELINE_STUDY.md) found that at 10 events a real
+  0.09 decline reads steady about two times in three.
+- [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
+  control-chart rule, instead of showing advice only. The study says to require at
+  least 3 checks in a row plus a cooldown, and to consider a sequential method
+  (CUSUM or EWMA), because a 3-sigma check repeated at every event raises false
+  alarms in about 5 percent of streams.
+- [ ] Percentiles (median and 10th) beside each mean, and a breakdown by model,
+  route and environment so a drift can be pinned to one cause.
+- [ ] Weights and thresholds that can be fitted to labelled data, and exposed in
+  Policy.
+- [ ] Outcome signals for Claude Code (tests pass at the end of a turn, the user
+  didn't repeat the request) as a quality proxy.
+
+### Dashboard
+- [ ] Finish the redesign review items: a fuller track diagram, gauges and the
+  same look on Agent Diagnosis and the lower Overview panels, and a better phone
+  layout for the timeline legend and header.
+- [ ] Frontend unit tests, starting with shortcuts, URL filters and the Policy
+  preview.
+- [ ] Saved views, and tab and search state in the address.
+- [ ] A bulk alerts endpoint, and a server-side impact preview for Policy that
+  replays stored history instead of the loaded events.
 
 ### Integrations
 - [ ] A standalone **MCP gateway** (`driftguard-mcp-proxy`) that sits between

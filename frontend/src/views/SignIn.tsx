@@ -3,7 +3,6 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { api, errorMessage } from '../api';
 import { Button } from '../components/Button';
 import { TextField } from '../components/Field';
-import { LogoMark } from '../components/Logo';
 import { ErrorState, LoadingState } from '../components/States';
 import { isEmail } from '../lib/validation';
 import { useSession } from '../state/session';
@@ -74,19 +73,18 @@ export function SignIn({ notice }: { notice?: string }) {
   };
 
   return (
-    <main className="workspace-grid flex min-h-dvh items-center justify-center px-4 py-10">
+    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-[400px] animate-rise">
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <LogoMark className="size-10" />
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">DriftGuard</h1>
-            <p className="mt-1 text-sm text-muted">
+            <h1 className="font-display text-[48px] leading-none font-bold">DriftGuard</h1>
+            <p className="mt-2 text-sm text-muted">
               {activeMode === 'register' ? 'Create an account to monitor your projects.' : 'Sign in to your workspace.'}
             </p>
           </div>
         </div>
 
-        <div className="rounded-lg border border-hairline-strong bg-panel p-5 sm:p-6">
+        <div className="rounded-md border border-hairline-strong bg-panel p-5 sm:p-6">
           {config === null && !configError && <LoadingState label="Connecting to server…" className="py-8" />}
           {configError && config === null && (
             <ErrorState message={configError} onRetry={() => setConfigTick((n) => n + 1)} className="py-6" />
@@ -151,7 +149,7 @@ export function SignIn({ notice }: { notice?: string }) {
             {activeMode === 'login' ? 'No account yet? ' : 'Already have an account? '}
             <button
               type="button"
-              className="font-semibold text-cyan hover:underline"
+              className="font-semibold text-route hover:underline"
               onClick={() => switchMode(activeMode === 'login' ? 'register' : 'login')}
             >
               {activeMode === 'login' ? 'Create one' : 'Sign in'}
@@ -161,7 +159,7 @@ export function SignIn({ notice }: { notice?: string }) {
         {config && !canRegister && (
           <p className="mt-4 text-center text-[13px] text-muted">Account creation is disabled on this server.</p>
         )}
-        {config && <p className="mt-6 text-center font-mono text-[11px] text-[#52525b]">Server v{config.version}</p>}
+        {config && <p className="mt-6 text-center font-mono text-xs text-faint">Server v{config.version}</p>}
       </div>
     </main>
   );

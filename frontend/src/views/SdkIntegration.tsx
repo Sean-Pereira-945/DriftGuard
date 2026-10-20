@@ -115,7 +115,7 @@ client.sync_agent_events()`;
           <Panel title="Project API key">
             <div className="space-y-3 text-[13px] text-muted">
               <p>
-                Current key: <code className="font-mono text-cyan">{keyHint}</code>
+                Current key: <code className="font-mono text-route">{keyHint}</code>
               </p>
               <p>
                 Use the full key you saved when the project was created. Keys are stored as hashes and can’t be shown again.

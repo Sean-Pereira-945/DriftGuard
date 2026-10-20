@@ -6,7 +6,7 @@ const META: Record<ConnectionState, { label: string; dot: string; title: string 
   connecting: { label: 'Connecting', dot: 'bg-amber', title: 'Opening the realtime connection' },
   reconnecting: { label: 'Reconnecting', dot: 'bg-amber', title: 'Realtime connection lost; retrying' },
   offline: { label: 'Offline', dot: 'bg-coral', title: 'No realtime connection; use Refresh to update. Still retrying in the background.' },
-  idle: { label: 'Offline', dot: 'bg-[#52525b]', title: 'No project selected' },
+  idle: { label: 'Offline', dot: 'bg-faint', title: 'No project selected' },
 };
 
 export function ConnectionIndicator() {

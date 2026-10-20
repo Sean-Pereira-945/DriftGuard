@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { api, errorMessage } from '../api';
+import { parseHash, replaceParams } from '../lib/route';
 import { readJson, readStorage, STORAGE_KEYS, writeStorage } from '../lib/storage';
 import { useRealtime, type ConnectionState } from '../lib/useRealtime';
 import { useResource, type Resource } from '../lib/useResource';
@@ -15,6 +16,16 @@ function isFilters(value: unknown): value is Filters {
   const envOk = v.environment === 'all' || (ENVIRONMENTS as readonly unknown[]).includes(v.environment);
   const rangeOk = (TIME_RANGES as readonly unknown[]).includes(v.timeRange);
   return envOk && rangeOk;
+}
+
+/** Filters carried by a shared link (`?env=prod&range=7d`), when present and valid. */
+function filtersFromUrl(): Filters | null {
+  const params = parseHash().params;
+  const env = params.get('env');
+  const range = params.get('range');
+  if (!env && !range) return null;
+  const candidate = { environment: env ?? DEFAULT_FILTERS.environment, timeRange: range ?? DEFAULT_FILTERS.timeRange };
+  return isFilters(candidate) ? candidate : null;
 }
 
 type ProjectsState =
@@ -55,8 +66,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const [projectsState, setProjectsState] = useState<ProjectsState>({ status: 'loading' });
   const [projectsTick, setProjectsTick] = useState(0);
-  const [selectedId, setSelectedId] = useState<string | null>(() => readStorage(STORAGE_KEYS.project));
-  const [filters, setFiltersState] = useState<Filters>(() => readJson(STORAGE_KEYS.filters, isFilters) ?? DEFAULT_FILTERS);
+  const [selectedId, setSelectedId] = useState<string | null>(() => parseHash().params.get('project') ?? readStorage(STORAGE_KEYS.project));
+  const [filters, setFiltersState] = useState<Filters>(() => filtersFromUrl() ?? readJson(STORAGE_KEYS.filters, isFilters) ?? DEFAULT_FILTERS);
   const [refreshKey, setRefreshKey] = useState(0);
   const [alertsKey, setAlertsKey] = useState(0);
   const [activityKey, setActivityKey] = useState(0);
@@ -85,6 +96,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (projectId) writeStorage(STORAGE_KEYS.project, projectId);
   }, [projectId]);
+
+  // Keep the address bar in step with the filters, so any view can be linked and shared.
+  useEffect(() => {
+    replaceParams({ env: filters.environment, range: filters.timeRange, project: projectId });
+  }, [filters, projectId]);
+
+  // A pasted link with different filters, opened in this tab, applies them.
+  useEffect(() => {
+    const onHash = () => {
+      const next = filtersFromUrl();
+      if (next) setFiltersState((prev) => (prev.environment === next.environment && prev.timeRange === next.timeRange ? prev : next));
+      const id = parseHash().params.get('project');
+      if (id) setSelectedId((prev) => (prev === id ? prev : id));
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   const selectProject = useCallback((id: string) => setSelectedId(id), []);
 

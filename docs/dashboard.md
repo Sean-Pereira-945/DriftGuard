@@ -5,8 +5,10 @@ The dashboard is served at the root of your DriftGuard server
 question it answers, what each card and column means, and where the numbers
 come from.
 
-The screenshots use the **Showcase** sample project
-(`examples/seed_showcase.py`, last 7 days).
+The screenshots use a sample project filled by `examples/seed_showcase.py`
+(last 7 days, except the Overview, which uses the last 24 hours so the
+comparison with the day before shows). The same data is what you get from the steps in
+[SETUP.md](../SETUP.md).
 
 **One rule for the whole dashboard:** every number comes from the API.
 Nothing is estimated or filled in by the browser. A missing value shows as
@@ -47,61 +49,115 @@ can close sign-ups with `DRIFTGUARD_ALLOW_SIGNUP=false`.
 | Control | What it does |
 | --- | --- |
 | **Project** | The application being viewed. **+** creates a project; its API key is shown **once**. |
-| **Environment** | `All`, `prod`, `staging`, `dev` or `test`. Filters every view. |
-| **Time range** | 15 minutes to 30 days, or all. Filters every view. Default: 24 hours. |
-| **Updated** | When the data on screen was last loaded. |
+| **Env** | `All`, `prod`, `staging`, `dev` or `test`. Filters every view. |
+| **Range** | 15 minutes to 30 days, or all. Filters every view. Default: 24 hours. |
+| **Reset filters** | Appears when a filter is not at its default, and puts both back. |
+| **Updated** | The time the data on screen was last loaded. |
 | **Live indicator** | The realtime connection: **Live**, **Connecting**, **Reconnecting** or **Offline**. While live, new alerts and agent activity appear without a refresh, and a new critical alert pops up a notification. |
 | **Refresh** | Reloads every view and the project list. |
 | **Test Telemetry** | Sends one event with the four metrics you type, and shows how the server scored it. Handy for trying out thresholds. |
 
 The project and filters are remembered in this browser.
 
+### Shared links
+
+The address bar carries the view, the project and both filters, for example
+`#/alerts?env=prod&range=7d&project=showcase`. Copy it to send a teammate the
+same view. Opening a link applies its filters and project. Someone who isn't
+signed in is asked to sign in first, and a project they can't see falls back to
+their first project.
+
+### Keyboard shortcuts
+
+Press `?` anywhere for the list. They are off while you type in a field or
+have a dialog open.
+
+| Keys | Action |
+| --- | --- |
+| `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` | Go to Overview, Agent Diagnosis, Logs, Events, Alerts, Analytics, Policy, SDK Integration, Project Settings |
+| `/` | Focus the search box on Logs or Events |
+| `r` | Refresh data |
+| `?` | Show the shortcut list |
+
+![The keyboard shortcut sheet](images/dashboard-shortcuts.png)
+
 ## Overview
 
 ![Overview of the Showcase project](images/dashboard-overview.png)
 
-The landing page. Read it top to bottom: the status pill, the health cards,
-agent activity, the most urgent agent problem, then charts and alerts.
+The landing page. Read it top to bottom: the status plate, the track of the
+most urgent task, four instruments, then charts and alerts.
 
-**Status pill** (next to the title): `Critical` if any open alert is critical,
-`Warning` if any is a warning, otherwise `Stable`.
+**Status plate.** One lamp and one word: `Critical`, `Warning`, `Stable`, or
+`No data` when the window has nothing yet. It shows the more severe of the
+project's overall status and the agent diagnosis. Beside it is the reason in one
+sentence. For an agent problem that is the blocking tool, the wasted tokens for
+that task, the latest error, and a recommendation. **Wasted tokens (all tasks)**
+adds up every task in the window, so it can be larger than the figure in the
+sentence. For drift it counts the critical and warning events and names the most
+frequent cause. One button opens the view that explains it.
 
-**LLM health cards**, from telemetry:
+When a reading is meaningfully **worse than the period before the window**, an
+amber line adds it, for example "Worse than usual. Response quality is 0.08
+lower than the 24 hours before." This is advice only: it doesn't change the
+lamp or raise an alert. See [the baseline comparison](concepts.md#is-it-worse-than-usual-baseline-comparison).
 
-| Card | Meaning |
+**Track.** The most urgent task drawn as a track. Each tool the task used is a
+block section, in the order it was first used. The blocking tool is lit red
+under a red signal, with the number of failures in a row. Other tools say "No
+block reported". Below it you see the latest error, and how many more tasks the
+window holds.
+
+**Instruments.** Four readings, each with its meaning written beside it. The
+three gauges draw the baseline on a track: a tick for each policy limit, a
+hatched span past it, and a marker for the reading. Drift is the distance
+between the marker and the tick.
+
+| Instrument | Meaning |
+| --- | --- |
+| Open alerts | Unresolved alerts in the window, split into critical and warning. |
+| Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). Ticks at 0.40 (warning) and 0.75 (critical). |
+| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
+| Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
+
+**Compared with before.** Under **Mean risk score** and **Response quality**
+(and **Mean retrieval score** in All readings) a line compares the window with
+the same length of time just before it, at least 24 hours:
+
+| Line | Meaning |
+| --- | --- |
+| **Worse: 0.08 lower than the 24 hours before** | A meaningful drop in quality or retrieval, or rise in risk. |
+| **Better: …** | A meaningful move the other way. |
+| **Steady against the 24 hours before, was 0.23** | No meaningful change. |
+| **Too few events to compare: 3 now, 40 before** | Under 10 events on a side, so no verdict. |
+| *(none)* | **All time** has no earlier period. With under 10 events it says "Only N events: too few to trust this average." |
+
+**All readings.** A collapsed list of everything the instruments leave out:
+
+| Reading | Meaning |
 | --- | --- |
 | Total events | Telemetry events in the window, split into critical and warning. |
-| Open alerts | Unresolved alerts in the window, split by severity. |
 | Tokens at stake | The sum of `saved_tokens` over open alerts. For a **drift** alert it's the tokens a mitigation would save; for an **agent** alert it's the tokens already wasted on the blocked task. These are estimates, not invoices. |
-| Mean retrieval score | Average 0–1 relevance of retrieved documents; higher is better. Shows the policy floor. It says **Not reported by this source** when telemetry exists but carries no retrieval score, as with Claude Code. |
-| Mean response quality | Average 0–1 answer quality from your evaluator. Same "Not reported" rule. |
-| Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). |
-
-**Agent activity**, from agent events. It's shown once the project has some,
-and counts the same rows Logs lists:
-
-| Card | Meaning |
-| --- | --- |
+| Mean retrieval score | Average 0–1 relevance of retrieved documents; higher is better. Shows the policy floor, with the same "Not reported" rule. |
 | Tool calls | Tool calls in the window, and how many failed. |
-| Tool failure rate | Failed ÷ all tool calls. Amber from 10%, red from 25%. |
 | Tasks | Distinct tasks, and how many completed (have a final response). |
 | Tokens used | New input + output tokens across agent tasks. Each turn is counted once. |
 | Avg tool duration | From the call being issued to its result. |
 | Agent events | All agent events, and when the last one arrived. |
 
-**Agent Task Diagnosis.** The most urgent agent problem in one sentence: the
-blocking tool, the wasted tokens for that task, the latest error, and a
-recommendation. **Wasted tokens (all tasks)** adds up every task in the window,
-so it can be larger than the figure in the sentence.
+The agent readings appear once the project has agent events, and count the same
+rows Logs lists.
 
-**Below the cards:**
+**Below the instruments:**
 - **Telemetry & Drift Timeline.** The latest 500 events in time order. Prompt
-  tokens use the left axis; retrieval and quality use the right axis (0–1). A
-  dashed line marks the prompt-token limit.
+  tokens use the left axis; retrieval and quality use the right axis (0–1).
+  Dashed lines mark the prompt-token limit and the two score floors, and the
+  span under the lower floor is hatched. **View the latest 12 readings as a
+  table** gives the same data without hovering.
 - **Drift Risk Breakdown.** The share of events that broke each policy rule.
 - **Top Root Causes.** The most frequent causes among warning and critical
   events. It shows "No drift detected" when every event is stable.
-- **Active Alerts.** The five newest open alerts.
+- **Open Alerts.** The five newest open alerts.
 
 ## Agent Diagnosis
 
@@ -110,17 +166,23 @@ so it can be larger than the figure in the sentence.
 This view replays each task's **tool calls** and finds the ones that are stuck.
 Prompts, answers and session events don't affect it; they're in Logs.
 
-| Card | Meaning |
+Three instruments sit across the top. A collapsed **All counts** list holds the
+rest.
+
+| Reading | Meaning |
 | --- | --- |
 | Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. |
 | Failing tasks | A shorter run of failures in a row. |
-| Failures | All failed tool attempts. |
-| Repeated attempts | Failures right after a failure of the same tool: the agent retrying something that just failed. |
-| Redundant attempts | Successful calls that repeated an identical input that had already succeeded in the task. |
 | Wasted tokens | Tokens of failed attempts plus redundant ones. |
+| Failures *(All counts)* | All failed tool attempts. |
+| Repeated attempts *(All counts)* | Failures right after a failure of the same tool: the agent retrying something that just failed. |
+| Redundant attempts *(All counts)* | Successful calls that repeated an identical input that had already succeeded in the task. |
 
-**Most urgent** repeats the top task's diagnosis and recommendation. The
-recommendation depends on the error: timeouts, permissions, not found, rate
+**Most urgent** repeats the top task's diagnosis and recommendation, with its
+**track**: each tool the task used as a block section, in the order it was
+first used. The blocking tool is lit red under a signal and says how many
+failures in a row. Selecting a task in the table shows the same track at the top
+of its drawer. The recommendation depends on the error: timeouts, permissions, not found, rate
 limits and malformed input each get their own advice.
 
 **Tasks table**, most urgent first:
@@ -147,6 +209,10 @@ recovers.
 The full history of what your agents did, newest first, 100 rows at a time,
 with **Load more** for older rows.
 
+The kind filter offers **Tool call**, **Prompt** and **Response**. Model calls
+and session start or end rows aren't in the filter. If your SDK or the hook
+(`session_events`) sends them, they still appear under **All activity**.
+
 | Column | Meaning |
 | --- | --- |
 | Time | When it happened. |
@@ -154,7 +220,7 @@ with **Load more** for older rows.
 | Status | `success`, `failed`, `error`, `timeout`, or `info` for non-tool rows. |
 | Task | The task it belongs to. |
 | Tool / model | The tool for a tool call; the model for model calls and responses. |
-| Details | The error for failures; otherwise the stored output or input, if any. |
+| Details | The error for failures; otherwise the stored output or input, if any. A dash means there is nothing to show, which for successful calls usually means **Content storage** is off (see [Project Settings](#project-settings)). It applies only to events sent after you turn it on. |
 | Agent | The agent's name, for example `claude-code`. |
 | Attempt | The attempt number of this tool call within the task. Empty for non-tool rows. |
 | Duration | How long it took. For a response, the whole turn. |
@@ -203,15 +269,20 @@ attached (for Claude Code: model, task and request ID).
 
 ![Alerts: agent and drift alerts](images/dashboard-alerts.png)
 
-**Open**, **Resolved** and **All** tabs, plus a severity filter. Each alert
-shows its severity, its **source**, how long ago it fired, the tokens at stake,
-and its task or environment.
+**Open**, **Resolved** and **All** tabs, plus a severity filter. Arrow keys,
+Home and End move between the tabs. Each alert shows a lamp, its severity, its
+**source**, how long ago it fired, the tokens at stake, and its task or
+environment.
+
+**Bulk actions.** Tick alerts, or **Select all**, then **Resolve** or
+**Reopen** the selection in one step. If some fail, the notification says how
+many and why. The selection clears when you change tab or filter.
 
 | Source | Raised when | Resolves |
 | --- | --- | --- |
 | **drift** | A telemetry event scores critical. Repeats of the same root cause within the cooldown (15 min) don't create new alerts. | By hand |
 | **agent** | A task becomes blocked. | **Automatically** when the task recovers |
-| **manual** | You create one with **New alert**, or through the API. | By hand |
+| **manual** | You create one with the **New alert** button, or through the API. | By hand |
 
 **Resolve** and **Reopen** apply for everyone on the project. Resolved alerts
 stop counting toward the status and the sidebar badge, and retention eventually
@@ -235,9 +306,19 @@ Charts over the latest 500 events in the window:
 
 ## Policy
 
+![Policy, with what each threshold flags in the loaded data](images/dashboard-policy.png)
+
 The project's thresholds. Saving changes how **new** events are scored and how
 the diagnosis runs, on the server and in any SDK that calls `fetch_policy()`.
 Stored events keep their scores.
+
+Each field checks its value as you leave it, and says what it flags in the
+events and tasks already loaded for the current filters, for example
+"Would flag 12 of 112 loaded events, now 44". The save bar lists every
+threshold that is changing and warns, in amber, when a change would flag fewer
+events or tasks than today. The preview counts the loaded data, up to the
+latest 500 events. It doesn't predict future traffic. The retry window has no
+preview.
 
 | Setting | Default | Meaning |
 | --- | ---: | --- |

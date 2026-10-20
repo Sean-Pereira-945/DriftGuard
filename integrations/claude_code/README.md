@@ -23,7 +23,8 @@ Each finished turn also sends **LLM telemetry**: one event per model call, with
 its new input tokens (`prompt_tokens`) and the full context it used
 (`context_length`, including cached context). The model and task go in
 metadata. That data feeds the Overview cards, the timeline, Events and
-Analytics. Claude Code has no retrieval or answer-quality score, so those are
+Analytics. Claude Code has no retrieval or answer-quality score (see
+[how to calculate them](../../docs/scoring-guide.md#when-you-only-have-telemetry)), so those are
 left out, not invented. Set `"send_telemetry": false` to skip it.
 
 The default policy limits (3,000 prompt tokens, 4,000 context) are meant for

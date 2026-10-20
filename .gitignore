@@ -99,3 +99,7 @@ driftguard/server/static/
 .claude/driftguard.json
 .claude/driftguard-state/
 .claude/driftguard-hook.log
+
+# Impeccable working files (screenshots, decision-page logs)
+.impeccable/review/
+.impeccable/questions/

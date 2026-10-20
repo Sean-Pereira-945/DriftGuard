@@ -26,7 +26,7 @@ export function RiskBreakdown({ rates, policy }: { rates: ViolationRates; policy
             <div className="mb-1.5 flex items-baseline justify-between gap-3 text-[13px]">
               <span className="text-body">
                 {rule.label}
-                <span className="ml-2 font-mono text-[11px] text-muted">{rule.describe(policy)}</span>
+                <span className="ml-2 font-mono text-xs text-muted">{rule.describe(policy)}</span>
               </span>
               <span className={`tabular font-mono font-semibold ${t.text}`}>{fmtPercent(rate, rate > 0 && rate < 0.1 ? 1 : 0)}</span>
             </div>
