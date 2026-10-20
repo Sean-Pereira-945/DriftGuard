@@ -41,6 +41,10 @@ All notable changes to DriftGuard are recorded here. The format follows
   new project starts with, for you to review and save. It is backed by a new
   `GET /projects/{id}/policy/defaults` (session or key), so the defaults live only
   on the server. 2 new tests.
+- **Attempt timeline in the task drawer.** One row per tool call on a shared time
+  axis, with each bar ending when the attempt was recorded and running back by its
+  duration. A retry loop shows as a bunch of red bars. It shows the latest 40
+  attempts and has a text summary.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.

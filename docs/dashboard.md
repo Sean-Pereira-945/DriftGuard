@@ -206,6 +206,16 @@ limits and malformed input each get their own advice.
 | Last error | The most recent error message, scrubbed of secrets. |
 | Last seen | Time of the task's latest event. |
 
+![A task's drawer: its track, details and a timeline of its attempts](images/dashboard-task-drawer.png)
+
+The task drawer ends with a **timeline of the attempts**: one row per tool call on a
+shared time axis. A bar ends when the attempt was recorded and runs back by its
+duration, so a retry loop shows as a bunch of red bars with the gaps between them,
+and a slow attempt is a long bar. Red bars failed. It shows the latest 40
+attempts, and says so when there are more. Without recorded durations each
+attempt is a thin mark. The list of attempts below it carries the same data as
+text, with each error.
+
 A blocked task raises an **agent** alert. The alert's token count stays
 current while the task is blocked, and it **resolves itself** when the task
 recovers.

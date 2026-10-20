@@ -6,6 +6,7 @@ import { CodeBlock } from '../components/Copy';
 import { BaselineGauge } from '../components/BaselineGauge';
 import { Instrument, InstrumentStrip } from '../components/Instrument';
 import { TrackDiagram } from '../components/TrackDiagram';
+import { Waterfall } from '../components/Waterfall';
 import { Drawer } from '../components/Overlay';
 import { Eyebrow, PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ResourceView } from '../components/States';
@@ -111,6 +112,7 @@ function AttemptTimeline({ task }: { task: AgentTask }) {
         return (
           <>
             {data.length >= 1000 && <p className="mb-3 text-xs text-muted">Showing the latest 1,000 attempts.</p>}
+            <Waterfall events={ordered} />
             <ol className="relative space-y-4 border-l border-hairline-strong pl-5">
               {ordered.map((event) => (
                 <AttemptItem key={event.id} event={event} />

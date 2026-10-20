@@ -90,6 +90,8 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] **Attempt timeline** in the task drawer: tool calls on a shared time axis, so a
+  retry loop is visible at a glance.
 - [x] **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults`.
 - [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
   gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
@@ -139,7 +141,7 @@ runs, not by unit tests: the frontend has none yet.
   [agent-integration.md](agent-integration.md#what-driftguard-cannot-observe).
 
 ### Product
-- [ ] Trace waterfall view: a timeline of a task's model turns and tool calls.
+- [ ] Add model turns to the attempt timeline. It shows a task's tool calls today.
 - [ ] Per-project notification settings (webhooks, email) instead of global
   environment variables.
 - [ ] Latency as a first-class metric: ingest `latency_ms` and add a policy rule.

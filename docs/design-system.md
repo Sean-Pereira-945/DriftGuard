@@ -70,6 +70,14 @@ The top of the Overview. A lamp and one word (`Critical`, `Warning`, `Stable`, `
 
 A task drawn as a track. Each tool is a block section: a 6px rail, a row of sleepers, the tool name in mono. The blocking section is lit red under a red signal lamp and says how many failures in a row. The track continues past the last section in a dim rail. Sections are listed in the order the tools were first used.
 
+### Attempt timeline
+
+In a task's drawer, one thin row per tool call on a shared time axis: a bar ends
+when the attempt was recorded and runs back by its duration. Failed attempts are
+coral and successful ones ivory, so a retry loop reads as a bunch of red bars.
+The axis shows 0, the midpoint and the span in mono. It has a text summary, and the
+list of attempts below is its text equivalent.
+
 ### Instrument strip and baseline gauge
 
 Four readings in one panel, separated by hairlines, not four cards. A gauge is a track with a tick at each policy limit, a hatched span past the baseline, and a diamond marker for the reading. The marker is ivory when fine, amber or red when it breaches. Each gauge has a plain-language `aria-label`. Less important readings sit in a collapsed **All readings** list.
