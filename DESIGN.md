@@ -2,24 +2,24 @@
 name: DriftGuard
 description: A signal-box panel for on-call developers: agent tasks drawn as a track diagram, the blocking tool held at red.
 colors:
-  enamel: "#0c1412"
-  enamel-sidebar: "#09100e"
-  enamel-panel: "#111c19"
-  enamel-raised: "#182621"
-  enamel-input: "#0a110f"
-  hairline: "#243630"
-  hairline-strong: "#355046"
-  hairline-hover: "#4a6a5d"
-  ink: "#f3eedd"
-  body: "#dad5c1"
-  muted: "#a3afa6"
-  faint: "#839189"
-  route: "#ece4c6"
-  lamp-red: "#ff6350"
-  lamp-amber: "#f4b63f"
-  lamp-green: "#3fcb84"
-  steel: "#8db9d1"
-  violet: "#b7a5e9"
+  enamel: "#000000"
+  enamel-sidebar: "#030504"
+  enamel-panel: "#080d0b"
+  enamel-raised: "#101915"
+  enamel-input: "#040706"
+  hairline: "#1e2d27"
+  hairline-strong: "#324a40"
+  hairline-hover: "#4b6e60"
+  ink: "#fffbea"
+  body: "#e4dec8"
+  muted: "#aebab1"
+  faint: "#8a988f"
+  route: "#fff2b8"
+  lamp-red: "#ff5a47"
+  lamp-amber: "#ffc83d"
+  lamp-green: "#34e89a"
+  steel: "#86d4ff"
+  violet: "#c4b2ff"
 typography:
   display:
     fontFamily: "Barlow Condensed, Arial Narrow, ui-sans-serif, system-ui, sans-serif"
@@ -126,7 +126,7 @@ components:
 
 **Creative North Star: "The Signal Box Panel"**
 
-DriftGuard is drawn as the illuminated track diagram in a railway signal box. Each agent task is a train on a line, tools are block sections, and the tool that holds the line is the section lit red. Drift is distance from a baseline, drawn as a gauge with the floor engraved on it. The surface is a dark green-black enamel panel with ivory engraved lettering and hairline rules, never pure black and never a grid of equal KPI cards.
+DriftGuard is drawn as the illuminated track diagram in a railway signal box. Each agent task is a train on a line, tools are block sections, and the tool that holds the line is the section lit red. Drift is distance from a baseline, drawn as a gauge with the floor engraved on it. The surface is a true-black enamel panel with ivory engraved lettering and hairline rules, never pure black and never a grid of equal KPI cards.
 
 Colour is quarantined. A healthy view is ink on enamel; the lamp colours (red, amber, green) appear only where state deviates, and always as a lit lamp with an icon and a word. Density is that of an operator's desk: compact, ruled, legible at a glance, with poster-scale condensed figures for the numbers that matter.
 
@@ -139,23 +139,23 @@ Colour is quarantined. A healthy view is ink on enamel; the lamp colours (red, a
 
 ## Colors
 
-A near-monochrome green-black enamel and ivory palette with three lamp colours held in reserve.
+A near-monochrome black enamel and ivory palette with three lamp colours held in reserve.
 
 ### Primary
-- **Route Ivory** (#ece4c6): the lit route. Primary button fill, active nav marker, focus outline, caret, checkbox accent, healthy track section and gauge marker.
+- **Route Ivory** (#fff2b8): the lit route. Primary button fill, active nav marker, focus outline, caret, checkbox accent, healthy track section and gauge marker.
 
 ### Secondary
-- **Lamp Red** (#ff6350): critical state and the blocking section only: lamps, danger buttons, error text, the hatched "past the floor" band.
-- **Lamp Amber** (#f4b63f): warning state only.
-- **Lamp Green** (#3fcb84): stable or live state only (including the live-connection pulse).
+- **Lamp Red** (#ff5a47): critical state and the blocking section only: lamps, danger buttons, error text, the hatched "past the floor" band.
+- **Lamp Amber** (#ffc83d): warning state only.
+- **Lamp Green** (#34e89a): stable or live state only (including the live-connection pulse).
 
 ### Tertiary
-- **Steel** (#8db9d1) and **Signal Violet** (#b7a5e9): categorical badge tones and chart series for non-state information. Used sparingly.
+- **Steel** (#86d4ff) and **Signal Violet** (#c4b2ff): categorical badge tones and chart series for non-state information. Used sparingly.
 
 ### Neutral
-- **Enamel** (#0c1412): page canvas. **Enamel Sidebar** (#09100e): the darker nav rail. **Enamel Panel** (#111c19): every panel surface. **Enamel Raised** (#182621): active nav, tooltips, toasts, select options. **Enamel Input** (#0a110f): inset field wells.
-- **Hairline** (#243630), **Hairline Strong** (#355046), **Hairline Hover** (#4a6a5d): panel rules, control borders, hover borders.
-- **Ink** (#f3eedd): headings and key figures. **Body** (#dad5c1): running text. **Muted** (#a3afa6): secondary text and plate labels. **Faint** (#839189): placeholders, disabled nav, idle lamp.
+- **Enamel** (#000000): page canvas. **Enamel Sidebar** (#030504): the darker nav rail. **Enamel Panel** (#080d0b): every panel surface. **Enamel Raised** (#101915): active nav, tooltips, toasts, select options. **Enamel Input** (#040706): inset field wells.
+- **Hairline** (#1e2d27), **Hairline Strong** (#324a40), **Hairline Hover** (#4b6e60): panel rules, control borders, hover borders.
+- **Ink** (#fffbea): headings and key figures. **Body** (#e4dec8): running text. **Muted** (#aebab1): secondary text and plate labels. **Faint** (#8a988f): placeholders, disabled nav, idle lamp.
 
 ### Named Rules
 **The Quarantine Rule.** Lamp red, amber and green mean a state. They never decorate, and a healthy screen has none of them lit.
@@ -187,7 +187,7 @@ A fixed 248px sidebar rail at large widths (an off-canvas drawer below `lg`), be
 
 ## Elevation & Depth
 
-Flat by default. Depth is tonal and ruled: canvas, then panel, then raised, each edged by a hairline. Shadows appear only for things that float above the panel: tooltips and toasts (`shadow-xl` at 60% black), modals and the slide-over (`shadow-2xl` black), over a 70% black scrim. State glow is the lamp's own light: a critical lamp glows once (`box-shadow: 0 0 14px 2px rgb(255 99 80 / 0.55)` over 1.6s), and the live indicator pulses green on a 2s loop.
+Flat by default. Depth is tonal and ruled: canvas, then panel, then raised, each edged by a hairline. Shadows appear only for things that float above the panel: tooltips and toasts (`shadow-xl` at 60% black), modals and the slide-over (`shadow-2xl` black), over a 70% black scrim. State glow is the lamp's own light: a critical lamp glows once (`box-shadow: 0 0 14px 2px rgb(255 90 71 / 0.55)` over 1.6s), and the live indicator pulses green on a 2s loop.
 
 ### Named Rules
 **The Flat Plate Rule.** Resting panels carry no shadow. If it is not floating, it is ruled, not lifted.

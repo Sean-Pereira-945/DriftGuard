@@ -214,7 +214,7 @@ export function Alerts() {
                     aria-controls="alert-tabpanel"
                     tabIndex={tab === item.id ? 0 : -1}
                     onClick={() => setTab(item.id)}
-                    className={`min-h-8 rounded-sm px-3 text-sm font-semibold transition-colors duration-150 ${tab === item.id ? 'bg-raised text-ink shadow-[inset_0_-2px_0_#ece4c6]' : 'text-muted hover:text-body'}`}
+                    className={`min-h-8 rounded-sm px-3 text-sm font-semibold transition-colors duration-150 ${tab === item.id ? 'bg-raised text-ink shadow-[inset_0_-2px_0_#fff2b8]' : 'text-muted hover:text-body'}`}
                   >
                     {item.label}
                   </button>

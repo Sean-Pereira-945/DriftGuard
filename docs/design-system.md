@@ -20,36 +20,36 @@ The UI represents real product capabilities. Do not imply that DriftGuard observ
 
 ## 2. Colour
 
-### Surfaces (dark green-black enamel, never pure black)
+### Surfaces (true black, panels lifted a shade)
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `canvas` | `#0C1412` | Page background |
-| `sidebar` | `#09100E` | Navigation rail |
-| `panel` | `#111C19` | Panels, tables, drawers |
-| `raised` | `#182621` | Selected rows, hovered surfaces |
-| `input` | `#0A110F` | Selects, inputs, code blocks |
-| `hairline` / `hairline-strong` | `#243630` / `#355046` | Rules and borders |
+| `canvas` | `#000000` | Page background |
+| `sidebar` | `#030504` | Navigation rail |
+| `panel` | `#080d0b` | Panels, tables, drawers |
+| `raised` | `#101915` | Selected rows, hovered surfaces |
+| `input` | `#040706` | Selects, inputs, code blocks |
+| `hairline` / `hairline-strong` | `#1e2d27` / `#324a40` | Rules and borders |
 
 ### Text
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `ink` | `#F3EEDD` | Titles, primary values (warm ivory) |
-| `body` | `#DAD5C1` | Body copy |
-| `muted` | `#A3AFA6` | Supporting text |
-| `faint` | `#839189` | Placeholders and disabled text |
+| `ink` | `#fffbea` | Titles, primary values (warm ivory) |
+| `body` | `#e4dec8` | Body copy |
+| `muted` | `#aebab1` | Supporting text |
+| `faint` | `#8a988f` | Placeholders and disabled text |
 
 Muted and faint text keep at least 4.5:1 against the panel and canvas.
 
 ### The route and the lamps
 
-- **Route ivory (`#ECE4C6`):** The lit track. Used for the primary action, the current selection, focus rings, links, and the main chart series. It is not a status colour.
-- **Critical (`#FF6350`):** Blocked tasks, critical alerts, failed tools. Critical lamps glow slowly.
-- **Warning (`#F4B63F`):** Degraded readings and warning alerts.
-- **Stable (`#3FCB84`):** Healthy state and the retrieval series.
-- **Steel (`#8DB9D1`):** Recovered tasks.
-- **Violet (`#B7A5E9`):** The second score series on charts only.
+- **Route ivory (`#fff2b8`):** The lit track. Used for the primary action, the current selection, focus rings, links, and the main chart series. It is not a status colour.
+- **Critical (`#ff5a47`):** Blocked tasks, critical alerts, failed tools. Critical lamps glow slowly.
+- **Warning (`#ffc83d`):** Degraded readings and warning alerts.
+- **Stable (`#34e89a`):** Healthy state and the retrieval series.
+- **Steel (`#86d4ff`):** Recovered tasks.
+- **Violet (`#c4b2ff`):** The second score series on charts only.
 
 Pair every lamp colour with text, an icon, or a pattern. Past-the-baseline spans are hatched, so they read without colour.
 

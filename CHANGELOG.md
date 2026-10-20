@@ -92,12 +92,19 @@ All notable changes to DriftGuard are recorded here. The format follows
 
 ### Changed
 - **New look.** The dashboard moves from a pure-black graphite console to a dark
-  green-black enamel panel with ivory type. Colour now appears only where
+  black enamel panel with ivory type. Colour now appears only where
   something deviates (red, amber, green lamps, each with an icon and a word).
   Fonts are Barlow, Barlow Condensed and JetBrains Mono, replacing Space
   Grotesk and Plus Jakarta Sans. The logo is the text "DriftGuard" alone, with no
   symbol, and the browser-tab icon is a plain "D". The decorative background grid
   is removed.
+- **True-black canvas and brighter colours.** The page background is pure black
+  with panels lifted a shade, ivory text and the route colour are brighter, and
+  the red, amber, green and steel lamp colours are more luminous.
+- **Themed dropdowns.** Every select uses a themed control. In Chrome and Edge
+  the open list is a black panel with a hairline border, a highlighted row and a
+  check mark on the chosen item. Other browsers keep their own list in the same
+  colours.
 - Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
   The header selects have visible labels (**Env**, **Range**), and the
   **Updated** time shows from tablet width up. The sidebar groups its nine

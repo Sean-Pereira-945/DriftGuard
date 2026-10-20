@@ -1,32 +1,32 @@
 @import "tailwindcss";
 
 /*
- * Signal Box Panel: a dark green-black enamel panel with ivory engraved lettering.
+ * Signal Box Panel: a true-black enamel panel with ivory engraved lettering.
  * Colour is quarantined. Healthy views are ink on enamel; lamp colours (red, amber,
  * green) appear only where state deviates, always with an icon and a word.
  */
 @theme {
-  --color-canvas: #0c1412;
-  --color-sidebar: #09100e;
-  --color-panel: #111c19;
-  --color-raised: #182621;
-  --color-input: #0a110f;
-  --color-hairline: #243630;
-  --color-hairline-strong: #355046;
-  --color-hairline-hover: #4a6a5d;
+  --color-canvas: #000000;
+  --color-sidebar: #030504;
+  --color-panel: #080d0b;
+  --color-raised: #101915;
+  --color-input: #040706;
+  --color-hairline: #1e2d27;
+  --color-hairline-strong: #324a40;
+  --color-hairline-hover: #4b6e60;
 
-  --color-ink: #f3eedd;
-  --color-body: #dad5c1;
-  --color-muted: #a3afa6;
-  --color-faint: #839189;
+  --color-ink: #fffbea;
+  --color-body: #e4dec8;
+  --color-muted: #aebab1;
+  --color-faint: #8a988f;
 
   /* The route: lit track, current selection, primary action. */
-  --color-route: #ece4c6;
-  --color-steel: #8db9d1;
-  --color-green: #3fcb84;
-  --color-amber: #f4b63f;
-  --color-coral: #ff6350;
-  --color-violet: #b7a5e9;
+  --color-route: #fff2b8;
+  --color-steel: #86d4ff;
+  --color-green: #34e89a;
+  --color-amber: #ffc83d;
+  --color-coral: #ff5a47;
+  --color-violet: #c4b2ff;
 
   --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
@@ -71,7 +71,7 @@
     letter-spacing: 0.01em;
   }
   ::selection {
-    background: rgb(236 228 198 / 0.28);
+    background: rgb(255 242 184 / 0.28);
     color: #fff;
   }
   :focus-visible {
@@ -121,20 +121,110 @@
 .hatch-bad {
   background-image: repeating-linear-gradient(
     135deg,
-    rgb(255 99 80 / 0.38) 0 2px,
+    rgb(255 90 71 / 0.38) 0 2px,
     transparent 2px 6px
   );
 }
 
-.select-chevron {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a3afa6' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
+/*
+ * Dropdowns. Chrome and Edge can style the open list (appearance: base-select), so the
+ * list is a panel: black enamel, hairline border, ivory selected row, a check mark.
+ * Other browsers keep their own list but get the same closed control and colours.
+ */
+select option {
+  background: var(--color-raised);
+  color: var(--color-ink);
+}
+
+.themed-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23aebab1' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
   background-size: 16px;
   background-position: right 10px center;
   background-repeat: no-repeat;
+  padding-right: 2rem;
 }
-select option {
-  background: #182621;
-  color: #f3eedd;
+
+@supports (appearance: base-select) {
+  .themed-select,
+  .themed-select::picker(select) {
+    appearance: base-select;
+  }
+  .themed-select {
+    background-image: none;
+    padding-right: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .themed-select::picker-icon {
+    content: "";
+    width: 16px;
+    height: 16px;
+    flex: none;
+    background-color: var(--color-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>") center / 16px no-repeat;
+    transition: rotate 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .themed-select:open::picker-icon {
+    rotate: 180deg;
+  }
+  .themed-select::picker(select) {
+    background: var(--color-panel);
+    color: var(--color-body);
+    border: 1px solid var(--color-hairline-strong);
+    border-radius: 6px;
+    padding: 4px;
+    margin-block: 4px;
+    min-width: anchor-size(width);
+    max-height: min(320px, 60vh);
+    box-shadow: 0 14px 36px rgb(0 0 0 / 0.85);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 150ms allow-discrete,
+      display 150ms allow-discrete;
+  }
+  .themed-select:open::picker(select) {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .themed-select:open::picker(select) {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  .themed-select option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--color-body);
+    font: inherit;
+    cursor: pointer;
+  }
+  .themed-select option:hover,
+  .themed-select option:focus-visible {
+    background: var(--color-raised);
+    color: var(--color-ink);
+    outline: none;
+  }
+  .themed-select option:checked {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .themed-select option::checkmark {
+    order: 1;
+    margin-left: auto;
+    color: var(--color-route);
+  }
 }
 
 .tabular {
@@ -143,17 +233,17 @@ select option {
 
 /* A lamp that turns critical glows once as it lights. */
 @keyframes lamp-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(255 99 80 / 0); }
-  50% { box-shadow: 0 0 14px 2px rgb(255 99 80 / 0.55); }
+  0%, 100% { box-shadow: 0 0 0 0 rgb(255 90 71 / 0); }
+  50% { box-shadow: 0 0 14px 2px rgb(255 90 71 / 0.55); }
 }
 .lamp-critical {
   animation: lamp-glow 1.6s ease-out 1;
 }
 
 @keyframes status-pulse {
-  0% { box-shadow: 0 0 0 0 rgb(63 203 132 / 0.5); }
-  70% { box-shadow: 0 0 0 6px rgb(63 203 132 / 0); }
-  100% { box-shadow: 0 0 0 0 rgb(63 203 132 / 0); }
+  0% { box-shadow: 0 0 0 0 rgb(52 232 154 / 0.5); }
+  70% { box-shadow: 0 0 0 6px rgb(52 232 154 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(52 232 154 / 0); }
 }
 .pulse-live {
   animation: status-pulse 2s ease-out infinite;

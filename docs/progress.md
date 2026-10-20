@@ -113,7 +113,7 @@ Details are in the CHANGELOG under *Unreleased*.
 | Area | What was done |
 | --- | --- |
 | Design context | New `PRODUCT.md` (users, purpose, positioning, constraints), `DESIGN.md` and `.impeccable/design.json` (tokens and components, written from the built code), a recorded direction contract, and the critique snapshot in `.impeccable/critique/`. The design-system doc was rewritten. |
-| Look | The pure-black graphite console became a dark green-black enamel panel with ivory type, in the idiom of a railway signal box. Colour appears only where state deviates, as red, amber or green lamps that always carry an icon and a word. Fonts are Barlow, Barlow Condensed and JetBrains Mono. New mark. The decorative grid is gone. |
+| Look | The graphite console became a true-black enamel panel with ivory type and brighter lamp colours, in the idiom of a railway signal box. Colour appears only where state deviates, as red, amber or green lamps that always carry an icon and a word. Fonts are Barlow, Barlow Condensed and JetBrains Mono. New mark. The decorative grid is gone. |
 | Overview | Now leads with a status plate (one lamp, one word, the diagnosis, the recommendation, one action), a track diagram of the most urgent task, and four instruments with baseline gauges. Total events, tokens at stake, retrieval score and the agent counts moved into a collapsed **All readings**. |
 | Agent Diagnosis | Three headline instruments plus a collapsed **All counts**, replacing six equal cards. The track diagram appears under the most urgent task and in the task drawer. |
 | Drift made visible | The timeline draws the prompt-token limit and both score floors, hatches the span under the floors, and has a table view. Gauges show how far a reading is from its floor. |

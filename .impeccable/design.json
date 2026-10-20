@@ -7,7 +7,7 @@
       "enamel": {
         "role": "neutral",
         "displayName": "Enamel",
-        "canonical": "#0c1412",
+        "canonical": "#000000",
         "tonalRamp": [
           "#1d302b",
           "#34564d",
@@ -22,7 +22,7 @@
       "enamel-sidebar": {
         "role": "neutral",
         "displayName": "Enamel Sidebar",
-        "canonical": "#09100e",
+        "canonical": "#030504",
         "tonalRamp": [
           "#1c312b",
           "#32584d",
@@ -37,7 +37,7 @@
       "enamel-panel": {
         "role": "neutral",
         "displayName": "Enamel Panel",
-        "canonical": "#111c19",
+        "canonical": "#080d0b",
         "tonalRamp": [
           "#1d302b",
           "#34564d",
@@ -52,7 +52,7 @@
       "enamel-raised": {
         "role": "neutral",
         "displayName": "Enamel Raised",
-        "canonical": "#182621",
+        "canonical": "#101915",
         "tonalRamp": [
           "#1e2f29",
           "#355449",
@@ -67,7 +67,7 @@
       "enamel-input": {
         "role": "neutral",
         "displayName": "Enamel Input",
-        "canonical": "#0a110f",
+        "canonical": "#040706",
         "tonalRamp": [
           "#1c302b",
           "#33574d",
@@ -82,7 +82,7 @@
       "hairline": {
         "role": "neutral",
         "displayName": "Hairline",
-        "canonical": "#243630",
+        "canonical": "#1e2d27",
         "tonalRamp": [
           "#1f2e29",
           "#375349",
@@ -97,7 +97,7 @@
       "hairline-strong": {
         "role": "neutral",
         "displayName": "Hairline Strong",
-        "canonical": "#355046",
+        "canonical": "#324a40",
         "tonalRamp": [
           "#1e2e28",
           "#375348",
@@ -112,7 +112,7 @@
       "hairline-hover": {
         "role": "neutral",
         "displayName": "Hairline Hover",
-        "canonical": "#4a6a5d",
+        "canonical": "#4b6e60",
         "tonalRamp": [
           "#1f2d28",
           "#395147",
@@ -127,7 +127,7 @@
       "ink": {
         "role": "neutral",
         "displayName": "Ink",
-        "canonical": "#f3eedd",
+        "canonical": "#fffbea",
         "tonalRamp": [
           "#393014",
           "#665724",
@@ -142,7 +142,7 @@
       "body": {
         "role": "neutral",
         "displayName": "Body",
-        "canonical": "#dad5c1",
+        "canonical": "#e4dec8",
         "tonalRamp": [
           "#302c1d",
           "#564f33",
@@ -157,7 +157,7 @@
       "muted": {
         "role": "neutral",
         "displayName": "Muted",
-        "canonical": "#a3afa6",
+        "canonical": "#aebab1",
         "tonalRamp": [
           "#242925",
           "#404a42",
@@ -172,7 +172,7 @@
       "faint": {
         "role": "neutral",
         "displayName": "Faint",
-        "canonical": "#839189",
+        "canonical": "#8a988f",
         "tonalRamp": [
           "#242926",
           "#414944",
@@ -187,7 +187,7 @@
       "route": {
         "role": "primary",
         "displayName": "Route Ivory",
-        "canonical": "#ece4c6",
+        "canonical": "#fff2b8",
         "tonalRamp": [
           "#393113",
           "#675922",
@@ -195,14 +195,14 @@
           "#c1a644",
           "#d0bc71",
           "#dfd29f",
-          "#ece4c6",
+          "#fff2b8",
           "#f9f6ec"
         ]
       },
       "lamp-red": {
         "role": "secondary",
         "displayName": "Lamp Red",
-        "canonical": "#ff6350",
+        "canonical": "#ff5a47",
         "tonalRamp": [
           "#4c0800",
           "#8a0f00",
@@ -217,7 +217,7 @@
       "lamp-amber": {
         "role": "secondary",
         "displayName": "Lamp Amber",
-        "canonical": "#f4b63f",
+        "canonical": "#ffc83d",
         "tonalRamp": [
           "#483104",
           "#825807",
@@ -232,7 +232,7 @@
       "lamp-green": {
         "role": "secondary",
         "displayName": "Lamp Green",
-        "canonical": "#3fcb84",
+        "canonical": "#34e89a",
         "tonalRamp": [
           "#103c26",
           "#1d6c44",
@@ -247,7 +247,7 @@
       "steel": {
         "role": "tertiary",
         "displayName": "Steel",
-        "canonical": "#8db9d1",
+        "canonical": "#86d4ff",
         "tonalRamp": [
           "#162b37",
           "#284d62",
@@ -262,7 +262,7 @@
       "violet": {
         "role": "tertiary",
         "displayName": "Signal Violet",
-        "canonical": "#b7a5e9",
+        "canonical": "#c4b2ff",
         "tonalRamp": [
           "#1b0f3d",
           "#311b6f",
@@ -314,12 +314,12 @@
       },
       {
         "name": "lamp-glow",
-        "value": "0 0 14px 2px rgb(255 99 80 / 0.55)",
+        "value": "0 0 14px 2px rgb(255 90 71 / 0.55)",
         "purpose": "A critical lamp glows once as it lights."
       },
       {
         "name": "live-pulse",
-        "value": "0 0 0 6px rgb(63 203 132 / 0)",
+        "value": "0 0 0 6px rgb(52 232 154 / 0)",
         "purpose": "Live-connection indicator ring."
       }
     ],
@@ -368,7 +368,7 @@
       "refersTo": "button-primary",
       "description": "The one primary action per view.",
       "html": "<button class=\"ds-btn-primary\">Open diagnosis</button>",
-      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#ece4c6;color:#0c1412;border-color:#ece4c6;font-weight:600}.ds-btn-primary:hover{background:#fff;border-color:#fff}.ds-btn-primary:focus-visible{outline:2px solid #ece4c6;outline-offset:2px}"
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#fff2b8;color:#000000;border-color:#fff2b8;font-weight:600}.ds-btn-primary:hover{background:#fff;border-color:#fff}.ds-btn-primary:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
     },
     {
       "name": "Secondary Button",
@@ -376,7 +376,7 @@
       "refersTo": "button-secondary",
       "description": "Default control.",
       "html": "<button class=\"ds-btn-secondary\">Export</button>",
-      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#111c19;color:#dad5c1;border-color:#355046}.ds-btn-secondary:hover{background:#182621;border-color:#4a6a5d}.ds-btn-secondary:focus-visible{outline:2px solid #ece4c6;outline-offset:2px}"
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:#080d0b;color:#e4dec8;border-color:#324a40}.ds-btn-secondary:hover{background:#101915;border-color:#4b6e60}.ds-btn-secondary:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
     },
     {
       "name": "Danger Button",
@@ -384,7 +384,7 @@
       "refersTo": "button-danger",
       "description": "Destructive action.",
       "html": "<button class=\"ds-btn-danger\">Delete key</button>",
-      "css": ".ds-btn-danger{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:rgba(255,99,80,.1);color:#ff6350;border-color:rgba(255,99,80,.5)}.ds-btn-danger:hover{background:rgba(255,99,80,.2);border-color:#ff6350}.ds-btn-danger:focus-visible{outline:2px solid #ece4c6;outline-offset:2px}"
+      "css": ".ds-btn-danger{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;font:500 14px Barlow,sans-serif;border:1px solid;border-radius:4px;transition:background .15s,border-color .15s;cursor:pointer;background:rgba(255,99,80,.1);color:#ff5a47;border-color:rgba(255,99,80,.5)}.ds-btn-danger:hover{background:rgba(255,99,80,.2);border-color:#ff5a47}.ds-btn-danger:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
     },
     {
       "name": "Text Field",
@@ -392,7 +392,7 @@
       "refersTo": "input",
       "description": "Inset field well with label.",
       "html": "<label class=\"ds-field\"><span>Project name</span><input placeholder=\"checkout-agent\"></label>",
-      "css": ".ds-field span{display:block;margin-bottom:6px;font:600 13px Barlow,sans-serif;color:#dad5c1}.ds-field input{width:100%;box-sizing:border-box;min-height:40px;padding:0 12px;background:#0a110f;color:#f3eedd;border:1px solid #355046;border-radius:6px;font:14px Barlow,sans-serif}.ds-field input::placeholder{color:#839189}.ds-field input:hover{border-color:#4a6a5d}.ds-field input:focus{border-color:#ece4c6;outline:2px solid #ece4c6}"
+      "css": ".ds-field span{display:block;margin-bottom:6px;font:600 13px Barlow,sans-serif;color:#e4dec8}.ds-field input{width:100%;box-sizing:border-box;min-height:40px;padding:0 12px;background:#040706;color:#fffbea;border:1px solid #324a40;border-radius:6px;font:14px Barlow,sans-serif}.ds-field input::placeholder{color:#8a988f}.ds-field input:hover{border-color:#4b6e60}.ds-field input:focus{border-color:#fff2b8;outline:2px solid #fff2b8}"
     },
     {
       "name": "Active Nav Item",
@@ -400,7 +400,7 @@
       "refersTo": "nav-item-active",
       "description": "Sidebar item with the Route bar.",
       "html": "<a class=\"ds-nav\" href=\"#\">Overview</a>",
-      "css": ".ds-nav{position:relative;display:flex;align-items:center;min-height:40px;padding:0 12px;border-radius:4px;background:#182621;color:#f3eedd;font:500 15px Barlow,sans-serif;text-decoration:none}.ds-nav:before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:#ece4c6}.ds-nav:hover{color:#fff}.ds-nav:focus-visible{outline:2px solid #ece4c6;outline-offset:2px}"
+      "css": ".ds-nav{position:relative;display:flex;align-items:center;min-height:40px;padding:0 12px;border-radius:4px;background:#101915;color:#fffbea;font:500 15px Barlow,sans-serif;text-decoration:none}.ds-nav:before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:4px;border-radius:4px;background:#fff2b8}.ds-nav:hover{color:#fff}.ds-nav:focus-visible{outline:2px solid #fff2b8;outline-offset:2px}"
     },
     {
       "name": "Badge",
@@ -408,7 +408,7 @@
       "refersTo": "badge",
       "description": "State or category tag with tinted fill.",
       "html": "<span class=\"ds-badge\">Critical</span>",
-      "css": ".ds-badge{display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid rgba(255,99,80,.4);border-radius:4px;background:rgba(255,99,80,.1);color:#ff6350;font:600 13px Barlow,sans-serif}"
+      "css": ".ds-badge{display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid rgba(255,99,80,.4);border-radius:4px;background:rgba(255,99,80,.1);color:#ff5a47;font:600 13px Barlow,sans-serif}"
     },
     {
       "name": "Lamp",
@@ -416,7 +416,7 @@
       "refersTo": "lamp",
       "description": "Lit state lamp; always written in words beside it.",
       "html": "<span class=\"ds-lamp-row\"><span class=\"ds-lamp\"></span> Blocked</span>",
-      "css": ".ds-lamp-row{display:inline-flex;align-items:center;gap:8px;color:#f3eedd;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-lamp{width:16px;height:16px;border-radius:9999px;background:#ff6350;box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 14px 2px rgba(255,99,80,.55)}"
+      "css": ".ds-lamp-row{display:inline-flex;align-items:center;gap:8px;color:#fffbea;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif}.ds-lamp{width:16px;height:16px;border-radius:9999px;background:#ff5a47;box-shadow:0 0 0 2px rgba(0,0,0,.4),0 0 14px 2px rgba(255,99,80,.55)}"
     },
     {
       "name": "Panel",
@@ -424,7 +424,7 @@
       "refersTo": "panel",
       "description": "Ruled enamel panel with header.",
       "html": "<section class=\"ds-panel\"><header><h2>Recent alerts</h2></header><p>No open alerts.</p></section>",
-      "css": ".ds-panel{background:#111c19;border:1px solid #243630;border-radius:6px;color:#dad5c1;font:15px Barlow,sans-serif}.ds-panel header{padding:12px 20px;border-bottom:1px solid #243630}.ds-panel h2{margin:0;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif;color:#f3eedd}.ds-panel p{margin:0;padding:16px 20px}"
+      "css": ".ds-panel{background:#080d0b;border:1px solid #1e2d27;border-radius:6px;color:#e4dec8;font:15px Barlow,sans-serif}.ds-panel header{padding:12px 20px;border-bottom:1px solid #1e2d27}.ds-panel h2{margin:0;font:600 22px 'Barlow Condensed','Arial Narrow',sans-serif;color:#fffbea}.ds-panel p{margin:0;padding:16px 20px}"
     },
     {
       "name": "Instrument",
@@ -432,7 +432,7 @@
       "refersTo": "panel",
       "description": "Plate label, poster figure and baseline gauge in one ruled cell.",
       "html": "<div class=\"ds-inst\"><span class=\"ds-pl\">Quality score</span><p>0.42</p><div class=\"ds-gauge\"><i class=\"ds-hatch\"></i><b></b><em></em></div><small>0.18 below the 0.60 floor</small></div>",
-      "css": ".ds-inst{width:260px;padding:20px;background:#111c19;border:1px solid #243630;border-radius:6px;font-family:Barlow,sans-serif}.ds-pl{font:600 13px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#a3afa6}.ds-inst p{margin:4px 0;font:600 52px/1.05 'Barlow Condensed','Arial Narrow',sans-serif;color:#f3eedd;font-variant-numeric:tabular-nums}.ds-gauge{position:relative;height:30px}.ds-gauge:before{content:'';position:absolute;left:0;right:0;top:12px;height:1px;background:#355046}.ds-hatch{position:absolute;left:42%;width:18%;top:7px;height:11px;background:repeating-linear-gradient(135deg,rgba(255,99,80,.38) 0 2px,transparent 2px 6px)}.ds-gauge em{position:absolute;left:60%;top:0;width:1px;height:25px;background:#dad5c1}.ds-gauge b{position:absolute;left:42%;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);background:#ff6350;border:1px solid #ff6350}.ds-inst small{font-size:14px;color:#a3afa6}"
+      "css": ".ds-inst{width:260px;padding:20px;background:#080d0b;border:1px solid #1e2d27;border-radius:6px;font-family:Barlow,sans-serif}.ds-pl{font:600 13px 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#aebab1}.ds-inst p{margin:4px 0;font:600 52px/1.05 'Barlow Condensed','Arial Narrow',sans-serif;color:#fffbea;font-variant-numeric:tabular-nums}.ds-gauge{position:relative;height:30px}.ds-gauge:before{content:'';position:absolute;left:0;right:0;top:12px;height:1px;background:#324a40}.ds-hatch{position:absolute;left:42%;width:18%;top:7px;height:11px;background:repeating-linear-gradient(135deg,rgba(255,99,80,.38) 0 2px,transparent 2px 6px)}.ds-gauge em{position:absolute;left:60%;top:0;width:1px;height:25px;background:#e4dec8}.ds-gauge b{position:absolute;left:42%;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);background:#ff5a47;border:1px solid #ff5a47}.ds-inst small{font-size:14px;color:#aebab1}"
     },
     {
       "name": "Track Section",
@@ -440,7 +440,7 @@
       "refersTo": "lamp",
       "description": "One tool as a block section on the track; the blocking one is red.",
       "html": "<div class=\"ds-sec\"><div class=\"ds-bar\"></div><div class=\"ds-sl\"></div><p class=\"ds-tool\">search_inventory</p><p class=\"ds-fail\">4 failures</p></div>",
-      "css": ".ds-sec{width:240px}.ds-bar{height:8px;border-radius:4px;background:#ff6350}.ds-sl{height:8px;margin-top:4px;background:repeating-linear-gradient(to right,#355046 0 1px,transparent 1px 10px)}.ds-tool{margin:8px 0 0;font:15px 'JetBrains Mono',monospace;color:#f3eedd}.ds-fail{margin:0;font:600 20px/1.15 'Barlow Condensed','Arial Narrow',sans-serif;color:#ff6350}"
+      "css": ".ds-sec{width:240px}.ds-bar{height:8px;border-radius:4px;background:#ff5a47}.ds-sl{height:8px;margin-top:4px;background:repeating-linear-gradient(to right,#324a40 0 1px,transparent 1px 10px)}.ds-tool{margin:8px 0 0;font:15px 'JetBrains Mono',monospace;color:#fffbea}.ds-fail{margin:0;font:600 20px/1.15 'Barlow Condensed','Arial Narrow',sans-serif;color:#ff5a47}"
     }
   ],
   "narrative": {

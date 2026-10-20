@@ -81,7 +81,7 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               <ReferenceLine yAxisId="tokens" y={promptTokenLimit} stroke={COLORS.muted} strokeDasharray="4 4" strokeOpacity={0.9} ifOverflow="extendDomain" />
             )}
             <Tooltip
-              cursor={{ stroke: '#4a6a5d', strokeWidth: 1 }}
+              cursor={{ stroke: '#4b6e60', strokeWidth: 1 }}
               isAnimationActive={false}
               content={({ active, payload }) => {
                 const point = active ? (payload?.[0]?.payload as EventPoint | undefined) : undefined;
@@ -107,7 +107,7 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               stroke={COLORS.route}
               strokeWidth={2}
               dot={showDots ? { r: 2.5, strokeWidth: 0, fill: COLORS.route } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#111c19' }}
+              activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
               isAnimationActive={false}
             />
             <Line
@@ -118,7 +118,7 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               stroke={COLORS.steel}
               strokeWidth={2}
               dot={showDots ? { r: 2.5, strokeWidth: 0, fill: COLORS.steel } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#111c19' }}
+              activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
               isAnimationActive={false}
             />
             <Line
@@ -130,7 +130,7 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               strokeWidth={2}
               strokeDasharray="5 4"
               dot={showDots ? { r: 2.5, strokeWidth: 0, fill: COLORS.steel } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#111c19' }}
+              activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
               isAnimationActive={false}
             />
           </LineChart>

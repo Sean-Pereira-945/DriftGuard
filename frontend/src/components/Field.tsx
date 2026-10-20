@@ -98,7 +98,7 @@ export function SelectField({ label, help, error, options, className, hideLabel,
           id={inputId}
           aria-describedby={describedBy}
           aria-invalid={invalid || undefined}
-          className={`${inputClass} select-chevron appearance-none pr-8`}
+          className={`${inputClass} themed-select`}
           {...select}
         >
           {options.map((option) => (

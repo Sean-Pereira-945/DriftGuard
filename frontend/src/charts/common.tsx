@@ -2,16 +2,16 @@ import type { ReactNode } from 'react';
 import { fmtDateTime } from '../lib/format';
 
 export const COLORS = {
-  route: '#ECE4C6',
-  green: '#3FCB84',
-  amber: '#F4B63F',
-  coral: '#FF6350',
-  violet: '#B7A5E9',
-  steel: '#8DB9D1',
-  muted: '#A3AFA6',
-  grid: '#243630',
-  axis: '#839189',
-  unscored: '#839189',
+  route: '#fff2b8',
+  green: '#34e89a',
+  amber: '#ffc83d',
+  coral: '#ff5a47',
+  violet: '#c4b2ff',
+  steel: '#86d4ff',
+  muted: '#aebab1',
+  grid: '#1e2d27',
+  axis: '#8a988f',
+  unscored: '#8a988f',
 } as const;
 
 export const AXIS_PROPS = {
