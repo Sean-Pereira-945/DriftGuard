@@ -126,9 +126,9 @@ the same length of time just before it, at least 24 hours:
 
 | Line | Meaning |
 | --- | --- |
-| **Worse: 0.08 lower than the 24 hours before** | A meaningful drop in quality or retrieval, or rise in risk. |
+| **Worse: 0.08 lower than the 24 hours before (107 events now, 78 before)** | A meaningful drop in quality or retrieval, or rise in risk, with the event counts it rests on. |
 | **Better: …** | A meaningful move the other way. |
-| **Steady against the 24 hours before, was 0.23** | No meaningful change. |
+| **No clear change against the 24 hours before: was 0.23 (89 events now, 93 before)** | No meaningful change was found. This is not proof that nothing changed: with under 30 events on a side the line adds "With this few events, a small drop could be missed", because a real 0.09 drop is found only about a third of the time at 10 events ([study](../research/BASELINE_STUDY.md)). |
 | **Too few events to compare: 3 now, 40 before** | Under 10 events on a side, so no verdict. |
 | *(none)* | **All time** has no earlier period. With under 10 events it says "Only N events: too few to trust this average." |
 

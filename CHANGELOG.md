@@ -119,6 +119,11 @@ All notable changes to DriftGuard are recorded here. The format follows
   the open list is a black panel with a hairline border, a highlighted row and a
   check mark on the chosen item. Other browsers keep their own list in the same
   colours.
+- The baseline line says **No clear change** instead of "Steady", and every verdict
+  shows the events it rests on, for example "(89 events now, 93 before)". Under 30
+  events on a side it adds that a small drop could be missed. The research study
+  found a real 0.09 drop is detected only about a third of the time at 10 events,
+  so "steady" over-claimed.
 - Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
   The header selects have visible labels (**Env**, **Range**), and the
   **Updated** time shows from tablet width up. The sidebar groups its nine

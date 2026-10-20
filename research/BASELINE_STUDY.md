@@ -188,6 +188,7 @@ is a control: the same duration with no fall at all.
    above the line and flags a steadily low project forever, while the baseline
    abstains with few events and can fire on noise when checked continuously.
 2. **The 10-event guard is doing its job, but "Steady" over-claims at low counts.**
+   *(Acted on: the dashboard now says "No clear change" and shows the counts.)*
    At 10 events a real 0.09 decline reads "steady" about two times in three. The
    wording "No clear change" is more honest, and the sample size should sit next
    to it.

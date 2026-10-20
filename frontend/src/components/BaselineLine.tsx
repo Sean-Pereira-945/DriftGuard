@@ -3,6 +3,9 @@ import { fmtScore } from '../lib/format';
 import { shiftPhrase, windowPhrase } from '../lib/baseline';
 import type { Baseline, BaselineMetric } from '../types';
 
+/** Below this many events on either side, a real small change is often missed (see research/BASELINE_STUDY.md). */
+const THIN_SAMPLE = 30;
+
 /**
  * One line that says how a reading compares with the period before it, and refuses to
  * say anything when there are too few events to know. Always an icon plus words.
@@ -30,11 +33,17 @@ export function BaselineLine({ metric, baseline, total }: { metric: BaselineMetr
       </span>
     );
   }
+  const counts = `${metric.n_current} events now, ${metric.n_baseline} before`;
   if (metric.status === 'steady') {
+    // "No clear change" is not "no change": with few events a real drop is often missed.
+    const thin = Math.min(metric.n_current, metric.n_baseline) < THIN_SAMPLE;
     return (
       <span className={`${base} text-muted`}>
         <Minus aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-        Steady against {windowPhrase(baseline.window_seconds)}, was {fmtScore(metric.baseline)}.
+        <span>
+          No clear change against {windowPhrase(baseline.window_seconds)}: was {fmtScore(metric.baseline)} ({counts}).
+          {thin && ' With this few events, a small drop could be missed.'}
+        </span>
       </span>
     );
   }
@@ -44,7 +53,7 @@ export function BaselineLine({ metric, baseline, total }: { metric: BaselineMetr
     <span className={`${base} ${worse ? 'font-semibold text-amber' : 'text-body'}`}>
       <Icon aria-hidden className="mt-0.5 size-3.5 shrink-0" />
       <span>
-        {worse ? 'Worse' : 'Better'}: {shiftPhrase(metric, baseline)}.
+        {worse ? 'Worse' : 'Better'}: {shiftPhrase(metric, baseline)} ({counts}).
       </span>
     </span>
   );

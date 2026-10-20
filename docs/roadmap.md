@@ -90,6 +90,8 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] The baseline line reads "No clear change" and shows its sample size, after the
+  [baseline study](../research/BASELINE_STUDY.md) found "steady" over-claimed.
 - [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
   before the window, with a minimum sample of 10 events and a z-test, shown on the
   Overview as advice.
@@ -98,9 +100,6 @@ runs, not by unit tests: the frontend has none yet.
 ## Next
 
 ### Analytics
-- [ ] Reword "Steady" to "No clear change" and show the sample size beside it. The
-  [baseline study](../research/BASELINE_STUDY.md) found that at 10 events a real
-  0.09 decline reads steady about two times in three.
 - [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
   control-chart rule, instead of showing advice only. The study says to require at
   least 3 checks in a row plus a cooldown, and to consider a sequential method
