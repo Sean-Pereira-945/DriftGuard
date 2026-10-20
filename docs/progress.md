@@ -12,7 +12,7 @@ long-term plan, see [roadmap.md](roadmap.md).
 | 0.4.0 foundation rebuild | `refactor/foundation` | Merged into `main` (PR #8) |
 | Logs view, event kinds, content storage, Claude Code hook, showcase seeder, docs rewrite | `feature/logs` | Merged into `main` (PR #9) |
 | Team setup guide (`SETUP.md`) | `docs/team-setup` | Pushed. One commit ahead of `main`, no PR yet. |
-| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub, no PR yet. |
+| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub, no PR yet. The follow-ups listed under "Dashboard follow-ups" below are committed locally and not yet pushed. |
 
 The sections below keep the 0.4.0 record, then cover each later piece of work.
 The newest, the dashboard redesign, has its own section near the end.
@@ -166,6 +166,25 @@ evaluation.
 
 It is advice only. It raises no alert and doesn't change the status, and it
 treats events as independent and mixes all models and routes together.
+
+### Dashboard follow-ups (same branch, after the first push)
+
+Six small features, each checked in a real browser against seeded data and
+committed on its own. The Python suite is now **200 passed, 2 skipped**.
+
+| # | What | How it was checked |
+| --- | --- | --- |
+| 1 | The baseline line says **No clear change** and shows the events behind every verdict, with a warning under 30 events | Screenshots with large and small samples |
+| 2 | Review fixes: a track that fills its width, a failures-in-a-row gauge on Agent Diagnosis, no gaps below the Overview charts, a readable phone layout | Desktop and 390 px screenshots |
+| 3 | The median, the weak end and the share under the floor beneath each average (`spread` on the summary) | 6 new tests, plus a screenshot where the mean was 0.79, the median 0.81 and half the events were under the floor |
+| 4 | **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults` | 2 new tests, plus a browser run: change the policy, restore, save, confirm through the API |
+| 5 | An attempt timeline in the task drawer | Screenshot of a blocked task with three failed attempts |
+| 6 | **Delete account** from Project Settings | Browser run on a throwaway account: wrong password deletes nothing, the right one deletes, signs out, and the login then fails |
+
+**Not done, and why:** alerting on a sustained drop from the baseline. It changes
+what raises an alert and what gets sent to Slack and webhooks, and needs a new
+alert source and a small state table. The study's design is to require at least 3
+checks in a row plus a cooldown. It is left for an explicit decision.
 
 ### Review items, and what was done about them
 
