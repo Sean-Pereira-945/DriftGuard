@@ -3,7 +3,6 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { api, errorMessage } from '../api';
 import { Button } from '../components/Button';
 import { TextField } from '../components/Field';
-import { LogoMark } from '../components/Logo';
 import { ErrorState, LoadingState } from '../components/States';
 import { isEmail } from '../lib/validation';
 import { useSession } from '../state/session';
@@ -74,13 +73,12 @@ export function SignIn({ notice }: { notice?: string }) {
   };
 
   return (
-    <main className="workspace-grid flex min-h-dvh items-center justify-center px-4 py-10">
+    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-[400px] animate-rise">
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <LogoMark className="size-10" />
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">DriftGuard</h1>
-            <p className="mt-1 text-sm text-muted">
+            <h1 className="font-display text-[48px] leading-none font-bold">DriftGuard</h1>
+            <p className="mt-2 text-sm text-muted">
               {activeMode === 'register' ? 'Create an account to monitor your projects.' : 'Sign in to your workspace.'}
             </p>
           </div>

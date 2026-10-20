@@ -95,8 +95,9 @@ All notable changes to DriftGuard are recorded here. The format follows
   green-black enamel panel with ivory type. Colour now appears only where
   something deviates (red, amber, green lamps, each with an icon and a word).
   Fonts are Barlow, Barlow Condensed and JetBrains Mono, replacing Space
-  Grotesk and Plus Jakarta Sans. The mark is a signal lamp beside a track. The
-  decorative background grid is removed.
+  Grotesk and Plus Jakarta Sans. The logo is the text "DriftGuard" alone, with no
+  symbol, and the browser-tab icon is a plain "D". The decorative background grid
+  is removed.
 - Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
   The header selects have visible labels (**Env**, **Range**), and the
   **Updated** time shows from tablet width up. The sidebar groups its nine
