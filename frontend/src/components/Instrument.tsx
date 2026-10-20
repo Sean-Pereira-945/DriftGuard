@@ -7,12 +7,15 @@ export function Instrument({
   figure,
   figureTone = 'text-ink',
   note,
+  extra,
   children,
 }: {
   label: string;
   figure: string;
   figureTone?: string;
   note?: ReactNode;
+  /** A second line under the note, such as the comparison with the previous period. */
+  extra?: ReactNode;
   children?: ReactNode;
 }) {
   return (
@@ -21,6 +24,7 @@ export function Instrument({
       <p className={`tabular font-display text-[52px] leading-[1.05] font-semibold ${figureTone}`}>{figure}</p>
       <div className="mt-auto">{children}</div>
       {note && <p className="text-sm text-muted">{note}</p>}
+      {extra}
     </div>
   );
 }

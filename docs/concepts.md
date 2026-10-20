@@ -183,6 +183,41 @@ card numbers first, and cut to 2,000 characters. Data older than 30 days is
 deleted automatically. Passwords are hashed with scrypt, API keys are stored
 only as hashes, and one account can never see another account's projects.
 
+## Is it worse than usual? (baseline comparison)
+
+A floor says "below a line". It can't say "worse than normal". A project whose
+usual quality is 0.70 sits under a floor of 0.80 forever, while one that falls
+from 0.99 to 0.85 never crosses it. So the Overview also compares the window you
+are looking at with the period just before it.
+
+- **Which period.** The same length of time immediately before the window, and
+  at least 24 hours. A 15-minute window is judged against the day before it, and
+  a 7-day window against the 7 days before it. "All time" has nothing earlier, so
+  it has no comparison.
+- **Which readings.** The mean retrieval score, the mean response quality and the
+  mean risk score. Each is shown with its comparison.
+- **The test.** A two-sample z-test on the two means (Welch's form, which doesn't
+  assume equal spread). A change is called **worse** or **better** only when it
+  is both at least 3 standard errors wide and at least 0.05 in size. Anything
+  smaller is **steady**. The size rule matters: with thousands of events even a
+  0.01 shift is "certain", but it isn't worth a warning.
+- **Which way is worse.** A fall in retrieval or quality, or a rise in risk.
+- **Sample-size guard.** Each side needs at least 10 events that carry the
+  reading. With fewer, the dashboard says **Too few events to compare** and gives
+  no verdict. A quiet hour can't flip it.
+
+For example, 40 events yesterday averaging 0.93 quality and 30 events today
+averaging 0.70 is a drop of 0.23, many standard errors wide: **worse**. The same
+0.93 against 0.91 over 30 events each is noise: **steady**.
+
+What it doesn't do:
+- It is advice, not an alert. It adds a "Worse than usual" line to the status
+  plate and a line under the readings. It doesn't raise an alert or change the
+  status, which still follows open alerts.
+- It mixes all models, routes and tasks together, so a change in traffic mix can
+  look like drift. Filter by environment to narrow it.
+- It treats events as independent, which is roughly true for separate requests.
+
 ## What it can't do
 
 - It only sees what is **reported** to it. It can't look inside a closed agent

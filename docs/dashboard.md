@@ -6,7 +6,8 @@ question it answers, what each card and column means, and where the numbers
 come from.
 
 The screenshots use a sample project filled by `examples/seed_showcase.py`
-(last 7 days). The same data is what you get from the steps in
+(last 7 days, except the Overview, which uses the last 24 hours so the
+comparison with the day before shows). The same data is what you get from the steps in
 [SETUP.md](../SETUP.md).
 
 **One rule for the whole dashboard:** every number comes from the API.
@@ -96,6 +97,11 @@ adds up every task in the window, so it can be larger than the figure in the
 sentence. For drift it counts the critical and warning events and names the most
 frequent cause. One button opens the view that explains it.
 
+When a reading is meaningfully **worse than the period before the window**, an
+amber line adds it, for example "Worse than usual. Response quality is 0.08
+lower than the 24 hours before." This is advice only: it doesn't change the
+lamp or raise an alert. See [the baseline comparison](concepts.md#is-it-worse-than-usual-baseline-comparison).
+
 **Track.** The most urgent task drawn as a track. Each tool the task used is a
 block section, in the order it was first used. The blocking tool is lit red
 under a red signal, with the number of failures in a row. Other tools say "No
@@ -113,6 +119,18 @@ between the marker and the tick.
 | Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). Ticks at 0.40 (warning) and 0.75 (critical). |
 | Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked. It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
 | Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
+
+**Compared with before.** Under **Mean risk score** and **Response quality**
+(and **Mean retrieval score** in All readings) a line compares the window with
+the same length of time just before it, at least 24 hours:
+
+| Line | Meaning |
+| --- | --- |
+| **Worse: 0.08 lower than the 24 hours before** | A meaningful drop in quality or retrieval, or rise in risk. |
+| **Better: …** | A meaningful move the other way. |
+| **Steady against the 24 hours before, was 0.23** | No meaningful change. |
+| **Too few events to compare: 3 now, 40 before** | Under 10 events on a side, so no verdict. |
+| *(none)* | **All time** has no earlier period. With under 10 events it says "Only N events: too few to trust this average." |
 
 **All readings.** A collapsed list of everything the instruments leave out:
 

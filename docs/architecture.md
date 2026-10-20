@@ -302,6 +302,29 @@ The response lists every task, most urgent first. The top-level fields describe
 the most urgent task, so older SDK callers that read `status`, `blocking_tool`
 and `wasted_tokens` keep working.
 
+## Baseline comparison
+
+`GET /projects/{id}/summary` also returns a `baseline`, computed in
+`driftguard/baseline.py` (pure maths) and `service.py` (the queries).
+
+1. The window is `[now - range, now)`. The comparison period is the same length,
+   at least 24 hours, ending where the window starts: `[start - length, start)`.
+   "All time" has no earlier period.
+2. For each of `retrieval_score`, `response_quality` and `risk_score`, one SQL
+   query per period returns the count of events that have the value, their mean,
+   and the mean of their squares. The variance follows as
+   `(mean_sq - mean²) · n / (n - 1)`.
+3. With `n` of at least `MIN_SAMPLE` (10) on both sides, the z-score is
+   `(mean_current - mean_before) / sqrt(var_c/n_c + var_b/n_b)`, capped at ±99 so
+   a zero-variance case can't produce infinity.
+4. The status is `worse` or `better` only when `|z| >= 3` and `|delta| >= 0.05`,
+   judged by direction (a rise in risk is worse; a fall in the others is worse).
+   Otherwise it is `steady`. Under 10 events on either side it is `insufficient`
+   and `delta` and `z` are `null`.
+
+The constants live at the top of `baseline.py`. Nothing is stored: it is
+recomputed on each request from the events table, and it doesn't create alerts.
+
 ## Agent activity totals
 
 The Overview's *Tool failure rate* instrument and its *All readings* list (tool calls, tasks, tokens used, average tool duration, agent events) are computed in SQL over the same rows that

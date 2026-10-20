@@ -134,7 +134,7 @@ different quantity from "Wasted tokens", so it stays).
 | --- | --- |
 | `npm run lint` and `npm run build` | Pass |
 | Design detector over the views, components and charts | Zero findings |
-| Python test suite | 167 passed, 2 skipped (the server is unchanged) |
+| Python test suite | 167 passed, 2 skipped when the redesign shipped (181 after the baseline comparison below) |
 | Headless Chrome against a throwaway database filled with the showcase seeder | Overview, Agent Diagnosis, Logs, Alerts, Policy (including an edited, invalid state) and the shortcut sheet at 1440 px wide, plus the Overview, Alerts and Policy at 390 px. No page errors; one mobile run logged two 429 responses because the test script signed in repeatedly and hit the server rate limit. `g` then `p` navigated, and a link with `?env=prod&range=7d` applied its filters. |
 | Policy preview counts | Checked against the events API: 44 of 111 for both floors. The seeder degrades retrieval and quality together. |
 | Finish review by a fresh agent, two rounds | Disposition **fix** after round one. Round two scored 4 fixes resolved and 4 partial, and found one regression (a label overprinting a tick), which was fixed afterwards. |
@@ -144,6 +144,16 @@ behaviour and the **New alert** form were reviewed in code and screenshots but
 not exercised end to end in a browser. Contrast was set from token values, not
 measured with a tool. Reduced-motion and a screen reader were not tested. The
 dashboard was only seen with sample data. The frontend still has no unit tests.
+
+### Baseline comparison (same branch, added afterwards)
+
+| What | How it was verified |
+| --- | --- |
+| `driftguard/baseline.py` and a `baseline` field on the summary: each window's mean retrieval score, response quality and risk score against the period before it, with a minimum sample of 10 events on each side | 14 new tests (`tests/test_baseline.py`): the guard, direction, a tiny-but-certain shift, zero variance, a hand-checked z-score, and the summary endpoint for 24 h, 15 m, all-time and empty projects. Full suite **181 passed, 2 skipped**. Lint and format clean. |
+| Overview shows the comparison under the readings, and a "Worse than usual" line on the status plate | Checked in headless Chrome on the seeded project: Last 24 hours flagged retrieval (z −3.7) and quality (z −6.7) as worse and risk as steady (z 2.2). Last 7 days said there was nothing earlier to compare. |
+
+It is advice only. It raises no alert and doesn't change the status, and it
+treats events as independent and mixes all models and routes together.
 
 ### Open items from the review
 

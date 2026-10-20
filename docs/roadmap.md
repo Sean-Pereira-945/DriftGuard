@@ -87,9 +87,22 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
+  before the window, with a minimum sample of 10 events and a z-test, shown on the
+  Overview as advice.
 - [x] Contrast, visible filter labels and grouped navigation.
 
 ## Next
+
+### Analytics
+- [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
+  control-chart rule, instead of showing advice only.
+- [ ] Percentiles (median and 10th) beside each mean, and a breakdown by model,
+  route and environment so a drift can be pinned to one cause.
+- [ ] Weights and thresholds that can be fitted to labelled data, and exposed in
+  Policy.
+- [ ] Outcome signals for Claude Code (tests pass at the end of a turn, the user
+  didn't repeat the request) as a quality proxy.
 
 ### Dashboard
 - [ ] Finish the redesign review items: a fuller track diagram, gauges and the

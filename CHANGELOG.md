@@ -21,6 +21,17 @@ All notable changes to DriftGuard are recorded here. The format follows
     Everything else is under a collapsed **All readings**.
   - The timeline draws the prompt-token limit and both score floors as dashed
     lines, hatches the span below the floors, and offers its data as a table.
+- **Baseline comparison and sample-size guard.** `GET /projects/{id}/summary`
+  gains `baseline`: the window's mean retrieval score, response quality and risk
+  score against the same length of time just before it (at least 24 hours).
+  - A change counts only when it is at least 3 standard errors wide (a Welch
+    two-sample z-test) and at least 0.05 in size.
+  - With under 10 events on either side it says "too few events to compare"
+    instead of giving a verdict. "All time" has no comparison.
+  - The Overview shows it under Mean risk score, Response quality and Mean
+    retrieval score, and adds a "Worse than usual" line to the status plate. It is
+    advice only: it raises no alert and doesn't change the status.
+  - `driftguard/baseline.py` holds the maths, with 14 new tests.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.

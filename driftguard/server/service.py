@@ -18,6 +18,7 @@ from sqlalchemy.engine import Connection, Engine, RowMapping
 from sqlalchemy.exc import IntegrityError
 
 from driftguard.agent_analysis import FAILED_STATUSES, SUCCESS_STATUSES, analyze_agent_events
+from driftguard.baseline import METRICS, MIN_BASELINE_HOURS, MIN_SAMPLE, compare
 from driftguard.policy import DEFAULT_POLICY, evaluate_drift
 
 from . import db
@@ -629,6 +630,7 @@ class DriftGuardService:
                 .limit(5)
             ).all()
             activity = self._agent_activity(conn, project_id, environment, cutoff)
+            baseline = self._baseline(conn, project_id, environment, time_range, cutoff)
 
         open_alerts = self.list_alerts(
             project_id, severity=severity, environment=environment, time_range=time_range, resolved=False
@@ -667,9 +669,59 @@ class DriftGuardService:
             "warning_alerts": warning,
             "saved_tokens": saved,
             "agent_activity": activity,
+            "baseline": baseline,
             "last_updated": max(filter(None, (last_event, last_alert, last_activity)), default=None),
             "policy": policy,
             "filters": {"environment": environment or "all", "severity": severity or "all", "time_range": time_range},
+        }
+
+    @staticmethod
+    def _baseline(
+        conn: Connection, project_id: str, environment: str | None, time_range: str, cutoff: datetime | None
+    ) -> dict[str, Any]:
+        """Compare the window's averages with the same length of time just before it.
+
+        The baseline is at least 24 hours long, so a 15 minute window is judged
+        against the day before it. "All time" has nothing earlier to compare with.
+        """
+        window = TIME_RANGES[time_range]
+        if window is None or cutoff is None:
+            return {"available": False, "reason": "all_time", "min_sample": MIN_SAMPLE, "metrics": {}}
+        length = max(window, timedelta(hours=MIN_BASELINE_HOURS))
+        start = cutoff - length
+
+        def stats(*conditions: Any) -> dict[str, dict[str, Any]]:
+            where = [events.c.project_id == project_id, *conditions]
+            if environment:
+                where.append(events.c.environment == environment)
+            columns: list[Any] = []
+            for metric in METRICS:
+                column = events.c[metric]
+                columns += [
+                    func.count(column).label(f"{metric}_n"),
+                    func.avg(column).label(f"{metric}_mean"),
+                    func.avg(column * column).label(f"{metric}_sq"),
+                ]
+            row = conn.execute(select(*columns).where(*where)).mappings().one()
+            return {
+                metric: {
+                    "n": int(row[f"{metric}_n"] or 0),
+                    "mean": row[f"{metric}_mean"],
+                    "mean_sq": row[f"{metric}_sq"],
+                }
+                for metric in METRICS
+            }
+
+        current = stats(events.c.created_at >= cutoff)
+        before = stats(events.c.created_at >= start, events.c.created_at < cutoff)
+        return {
+            "available": True,
+            "reason": None,
+            "window_seconds": int(length.total_seconds()),
+            "start": iso(start),
+            "end": iso(cutoff),
+            "min_sample": MIN_SAMPLE,
+            "metrics": {metric: compare(metric, current[metric], before[metric]) for metric in METRICS},
         }
 
     @staticmethod

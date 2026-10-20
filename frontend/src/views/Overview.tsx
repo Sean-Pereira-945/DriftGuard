@@ -1,17 +1,20 @@
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight, TrendingDown } from 'lucide-react';
 import { api } from '../api';
 import { TimelineChart } from '../charts/TimelineChart';
 import { RiskBreakdown } from '../charts/RiskBreakdown';
 import { toPoints } from '../charts/points';
 import { AlertRow } from '../components/AlertRow';
 import { BaselineGauge } from '../components/BaselineGauge';
+import { BaselineLine } from '../components/BaselineLine';
 import { Button } from '../components/Button';
 import { Lamp, worst, type LampState } from '../components/Lamp';
+import type { ReactNode } from 'react';
 import { Instrument, InstrumentStrip } from '../components/Instrument';
 import { PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ErrorState, ResourceView } from '../components/States';
 import { TrackDiagram } from '../components/TrackDiagram';
 import { fmtCompact, fmtDateTime, fmtDuration, fmtInt, fmtPercent, fmtRelative, fmtScore, TIME_RANGE_LABELS } from '../lib/format';
+import { worseSentences } from '../lib/baseline';
 import type { ViewId } from '../lib/route';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
@@ -72,6 +75,7 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
       </Instrument>
       <Instrument
         label="Mean risk score"
+        extra={<BaselineLine metric={summary.baseline.metrics.risk_score} baseline={summary.baseline} total={summary.total_events} />}
         figure={fmtScore(risk)}
         figureTone={TONE_TEXT[riskTone]}
         note={risk === null ? 'No scored events in this window' : 'Warning from 0.40, critical from 0.75'}
@@ -90,6 +94,7 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
       </Instrument>
       <Instrument
         label="Response quality"
+        extra={<BaselineLine metric={summary.baseline.metrics.response_quality} baseline={summary.baseline} total={summary.total_events} />}
         figure={fmtScore(quality)}
         figureTone={qualityBelow ? 'text-amber' : 'text-ink'}
         note={
@@ -146,7 +151,7 @@ function AllReadings({ summary }: { summary: Summary }) {
   const a = summary.agent_activity;
   const avg = summary.averages;
   const p = summary.policy;
-  const rows: [string, string, string][] = [
+  const rows: [string, string, ReactNode][] = [
     [
       'Total events',
       fmtInt(summary.total_events),
@@ -158,7 +163,10 @@ function AllReadings({ summary }: { summary: Summary }) {
     [
       'Mean retrieval score',
       fmtScore(avg.retrieval_score),
-      summary.total_events > 0 && avg.retrieval_score == null ? 'Not reported by this source' : `Floor ${fmtScore(p.retrieval_score_floor)}`,
+      <>
+        {summary.total_events > 0 && avg.retrieval_score == null ? 'Not reported by this source' : `Floor ${fmtScore(p.retrieval_score_floor)}`}
+        <BaselineLine metric={summary.baseline.metrics.retrieval_score} baseline={summary.baseline} total={summary.total_events} />
+      </>,
     ],
   ];
   if (a && a.events > 0) {
@@ -208,6 +216,7 @@ function StatusPlate({
   const topCause = summary?.top_root_causes[0]?.root_cause;
   const tasks = diagnosis?.tasks ?? [];
   const lead = tasks[0];
+  const shifts = worseSentences(summary?.baseline);
 
   let headline: string;
   let advice: string | null = null;
@@ -247,6 +256,12 @@ function StatusPlate({
             <p className="max-w-[75ch] text-[15px] text-muted">
               {agentUrgent && <span className="font-semibold text-body">Recommendation: </span>}
               {advice}
+            </p>
+          )}
+          {shifts.length > 0 && (
+            <p className="flex items-start gap-2 pt-1 text-[15px] font-semibold text-amber">
+              <TrendingDown aria-hidden className="mt-0.5 size-4 shrink-0" />
+              <span>Worse than usual. {shifts.join(' ')}</span>
             </p>
           )}
           {agentUrgent && diagnosis && (

@@ -207,7 +207,7 @@ More detail is in
 **Run the checks** (with `.venv` active):
 
 ```bash
-pytest                                   # about 170 tests, ~25 s
+pytest                                   # about 180 tests, ~25 s
 ruff check . && ruff format --check .
 cd frontend && npm run lint && cd ..
 ```
