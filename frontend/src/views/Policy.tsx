@@ -1,4 +1,4 @@
-import { RotateCcw, Save } from 'lucide-react';
+import { History, RotateCcw, Save } from 'lucide-react';
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { api, errorMessage } from '../api';
 import { Button } from '../components/Button';
@@ -122,7 +122,17 @@ interface Preview {
   tasks: AgentTask[] | null;
 }
 
-function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview: Preview; onSaved: (policy: PolicyType) => void }) {
+function PolicyForm({
+  policy,
+  defaults,
+  preview,
+  onSaved,
+}: {
+  policy: PolicyType;
+  defaults: PolicyType | null;
+  preview: Preview;
+  onSaved: (policy: PolicyType) => void;
+}) {
   const project = useProject();
   const { refreshAll, filters } = useWorkspace();
   const toast = useToast();
@@ -155,6 +165,7 @@ function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview:
   const shownError = (key: PolicyField) => (touched[key] || submitted ? parsed[key].error : null);
   const changes = ALL_FIELDS.filter((f) => parsed[f.key].value !== null && parsed[f.key].value !== policy[f.key]);
   const dirty = ALL_FIELDS.some((f) => parseNumber(draft[f.key]) !== policy[f.key]);
+  const atDefaults = defaults === null || ALL_FIELDS.every((f) => parseNumber(draft[f.key]) === defaults[f.key]);
 
   // Coverage after the change, from the events and tasks already loaded.
   const coverage = changes
@@ -297,6 +308,20 @@ function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview:
           >
             Reset
           </Button>
+          <Button
+            onClick={() => {
+              if (!defaults) return;
+              setDraft(toDraft(defaults));
+              setTouched({});
+              setSubmitted(false);
+              setStatus({ tone: 'success', text: 'Defaults loaded. Check the changes above, then save.' });
+            }}
+            disabled={atDefaults || busy}
+            title="Fill every field with the thresholds a new project starts with. Nothing is saved until you press Save policy."
+            icon={<History aria-hidden className="size-4" />}
+          >
+            Restore defaults
+          </Button>
           <span aria-live="polite" className={`text-sm ${status?.tone === 'error' ? 'text-coral' : 'text-green'}`}>
             {status?.text ?? (dirty ? <span className="text-amber">Unsaved changes</span> : '')}
           </span>
@@ -311,6 +336,7 @@ export function Policy() {
   const { refreshKey } = useWorkspace();
   const [saved, setSaved] = useState<PolicyType | null>(null);
   const policy = useResource<PolicyType>((signal) => api.getPolicy(project.project_id, signal), `policy|${project.project_id}`, refreshKey);
+  const defaults = useResource<PolicyType>((signal) => api.getPolicyDefaults(project.project_id, signal), `policy-defaults|${project.project_id}`, 0);
   const events = useProjectQuery('policy-events-500', (id, f, signal) => api.listEvents(id, f, { limit: 500 }, signal));
   const diagnosis = useProjectQuery('policy-diagnosis', (id, f, signal) => api.agentDiagnosis(id, f, signal));
 
@@ -320,10 +346,10 @@ export function Policy() {
     <>
       <PageHeader
         title="Policy"
-        description="Thresholds that score telemetry and decide when an agent task is blocked. Each field shows what it flags in the data already loaded for the current filters. Reset discards unsaved edits."
+        description="Thresholds that score telemetry and decide when an agent task is blocked. Each field shows what it flags in the data already loaded for the current filters. Reset discards unsaved edits. Restore defaults fills the form with the thresholds a new project starts with; nothing changes until you save."
       />
       <ResourceView resource={policy} loadingLabel="Loading policy…">
-        {(data) => <PolicyForm policy={saved ?? data} preview={{ events: events.data ?? null, tasks: diagnosis.data?.tasks ?? null }} onSaved={setSaved} />}
+        {(data) => <PolicyForm policy={saved ?? data} defaults={defaults.data ?? null} preview={{ events: events.data ?? null, tasks: diagnosis.data?.tasks ?? null }} onSaved={setSaved} />}
       </ResourceView>
     </>
   );

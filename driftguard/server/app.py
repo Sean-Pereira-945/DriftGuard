@@ -42,6 +42,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from driftguard import __version__
+from driftguard.policy import DEFAULT_POLICY
 
 from .notifications import Notifier
 from .ratelimit import RateLimiter, build_rate_limiter
@@ -437,6 +438,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/projects/{project_id}/policy", tags=["policy"], dependencies=default_limit)
     def get_policy(project: ReaderDep) -> dict[str, Any]:
         return service.get_policy(project["project_id"])
+
+    @app.get("/projects/{project_id}/policy/defaults", tags=["policy"], dependencies=default_limit)
+    def get_policy_defaults(project: ReaderDep) -> dict[str, Any]:
+        """The thresholds a new project starts with, so a client can offer to restore them."""
+        return dict(DEFAULT_POLICY)
 
     @app.put("/projects/{project_id}/policy", tags=["policy"], dependencies=default_limit)
     def update_policy(body: PolicyUpdateRequest, project: OwnerDep) -> dict[str, Any]:

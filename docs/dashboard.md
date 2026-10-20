@@ -328,6 +328,13 @@ events or tasks than today. The preview counts the loaded data, up to the
 latest 500 events. It doesn't predict future traffic. The retry window has no
 preview.
 
+**Restore defaults** fills every field with the thresholds a new project
+starts with. It saves nothing: the save bar lists what would change and the
+preview shows the effect, and the policy only changes when you press **Save
+policy**. **Reset** discards your unsaved edits and goes back to the stored
+policy. **Restore defaults** is greyed out when the form already matches the
+defaults.
+
 | Setting | Default | Meaning |
 | --- | ---: | --- |
 | Prompt token limit | 3000 | Broken when `prompt_tokens` is above it. |
@@ -339,7 +346,7 @@ preview.
 
 The defaults suit chat apps. A coding agent like Claude Code sends far larger
 requests: about **30000** prompt tokens and **400000** context are sensible
-there. **Reset** discards unsaved edits.
+there. **Reset** discards unsaved edits, and **Restore defaults** loads the defaults for you to review.
 
 ## SDK Integration
 

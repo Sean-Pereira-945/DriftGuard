@@ -183,6 +183,8 @@ export const api = {
   rotateApiKey: (id: string) => request<ProjectWithKey>(`/projects/${enc(id)}/api-key`, { method: 'POST' }),
 
   getPolicy: (id: string, signal?: AbortSignal) => request<Policy>(`/projects/${enc(id)}/policy`, { signal }),
+  getPolicyDefaults: (id: string, signal?: AbortSignal) =>
+    request<Policy>(`/projects/${enc(id)}/policy/defaults`, { signal }),
   updatePolicy: (id: string, body: PolicyUpdate) =>
     request<Policy>(`/projects/${enc(id)}/policy`, { method: 'PUT', body }),
 

@@ -37,6 +37,10 @@ All notable changes to DriftGuard are recorded here. The format follows
   5,000 readings in the window. The Overview shows them under Mean risk score,
   Response quality and Mean retrieval score, with the share of events under the
   floor, so an average can't hide a split. It appears from 10 events. 6 new tests.
+- **Restore defaults on Policy.** A button fills every field with the thresholds a
+  new project starts with, for you to review and save. It is backed by a new
+  `GET /projects/{id}/policy/defaults` (session or key), so the defaults live only
+  on the server. 2 new tests.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.

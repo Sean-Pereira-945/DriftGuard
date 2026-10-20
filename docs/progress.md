@@ -258,8 +258,9 @@ walkthrough and talking points are in [demo.md](demo.md).
   cleaner if people select hundreds.
 - The Policy preview counts only the events already loaded (up to 500) for the
   current filters. It doesn't replay stored history on the server.
-- There's no "restore default policy" endpoint. The Policy view's Reset only
-  discards unsaved edits.
+- Policy has **Restore defaults** (it loads the defaults for you to review and save).
+  There is still no one-step reset on the server: restoring is a `PUT` of the
+  values from `GET /projects/{id}/policy/defaults`.
 - The open-alerts badge counts only alerts inside the current time and
   environment filter; there's no unfiltered count endpoint.
 - The dashboard has no account-deletion screen. The API supports it

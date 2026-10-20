@@ -112,6 +112,28 @@ def test_policy_defaults_and_updates(client, account, project):
         assert client.put(f"/projects/{pid}/policy", json=bad, headers=account["headers"]).status_code == 422
 
 
+def test_policy_defaults_survive_edits_and_are_readable_with_a_key_or_a_session(client, account, project):
+    pid = project["project_id"]
+    client.put(
+        f"/projects/{pid}/policy",
+        json={"prompt_token_limit": 9000, "retrieval_score_floor": 0.1},
+        headers=account["headers"],
+    )
+    for headers in (account["headers"], project["key_headers"]):
+        defaults = client.get(f"/projects/{pid}/policy/defaults", headers=headers)
+        assert defaults.status_code == 200
+        body = defaults.json()
+        assert body["prompt_token_limit"] == 3000 and body["retrieval_score_floor"] == 0.5
+        assert set(body) == set(client.get(f"/projects/{pid}/policy", headers=headers).json())
+    # Restoring is just a PUT of the defaults.
+    restored = client.put(f"/projects/{pid}/policy", json=body, headers=account["headers"]).json()
+    assert restored["prompt_token_limit"] == 3000
+
+
+def test_policy_defaults_need_a_valid_credential(client, project):
+    assert client.get(f"/projects/{project['project_id']}/policy/defaults").status_code == 401
+
+
 def test_blocked_after_failures_is_an_integer(client, account, project):
     pid = project["project_id"]
     assert client.get(f"/projects/{pid}/policy", headers=account["headers"]).json()["blocked_after_failures"] == 3

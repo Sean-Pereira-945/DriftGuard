@@ -150,6 +150,11 @@ immediately.
 }
 ```
 
+### `GET /projects/{id}/policy/defaults` *(session or key)*
+The thresholds a new project starts with, in the same shape as the policy above.
+The dashboard's **Restore defaults** button uses it, so the defaults live in one
+place. It does not change anything: restoring is a `PUT` of these values.
+
 ### `PUT /projects/{id}/policy` *(session)*
 Send any subset of the fields above. Unknown fields return `422`. Constraints:
 limits `> 0`; floors between 0 and 1; `blocked_after_failures` 1–100;

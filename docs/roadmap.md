@@ -90,6 +90,7 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults`.
 - [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
   gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
   phone layout.
