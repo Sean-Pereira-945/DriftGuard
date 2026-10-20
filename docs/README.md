@@ -24,8 +24,9 @@ New here? Read [How DriftGuard works](concepts.md), then
 - [Architecture](architecture.md): diagrams, request flows, algorithms, data model, security
 - [Development](development.md): setup, tests, CI, releases
 - [Design system](design-system.md): the dashboard's signal box look
-- [Product context](../PRODUCT.md): users, purpose, positioning and constraints
+- [Product context](PRODUCT.md): users, purpose, positioning and constraints
 - [DESIGN.md](../DESIGN.md): the design tokens and components, written from the built code
+- [Research](../research/README.md): the simulation study of floors against the baseline comparison, and the Phase 1 prototypes
 - [Roadmap](roadmap.md): status and next steps
 - [Progress report](progress.md): what's done, what changed, and what's next
 - [Changelog](../CHANGELOG.md)

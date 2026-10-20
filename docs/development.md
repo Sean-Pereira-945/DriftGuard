@@ -109,7 +109,7 @@ The dashboard's look is recorded in files you should read before changing it.
 
 | File | What it holds |
 | --- | --- |
-| [PRODUCT.md](../PRODUCT.md) | Who the product is for, what it does, and constraints future work must keep |
+| [PRODUCT.md](PRODUCT.md) | Who the product is for, what it does, and constraints future work must keep |
 | [DESIGN.md](../DESIGN.md) | Tokens and components, written from the built code |
 | [design-system.md](design-system.md) | The same system in plain language |
 | `.impeccable/design.json` | Machine-readable design system |

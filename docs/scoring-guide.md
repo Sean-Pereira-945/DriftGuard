@@ -156,6 +156,9 @@ Read the dashboard with these limits in mind.
   and wasted 13,200 tokens" is observed, not estimated. Claims about quality are
   only as good as the evaluator behind them.
 
+How often the checks catch a real problem, and how often they raise a false one, is
+measured in [the baseline study](../research/BASELINE_STUDY.md).
+
 Not built yet, and listed in the [roadmap](roadmap.md): percentiles beside each
 mean, a breakdown by model and route, alerts on a sustained drop from the
 baseline, and weights that can be fitted to labelled data.

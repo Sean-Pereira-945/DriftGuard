@@ -22,6 +22,9 @@ are for planning only; they aren't commitments.
 ### Phase 1: research foundation (June 2026)
 - [x] Synthetic feature-drift model, benchmark against baselines, experiment
   runner, and Markdown reporting. These now live in `research/`.
+- [x] **Baseline study (October 2026):** a seeded simulation of floors against the
+  baseline comparison, with detection rates, false alarms and delays
+  (`research/BASELINE_STUDY.md`).
 
 ### Phase 2: SaaS core and SDK (July 2026)
 - [x] SDK client with local drift checks and server sync
@@ -95,8 +98,14 @@ runs, not by unit tests: the frontend has none yet.
 ## Next
 
 ### Analytics
+- [ ] Reword "Steady" to "No clear change" and show the sample size beside it. The
+  [baseline study](../research/BASELINE_STUDY.md) found that at 10 events a real
+  0.09 decline reads steady about two times in three.
 - [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
-  control-chart rule, instead of showing advice only.
+  control-chart rule, instead of showing advice only. The study says to require at
+  least 3 checks in a row plus a cooldown, and to consider a sequential method
+  (CUSUM or EWMA), because a 3-sigma check repeated at every event raises false
+  alarms in about 5 percent of streams.
 - [ ] Percentiles (median and 10th) beside each mean, and a breakdown by model,
   route and environment so a drift can be pinned to one cause.
 - [ ] Weights and thresholds that can be fitted to labelled data, and exposed in

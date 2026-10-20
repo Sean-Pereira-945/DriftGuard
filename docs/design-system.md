@@ -2,7 +2,7 @@
 
 **Project:** DriftGuard
 **Purpose:** An observability console for monitoring LLM quality, detecting prompt and retrieval drift, diagnosing failed agent tools, and reducing wasted tokens.
-**Implementation:** `frontend/` (React + Tailwind). Tokens live in `frontend/src/index.css`. The product context is in [PRODUCT.md](../PRODUCT.md).
+**Implementation:** `frontend/` (React + Tailwind). Tokens live in `frontend/src/index.css`. The product context is in [PRODUCT.md](PRODUCT.md).
 
 ## 1. The idea: a signal box panel
 

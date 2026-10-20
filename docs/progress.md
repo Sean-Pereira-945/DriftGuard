@@ -146,6 +146,17 @@ not exercised end to end in a browser. Contrast was set from token values, not
 measured with a tool. Reduced-motion and a screen reader were not tested. The
 dashboard was only seen with sample data. The frontend still has no unit tests.
 
+### Research update (same branch)
+
+The research folder gained a simulation study of the product's detection rules.
+The code is `research/baseline_study.py` and the write-up is
+[`research/BASELINE_STUDY.md`](../research/BASELINE_STUDY.md). It is seeded and
+reproducible, and 11 new tests in `research/tests/test_baseline_study.py` pin its
+main findings. The research suite is now **19 passed**. Lint and format are clean
+across the repo. The Phase 1 prototypes are unchanged, and the research README now
+says plainly that their benchmark ranks raw scores and isn't a detection
+evaluation.
+
 ### Baseline comparison (same branch, added afterwards)
 
 | What | How it was verified |

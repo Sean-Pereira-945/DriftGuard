@@ -218,6 +218,12 @@ What it doesn't do:
   look like drift. Filter by environment to narrow it.
 - It treats events as independent, which is roughly true for separate requests.
 
+How well it works, and where it doesn't, is measured in
+[the baseline study](../research/BASELINE_STUDY.md). In short: the floor and the
+baseline fail in opposite places, so the dashboard keeps both. The comparison
+finds a 0.09 decline above the floor 36 percent of the time with 10 events and
+91 percent with 30. Fewer events than that and it can't tell.
+
 ## What it can't do
 
 - It only sees what is **reported** to it. It can't look inside a closed agent

@@ -136,6 +136,16 @@ All notable changes to DriftGuard are recorded here. The format follows
   Existing agent events become `tool_call` events.
 
 ### Documentation
+- **Research: the baseline study** (`research/baseline_study.py`,
+  `research/BASELINE_STUDY.md`). A seeded simulation of the product's own rules,
+  fixed floors against the baseline comparison, with known truth. It reports
+  detection rates, false alarms and delays for one decision per window, for
+  noisier data, for checking after every event, and for slow decline, with 11
+  tests. Findings: the two rules fail in opposite places so both stay; the
+  10-event guard works but "Steady" over-claims at low counts; and a 3-sigma
+  check repeated at every event raises false alarms in 5 percent of streams, which
+  needs a rule of several checks in a row before anything alerts. The research
+  README now explains what each part can and can't show.
 - **New guide: Measuring retrieval score and response quality**
   (`docs/scoring-guide.md`). How to calculate each score, what to do when a source
   has no evaluator (and why a proxy from telemetry is only a rough signal),
