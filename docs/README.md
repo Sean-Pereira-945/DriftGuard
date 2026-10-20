@@ -22,9 +22,11 @@ New here? Read [How DriftGuard works](concepts.md), then
 **Working on DriftGuard**
 - [Architecture](architecture.md): diagrams, request flows, algorithms, data model, security
 - [Development](development.md): setup, tests, CI, releases
-- [Design system](design-system.md): dashboard visual language
+- [Design system](design-system.md): the dashboard's signal box look
+- [Product context](../PRODUCT.md): users, purpose, positioning and constraints
+- [DESIGN.md](../DESIGN.md): the design tokens and components, written from the built code
 - [Roadmap](roadmap.md): status and next steps
-- [Progress report](progress.md): what's finished and what's left
+- [Progress report](progress.md): what's done, what changed, and what's next
 - [Changelog](../CHANGELOG.md)
 
 The diagram source is [images/architecture.svg](images/architecture.svg). A PNG

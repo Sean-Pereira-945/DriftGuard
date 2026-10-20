@@ -63,7 +63,7 @@ are for planning only; they aren't commitments.
 - [x] **Dashboard** rebuilt against the real API under the DriftGuard brand:
   sign-in, live alerts, agent diagnosis, and no mock data.
 
-### Activity log (unreleased, branch `feature/logs`)
+### Activity log (merged as PR #9, not yet released)
 - [x] **Logs view**: every agent activity newest first, with server-side search,
   kind and outcome filters, live updates, a detail drawer, and CSV/JSON export.
 - [x] **Event kinds** beyond tool calls: model calls, prompts, responses and
@@ -74,7 +74,32 @@ are for planning only; they aren't commitments.
 - [x] **Claude Code integration** through hooks: real sessions appear in Logs
   and Agent Diagnosis, and a command Claude keeps retrying is flagged as blocked.
 
+### Dashboard redesign (October 2026, branch `feature/signal-box-redesign`, not merged)
+These are checked by the type check, the build, the design detector and browser
+runs, not by unit tests: the frontend has none yet.
+
+- [x] **Signal box look.** A dark enamel panel where colour appears only where
+  state deviates. `PRODUCT.md` and `DESIGN.md` record the product and the design.
+- [x] **Overview rebuilt** around a status plate, a track diagram of the most
+  urgent task, and four instruments drawn against their policy floors.
+- [x] **Drift made visible** on the timeline (limit, floors, a hatched breach
+  span, a table view).
+- [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
+  the view, project and filters, bulk resolve and reopen, arrow-key tabs.
+- [x] **Policy impact preview**, inline validation and a change summary.
+- [x] Contrast, visible filter labels and grouped navigation.
+
 ## Next
+
+### Dashboard
+- [ ] Finish the redesign review items: a fuller track diagram, gauges and the
+  same look on Agent Diagnosis and the lower Overview panels, and a better phone
+  layout for the timeline legend and header.
+- [ ] Frontend unit tests, starting with shortcuts, URL filters and the Policy
+  preview.
+- [ ] Saved views, and tab and search state in the address.
+- [ ] A bulk alerts endpoint, and a server-side impact preview for Policy that
+  replays stored history instead of the loaded events.
 
 ### Integrations
 - [ ] A standalone **MCP gateway** (`driftguard-mcp-proxy`) that sits between
