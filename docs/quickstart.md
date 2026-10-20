@@ -42,7 +42,7 @@ To stop, close the window titled **DriftGuard server**. Your data stays in
 ### 1. Install once
 
 ```bash
-git clone https://github.com/Sean-Pereira-945/tokepi.git driftguard
+git clone https://github.com/Sean-Pereira-945/DriftGuard.git driftguard
 cd driftguard
 
 python -m venv .venv
@@ -106,7 +106,7 @@ Next, [send some data](#send-data).
 ## C. Docker Compose
 
 ```bash
-git clone https://github.com/Sean-Pereira-945/tokepi.git driftguard && cd driftguard
+git clone https://github.com/Sean-Pereira-945/DriftGuard.git driftguard && cd driftguard
 cp .env.example .env
 # In .env set:
 #   DRIFTGUARD_SECRET_KEY=<python -c "import secrets; print(secrets.token_urlsafe(48))">

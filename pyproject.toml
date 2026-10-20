@@ -51,10 +51,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Sean-Pereira-945/tokepi"
-Repository = "https://github.com/Sean-Pereira-945/tokepi"
-Documentation = "https://github.com/Sean-Pereira-945/tokepi/tree/main/docs"
-"Bug Tracker" = "https://github.com/Sean-Pereira-945/tokepi/issues"
+Homepage = "https://github.com/Sean-Pereira-945/DriftGuard"
+Repository = "https://github.com/Sean-Pereira-945/DriftGuard"
+Documentation = "https://github.com/Sean-Pereira-945/DriftGuard/tree/main/docs"
+"Bug Tracker" = "https://github.com/Sean-Pereira-945/DriftGuard/issues"
 
 [project.scripts]
 driftguard-server = "driftguard.server.cli:main"

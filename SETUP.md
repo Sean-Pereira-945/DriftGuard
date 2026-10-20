@@ -21,7 +21,7 @@ project, and the [dashboard guide](docs/dashboard.md) explains each screen.
 Restart your terminal after installing, so the new commands are found.
 
 You also need read access to the GitHub repo
-(https://github.com/Sean-Pereira-945/tokepi). If `git clone` asks you to log
+(https://github.com/Sean-Pereira-945/DriftGuard). If `git clone` asks you to log
 in or says *not found*, ask Sean to add you as a collaborator.
 
 ---
@@ -29,7 +29,7 @@ in or says *not found*, ask Sean to add you as a collaborator.
 ## 2. Get the code
 
 ```bash
-git clone https://github.com/Sean-Pereira-945/tokepi.git DriftGuard
+git clone https://github.com/Sean-Pereira-945/DriftGuard.git DriftGuard
 cd DriftGuard
 ```
 

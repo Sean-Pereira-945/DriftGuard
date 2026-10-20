@@ -12,7 +12,7 @@ long-term plan, see [roadmap.md](roadmap.md).
 | 0.4.0 foundation rebuild | `refactor/foundation` | Merged into `main` (PR #8) |
 | Logs view, event kinds, content storage, Claude Code hook, showcase seeder, docs rewrite | `feature/logs` | Merged into `main` (PR #9) |
 | Team setup guide (`SETUP.md`) | `docs/team-setup` | Pushed. One commit ahead of `main`, no PR yet. |
-| Dashboard redesign: signal box look, shortcuts, shared links, policy preview | `feature/signal-box-redesign` | One commit on top of `docs/team-setup`. Not pushed, no PR yet. |
+| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub, no PR yet. |
 
 The sections below keep the 0.4.0 record, then cover each later piece of work.
 The newest, the dashboard redesign, has its own section near the end.
@@ -183,14 +183,14 @@ treats events as independent and mixes all models and routes together.
 ### Before merging (owner decisions or quick tasks)
 1. **Merge the pending branches.** `docs/team-setup` and
    `feature/signal-box-redesign` have no PR yet, and the redesign sits on top of
-   the setup guide. Push the redesign branch, open one PR (or two, setup first),
-   and review the screenshots in `docs/images/`. The 0.4.0 and Logs PRs are
+   the setup guide. Both are on GitHub. Open one PR from the redesign branch, or
+   two with the setup guide first, and review the screenshots in `docs/images/`. The 0.4.0 and Logs PRs are
    already merged. Local `main` is behind `origin/main`, so pull before branching.
    I haven't checked the results of the GitHub Actions runs on those merges, so
    look at the Actions tab.
-2. **Repo name.** The GitHub repo is still called `tokepi`, and `pyproject.toml`
-   URLs point there. Rename the repo to `DriftGuard` if you want the name to
-   match, then update the URLs.
+2. **Repo name.** Done: the GitHub repo is now `DriftGuard`. The clone commands in
+   `SETUP.md` and `docs/quickstart.md`, and the URLs in `pyproject.toml`, use the
+   new name. GitHub redirects the old `tokepi` address.
 3. **LICENSE.** An MIT `LICENSE` file was added to match what `pyproject.toml`
    already declared. Confirm that's the licence you want.
 4. **PyPI trusted publishing.** Set up the `pypi` environment in GitHub before
