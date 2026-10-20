@@ -1,34 +1,43 @@
 @import "tailwindcss";
 
+/*
+ * Signal Box Panel: a dark green-black enamel panel with ivory engraved lettering.
+ * Colour is quarantined. Healthy views are ink on enamel; lamp colours (red, amber,
+ * green) appear only where state deviates, always with an icon and a word.
+ */
 @theme {
-  --color-canvas: #000000;
-  --color-sidebar: #020202;
-  --color-panel: #050505;
-  --color-raised: #0a0a0a;
-  --color-input: #030303;
-  --color-hairline: #171717;
-  --color-hairline-strong: #262626;
+  --color-canvas: #0c1412;
+  --color-sidebar: #09100e;
+  --color-panel: #111c19;
+  --color-raised: #182621;
+  --color-input: #0a110f;
+  --color-hairline: #243630;
+  --color-hairline-strong: #355046;
+  --color-hairline-hover: #4a6a5d;
 
-  --color-ink: #ffffff;
-  --color-body: #f4f4f5;
-  --color-muted: #a1a1aa;
+  --color-ink: #f3eedd;
+  --color-body: #dad5c1;
+  --color-muted: #a3afa6;
+  --color-faint: #839189;
 
-  --color-cyan: #28c7d9;
-  --color-green: #42d392;
-  --color-amber: #f2b84b;
-  --color-coral: #f06464;
-  --color-violet: #a78bfa;
+  /* The route: lit track, current selection, primary action. */
+  --color-route: #ece4c6;
+  --color-steel: #8db9d1;
+  --color-green: #3fcb84;
+  --color-amber: #f4b63f;
+  --color-coral: #ff6350;
+  --color-violet: #b7a5e9;
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --animate-rise: rise 220ms ease-out both;
-  --animate-fade: fade 180ms ease-out both;
-  --animate-slide-in: slide-in 200ms ease-out both;
+  --animate-rise: rise 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 160ms ease-out both;
+  --animate-slide-in: slide-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @keyframes rise {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: none; }
   }
   @keyframes fade {
@@ -51,65 +60,100 @@
     background-color: var(--color-canvas);
     color: var(--color-body);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3 {
     font-family: var(--font-display);
     color: var(--color-ink);
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
   }
   ::selection {
-    background: rgb(40 199 217 / 0.3);
+    background: rgb(236 228 198 / 0.28);
     color: #fff;
   }
   :focus-visible {
-    outline: 2px solid var(--color-cyan);
+    outline: 2px solid var(--color-route);
     outline-offset: 2px;
   }
   input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline-offset: 0;
+  }
+  input, textarea {
+    caret-color: var(--color-route);
   }
   button:not(:disabled), [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #262626 transparent;
+    scrollbar-color: var(--color-hairline-strong) transparent;
   }
   input[type="number"] {
     font-family: var(--font-mono);
   }
+  input[type="checkbox"] {
+    accent-color: var(--color-route);
+  }
 }
 
-/* Faint 32px technical grid behind the workspace. */
-.workspace-grid {
-  background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* An engraved plate label: condensed, uppercase, slightly open. */
+.plate-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* A thin sleeper-tie rule used between instrument cells and on the track diagram. */
+.sleepers {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-hairline-strong) 0 1px,
+    transparent 1px 10px
+  );
+}
+
+/* Region past the floor on a gauge: diagonal hatch, so it never depends on colour alone. */
+.hatch-bad {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(255 99 80 / 0.38) 0 2px,
+    transparent 2px 6px
+  );
 }
 
 .select-chevron {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a1a1aa' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a3afa6' stroke-width='1.5'><path d='m4 6 4 4 4-4'/></svg>");
   background-size: 16px;
   background-position: right 10px center;
   background-repeat: no-repeat;
 }
 select option {
-  background: #0a0a0a;
-  color: #f4f4f5;
+  background: #182621;
+  color: #f3eedd;
 }
 
 .tabular {
   font-variant-numeric: tabular-nums;
 }
 
+/* A lamp that turns critical glows once as it lights. */
+@keyframes lamp-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(255 99 80 / 0); }
+  50% { box-shadow: 0 0 14px 2px rgb(255 99 80 / 0.55); }
+}
+.lamp-critical {
+  animation: lamp-glow 1.6s ease-out 1;
+}
+
 @keyframes status-pulse {
-  0% { box-shadow: 0 0 0 0 rgb(66 211 146 / 0.5); }
-  70% { box-shadow: 0 0 0 6px rgb(66 211 146 / 0); }
-  100% { box-shadow: 0 0 0 0 rgb(66 211 146 / 0); }
+  0% { box-shadow: 0 0 0 0 rgb(63 203 132 / 0.5); }
+  70% { box-shadow: 0 0 0 6px rgb(63 203 132 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(63 203 132 / 0); }
 }
 .pulse-live {
   animation: status-pulse 2s ease-out infinite;

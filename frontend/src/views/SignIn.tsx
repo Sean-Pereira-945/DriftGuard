@@ -86,7 +86,7 @@ export function SignIn({ notice }: { notice?: string }) {
           </div>
         </div>
 
-        <div className="rounded-lg border border-hairline-strong bg-panel p-5 sm:p-6">
+        <div className="rounded-md border border-hairline-strong bg-panel p-5 sm:p-6">
           {config === null && !configError && <LoadingState label="Connecting to server…" className="py-8" />}
           {configError && config === null && (
             <ErrorState message={configError} onRetry={() => setConfigTick((n) => n + 1)} className="py-6" />
@@ -151,7 +151,7 @@ export function SignIn({ notice }: { notice?: string }) {
             {activeMode === 'login' ? 'No account yet? ' : 'Already have an account? '}
             <button
               type="button"
-              className="font-semibold text-cyan hover:underline"
+              className="font-semibold text-route hover:underline"
               onClick={() => switchMode(activeMode === 'login' ? 'register' : 'login')}
             >
               {activeMode === 'login' ? 'Create one' : 'Sign in'}
@@ -161,7 +161,7 @@ export function SignIn({ notice }: { notice?: string }) {
         {config && !canRegister && (
           <p className="mt-4 text-center text-[13px] text-muted">Account creation is disabled on this server.</p>
         )}
-        {config && <p className="mt-6 text-center font-mono text-[11px] text-[#52525b]">Server v{config.version}</p>}
+        {config && <p className="mt-6 text-center font-mono text-xs text-faint">Server v{config.version}</p>}
       </div>
     </main>
   );

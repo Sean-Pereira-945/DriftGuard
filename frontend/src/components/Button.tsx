@@ -5,8 +5,8 @@ type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type Size = 'md' | 'sm';
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-cyan text-black border-cyan hover:bg-[#4dd6e5] hover:border-[#4dd6e5] font-semibold',
-  secondary: 'bg-panel text-body border-hairline-strong hover:border-[#3f3f46] hover:bg-raised',
+  primary: 'bg-route text-canvas border-route hover:bg-white hover:border-white font-semibold',
+  secondary: 'bg-panel text-body border-hairline-strong hover:border-hairline-hover hover:bg-raised',
   danger: 'bg-coral/10 text-coral border-coral/50 hover:bg-coral/20 hover:border-coral',
   ghost: 'bg-transparent text-muted border-transparent hover:text-ink hover:bg-white/5',
 };
@@ -39,7 +39,7 @@ export function Button({
       type={type}
       disabled={disabled || busy}
       aria-busy={busy || undefined}
-      className={`inline-flex shrink-0 items-center justify-center rounded-md border font-medium whitespace-nowrap transition-colors duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-sm border font-medium whitespace-nowrap transition-colors duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
       {...rest}
     >
       {busy ? <Loader2 aria-hidden className="size-4 animate-spin" /> : icon}
@@ -60,7 +60,7 @@ export function IconButton({ label, children, className = '', type = 'button', .
       type={type}
       aria-label={label}
       title={label}
-      className={`grid size-10 shrink-0 place-items-center rounded-md border border-hairline-strong bg-panel text-muted transition-colors duration-150 hover:border-[#3f3f46] hover:text-ink disabled:opacity-50 ${className}`}
+      className={`grid size-10 shrink-0 place-items-center rounded-sm border border-hairline-strong bg-panel text-muted transition-colors duration-150 hover:border-hairline-hover hover:text-ink disabled:opacity-50 ${className}`}
       {...rest}
     >
       {children}

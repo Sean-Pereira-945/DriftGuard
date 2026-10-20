@@ -56,7 +56,7 @@ export function SeverityChart({ bySeverity }: { bySeverity: Summary['events_by_s
             {rows.map((row) => (
               <Cell key={row.key} fill={row.color} />
             ))}
-            <LabelList dataKey="count" position="top" fill="#f4f4f5" fontSize={12} fontFamily="JetBrains Mono, monospace" />
+            <LabelList dataKey="count" position="top" fill="#f3eedd" fontSize={12} fontFamily="JetBrains Mono, monospace" />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

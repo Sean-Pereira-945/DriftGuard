@@ -40,7 +40,7 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`relative flex max-h-[92vh] w-full animate-rise flex-col rounded-t-lg border border-hairline-strong bg-panel shadow-2xl shadow-black sm:rounded-lg ${size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-lg'}`}
+        className={`relative flex max-h-[92vh] w-full animate-rise flex-col rounded-t-lg border border-hairline-strong bg-panel shadow-2xl shadow-black sm:rounded-md ${size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-lg'}`}
       >
         <header className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4">
           <div className="min-w-0">

@@ -6,7 +6,7 @@ import { Button } from './Button';
 export function LoadingState({ label = 'Loading…', className = 'py-12' }: { label?: string; className?: string }) {
   return (
     <div role="status" className={`flex items-center justify-center gap-2 text-sm text-muted ${className}`}>
-      <Loader2 aria-hidden className="size-4 animate-spin text-cyan" />
+      <Loader2 aria-hidden className="size-4 animate-spin text-route" />
       {label}
     </div>
   );
@@ -58,7 +58,7 @@ export function StaleBanner({ message, onRetry }: { message: string; onRetry: ()
     <div role="alert" className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-coral/40 bg-coral/5 px-3 py-2 text-[13px]">
       <AlertOctagon aria-hidden className="size-4 text-coral" />
       <span className="text-body">Refresh failed: {message}</span>
-      <button type="button" onClick={onRetry} className="ml-auto font-semibold text-cyan hover:underline">
+      <button type="button" onClick={onRetry} className="ml-auto font-semibold text-route hover:underline">
         Retry
       </button>
     </div>

@@ -7,6 +7,32 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Signal box redesign of the dashboard.** The Overview now leads with one
+  status plate, then a track diagram of the most urgent task, then four
+  instruments.
+  - The status plate shows one lamp and one word (`Critical`, `Warning`,
+    `Stable` or `No data`), the diagnosis sentence, the recommendation and a
+    single action.
+  - The track draws each tool a task used as a block section, with the
+    blocking tool held at a red signal. It also appears on Agent Diagnosis and
+    in the task drawer.
+  - Open alerts, mean risk score, response quality and tool failure rate sit in
+    one strip. Gauges draw each reading against its policy floor or limit.
+    Everything else is under a collapsed **All readings**.
+  - The timeline draws the prompt-token limit and both score floors as dashed
+    lines, hatches the span below the floors, and offers its data as a table.
+- **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
+  between views, `/` focuses the search box, `r` refreshes and `?` lists them.
+  They are off while typing or with a dialog open.
+- **Shareable links.** The address carries the view, the project and both
+  filters (`#/alerts?env=prod&range=7d&project=showcase`). Opening a link
+  applies them. **Reset filters** appears when a filter is not at its default.
+- **Bulk resolve and reopen** on Alerts, with select-all. The Alerts tabs now
+  respond to arrow keys, Home and End, and the new-alert form opens from a
+  **New alert** button.
+- **Policy impact preview.** Each threshold says how many of the loaded events
+  or tasks it flags, before and after your edit. Fields validate as you leave
+  them. The save bar lists every change and warns when coverage drops.
 - **Logs view** in the dashboard: the full history of agent activity, newest
   first.
   - Server-side search, plus kind and outcome filters.
@@ -65,6 +91,21 @@ All notable changes to DriftGuard are recorded here. The format follows
     Claude Code, and logs problems to `.claude/driftguard-hook.log`.
 
 ### Changed
+- **New look.** The dashboard moves from a pure-black graphite console to a dark
+  green-black enamel panel with ivory type. Colour now appears only where
+  something deviates (red, amber, green lamps, each with an icon and a word).
+  Fonts are Barlow, Barlow Condensed and JetBrains Mono, replacing Space
+  Grotesk and Plus Jakarta Sans. The mark is a signal lamp beside a track. The
+  decorative background grid is removed.
+- Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
+  The header selects have visible labels (**Env**, **Range**), and the
+  **Updated** time shows from tablet width up. The sidebar groups its nine
+  views into Monitor and Configure.
+- The Overview moves Total events, Tokens at stake, retrieval score and the
+  agent counts into a collapsed **All readings** list. The "Active Alerts"
+  panel is now **Open Alerts**, and the Alerts panel title follows the tab.
+- Agent Diagnosis shows three headline instruments, with the other counts
+  under **All counts**.
 - The dashboard's Refresh button also reloads the project list, and the list
   reloads when you return to the tab. A project created through the API or a
   script no longer needs a page reload to appear.
@@ -73,6 +114,12 @@ All notable changes to DriftGuard are recorded here. The format follows
   Existing agent events become `tool_call` events.
 
 ### Documentation
+- **`PRODUCT.md`** records the product's users, purpose, positioning and
+  constraints for design work.
+- **Design system** (`docs/design-system.md`) rewritten for the signal box
+  look. The **dashboard guide** covers the new Overview, shortcuts, shared
+  links, bulk actions and the policy preview, and its screenshots are
+  retaken.
 - **`SETUP.md`**: a step-by-step guide for teammates, from a fresh laptop to
   a running DriftGuard with sample data, on Windows, macOS and Linux.
 - **Getting started** (`docs/quickstart.md`) rewritten: three ways to run it

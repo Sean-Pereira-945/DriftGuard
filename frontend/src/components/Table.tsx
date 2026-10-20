@@ -4,7 +4,7 @@ import type { KeyboardEvent, ReactNode } from 'react';
 export function TableScroll({ children, label }: { children: ReactNode; label: string }) {
   return (
     <div className="overflow-x-auto" role="region" aria-label={label} tabIndex={0}>
-      <table className="w-full min-w-[860px] border-collapse text-left text-[13px]">{children}</table>
+      <table className="w-full min-w-[860px] border-collapse text-left text-sm">{children}</table>
     </div>
   );
 }
@@ -13,7 +13,7 @@ export function Th({ children, align = 'left', className = '' }: { children?: Re
   return (
     <th
       scope="col"
-      className={`sticky top-0 h-10 border-b border-hairline bg-panel px-4 text-[11px] font-semibold tracking-[0.08em] whitespace-nowrap text-muted uppercase ${align === 'right' ? 'text-right' : ''} ${className}`}
+      className={`sticky top-0 h-10 border-b border-hairline bg-panel px-4 plate-label whitespace-nowrap text-muted ${align === 'right' ? 'text-right' : ''} ${className}`}
     >
       {children}
     </th>

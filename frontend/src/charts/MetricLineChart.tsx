@@ -50,7 +50,7 @@ export function MetricLineChart({ points, dataKey, label, color, format, thresho
               <ReferenceLine y={threshold.value} stroke={COLORS.amber} strokeDasharray="4 4" strokeOpacity={0.7} ifOverflow="extendDomain" />
             )}
             <Tooltip
-              cursor={{ stroke: '#3f3f46', strokeWidth: 1 }}
+              cursor={{ stroke: '#4a6a5d', strokeWidth: 1 }}
               isAnimationActive={false}
               content={({ active, payload }) => {
                 const point = active ? (payload?.[0]?.payload as EventPoint | undefined) : undefined;
@@ -74,7 +74,7 @@ export function MetricLineChart({ points, dataKey, label, color, format, thresho
               stroke={color}
               strokeWidth={2}
               dot={points.length <= 40 ? { r: 2.5, strokeWidth: 0, fill: color } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#050505' }}
+              activeDot={{ r: 4, strokeWidth: 2, stroke: '#111c19' }}
               isAnimationActive={false}
             />
           </LineChart>

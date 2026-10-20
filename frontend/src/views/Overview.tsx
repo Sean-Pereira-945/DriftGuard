@@ -1,14 +1,16 @@
-import { ArrowRight, Bot } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { api } from '../api';
 import { TimelineChart } from '../charts/TimelineChart';
 import { RiskBreakdown } from '../charts/RiskBreakdown';
 import { toPoints } from '../charts/points';
 import { AlertRow } from '../components/AlertRow';
-import { SeverityBadge } from '../components/Badges';
+import { BaselineGauge } from '../components/BaselineGauge';
 import { Button } from '../components/Button';
-import { MetricCard } from '../components/MetricCard';
+import { Lamp, worst, type LampState } from '../components/Lamp';
+import { Instrument, InstrumentStrip } from '../components/Instrument';
 import { PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ErrorState, ResourceView } from '../components/States';
+import { TrackDiagram } from '../components/TrackDiagram';
 import { fmtCompact, fmtDateTime, fmtDuration, fmtInt, fmtPercent, fmtRelative, fmtScore, TIME_RANGE_LABELS } from '../lib/format';
 import type { ViewId } from '../lib/route';
 import { useProjectQuery } from '../state/queries';
@@ -19,166 +21,278 @@ import type { AgentDiagnosis, Summary } from '../types';
 const WARNING_RISK = 0.4;
 const CRITICAL_RISK = 0.75;
 
-function MetricRow({ summary, loading }: { summary: Summary | undefined; loading: boolean }) {
-  const s = summary;
-  const avg = s?.averages;
-  const floor = s?.policy;
-  const bySev = s?.events_by_severity;
-  const below = (value: number | null | undefined, limit: number | undefined) =>
-    value !== null && value !== undefined && limit !== undefined && value < limit;
-  // Telemetry exists but this metric was never sent (e.g. Claude Code has no retrieval step).
-  const notReported = (value: number | null | undefined) =>
-    s && s.total_events > 0 && (value === null || value === undefined) ? 'Not reported by this source' : null;
+const STATE_WORD: Record<LampState, string> = { critical: 'Critical', warning: 'Warning', stable: 'Stable', idle: 'No data' };
 
-  return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
-      <MetricCard
-        label="Total events"
-        loading={loading}
-        value={fmtInt(s?.total_events)}
-        detail={
-          s && s.total_events > 0
-            ? `${fmtInt(bySev?.critical ?? 0)} critical · ${fmtInt(bySev?.warning ?? 0)} warning`
-            : 'No telemetry in this window'
-        }
-      />
-      <MetricCard
-        label="Open alerts"
-        loading={loading}
-        value={fmtInt(s?.open_alerts)}
-        emphasis={s && s.critical_alerts > 0 ? 'critical' : s && s.warning_alerts > 0 ? 'warning' : 'default'}
-        detail={s ? `${fmtInt(s.critical_alerts)} critical · ${fmtInt(s.warning_alerts)} warning` : undefined}
-      />
-      <MetricCard
-        label="Tokens at stake"
-        loading={loading}
-        value={fmtInt(s?.saved_tokens)}
-        unit="tokens"
-        detail="Across open alerts"
-      />
-      <MetricCard
-        label="Mean retrieval score"
-        loading={loading}
-        value={fmtScore(avg?.retrieval_score)}
-        emphasis={below(avg?.retrieval_score, floor?.retrieval_score_floor) ? 'warning' : 'default'}
-        detail={notReported(avg?.retrieval_score) ?? (floor ? `Floor ${fmtScore(floor.retrieval_score_floor)}` : undefined)}
-      />
-      <MetricCard
-        label="Mean response quality"
-        loading={loading}
-        value={fmtScore(avg?.response_quality)}
-        emphasis={below(avg?.response_quality, floor?.response_quality_floor) ? 'warning' : 'default'}
-        detail={notReported(avg?.response_quality) ?? (floor ? `Floor ${fmtScore(floor.response_quality_floor)}` : undefined)}
-      />
-      <MetricCard
-        label="Mean risk score"
-        loading={loading}
-        value={fmtScore(avg?.risk_score)}
-        emphasis={
-          avg?.risk_score == null
-            ? 'default'
-            : avg.risk_score >= CRITICAL_RISK
-              ? 'critical'
-              : avg.risk_score >= WARNING_RISK
-                ? 'warning'
-                : 'default'
-        }
-        detail="Warning ≥ 0.40 · critical ≥ 0.75"
-      />
-    </div>
-  );
-}
+const below = (value: number | null | undefined, limit: number | undefined) =>
+  value !== null && value !== undefined && limit !== undefined && value < limit;
 
-/** Agent activity from the same events the Logs view lists. Shown once a project has any. */
-function AgentActivityRow({ summary }: { summary: Summary }) {
-  const a = summary.agent_activity;
-  if (!a || a.events === 0) return null;
-  const rate = a.failure_rate;
-  return (
-    <section aria-labelledby="overview-activity" className="space-y-3">
-      <h2 id="overview-activity" className="text-sm font-semibold text-body">
-        Agent activity
-      </h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
-        <MetricCard label="Tool calls" value={fmtInt(a.tool_calls)} detail={`${fmtInt(a.failed_tool_calls)} failed`} />
-        <MetricCard
-          label="Tool failure rate"
-          value={rate === null ? '—' : fmtPercent(rate, 1)}
-          emphasis={rate !== null && rate >= 0.25 ? 'critical' : rate !== null && rate >= 0.1 ? 'warning' : 'default'}
-          detail="Failed ÷ all tool calls"
-        />
-        <MetricCard label="Tasks" value={fmtInt(a.tasks)} detail={`${fmtInt(a.turns)} completed`} />
-        <MetricCard
-          label="Tokens used"
-          value={fmtCompact(a.total_tokens)}
-          unit="tokens"
-          detail="New input + output, by agent tasks"
-        />
-        <MetricCard label="Avg tool duration" value={fmtDuration(a.avg_tool_duration_ms)} detail="Call to result" />
-        <MetricCard
-          label="Agent events"
-          value={fmtInt(a.events)}
-          detail={a.last_activity ? `Last ${fmtRelative(a.last_activity)}` : 'In this window'}
-        />
-      </div>
-    </section>
-  );
-}
+const TONE_TEXT = { ok: 'text-ink', warning: 'text-amber', critical: 'text-coral' } as const;
 
-function DiagnosisCallout({ diagnosis, onOpen }: { diagnosis: AgentDiagnosis; onOpen: () => void }) {
-  const urgent = diagnosis.status !== 'stable';
-  const border = diagnosis.status === 'critical' ? 'border-coral/50' : diagnosis.status === 'warning' ? 'border-amber/40' : 'border-hairline';
-  if (diagnosis.task_count === 0) {
+function OverviewInstruments({ summary, loading }: { summary: Summary | undefined; loading: boolean }) {
+  if (loading || !summary) {
     return (
-      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-hairline bg-panel px-4 py-3 text-[13px] text-muted">
-        <Bot aria-hidden className="size-4" />
-        No agent events in this window. Agent Diagnosis activates once your agent sends tool attempts.
-        <button type="button" onClick={onOpen} className="font-semibold text-cyan hover:underline">
-          How to send agent events
-        </button>
-      </div>
+      <Panel bodyClassName="p-5">
+        <div className="h-28 animate-pulse rounded-sm bg-white/5" aria-label="Loading readings" />
+      </Panel>
+    );
+  }
+
+  const avg = summary.averages;
+  const policy = summary.policy;
+  const activity = summary.agent_activity;
+  const hasTelemetry = summary.total_events > 0;
+
+  const risk = avg.risk_score ?? null;
+  const riskTone = risk === null ? 'ok' : risk >= CRITICAL_RISK ? 'critical' : risk >= WARNING_RISK ? 'warning' : 'ok';
+
+  const quality = avg.response_quality ?? null;
+  const qualityFloor = policy.response_quality_floor;
+  const qualityBelow = below(quality, qualityFloor);
+
+  const rate = activity && activity.events > 0 ? activity.failure_rate : null;
+  const rateTone = rate === null ? 'ok' : rate >= 0.25 ? 'critical' : rate >= 0.1 ? 'warning' : 'ok';
+
+  return (
+    <InstrumentStrip label="Instruments">
+      <Instrument
+        label="Open alerts"
+        figure={fmtInt(summary.open_alerts)}
+        figureTone={summary.critical_alerts > 0 ? 'text-coral' : summary.warning_alerts > 0 ? 'text-amber' : 'text-ink'}
+      >
+        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-body">
+          <span className="inline-flex items-center gap-1.5">
+            <Lamp state="critical" size="sm" />
+            {fmtInt(summary.critical_alerts)} critical
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Lamp state="warning" size="sm" />
+            {fmtInt(summary.warning_alerts)} warning
+          </span>
+        </p>
+      </Instrument>
+      <Instrument
+        label="Mean risk score"
+        figure={fmtScore(risk)}
+        figureTone={TONE_TEXT[riskTone]}
+        note={risk === null ? 'No scored events in this window' : 'Warning from 0.40, critical from 0.75'}
+      >
+        <BaselineGauge
+          summary={risk === null ? 'Mean risk score: no reading.' : `Mean risk score ${fmtScore(risk)}. Warning from 0.40, critical from 0.75.`}
+          value={risk}
+          max={1}
+          marks={[
+            { at: WARNING_RISK, label: '0.40' },
+            { at: CRITICAL_RISK, label: '0.75' },
+          ]}
+          bad={{ from: CRITICAL_RISK, to: 1 }}
+          tone={riskTone}
+        />
+      </Instrument>
+      <Instrument
+        label="Response quality"
+        figure={fmtScore(quality)}
+        figureTone={qualityBelow ? 'text-amber' : 'text-ink'}
+        note={
+          hasTelemetry && quality === null
+            ? 'Not reported by this source'
+            : quality !== null
+              ? qualityBelow
+                ? `${fmtScore(qualityFloor - quality)} below the floor`
+                : `${fmtScore(quality - qualityFloor)} above the floor`
+              : 'No scored events in this window'
+        }
+      >
+        <BaselineGauge
+          summary={
+            quality === null
+              ? 'Mean response quality: no reading.'
+              : `Mean response quality ${fmtScore(quality)} against a floor of ${fmtScore(qualityFloor)}.`
+          }
+          value={quality}
+          max={1}
+          marks={[{ at: qualityFloor, label: `floor ${fmtScore(qualityFloor)}` }]}
+          bad={{ from: 0, to: qualityFloor }}
+          tone={qualityBelow ? 'warning' : 'ok'}
+        />
+      </Instrument>
+      <Instrument
+        label="Tool failure rate"
+        figure={rate === null ? '—' : fmtPercent(rate, 1)}
+        figureTone={TONE_TEXT[rateTone]}
+        note={rate === null ? 'No agent activity in this window' : `${fmtInt(activity.failed_tool_calls)} of ${fmtInt(activity.tool_calls)} tool calls failed`}
+      >
+        <BaselineGauge
+          summary={
+            rate === null
+              ? 'Tool failure rate: no reading.'
+              : `Tool failure rate ${fmtPercent(rate, 1)}. Warning from 10 percent, critical from 25 percent.`
+          }
+          value={rate}
+          max={0.5}
+          marks={[
+            { at: 0.1, label: '10%' },
+            { at: 0.25, label: '25%' },
+          ]}
+          bad={{ from: 0.25, to: 0.5 }}
+          tone={rateTone}
+        />
+      </Instrument>
+    </InstrumentStrip>
+  );
+}
+
+/** Everything the strip leaves out, one click away. */
+function AllReadings({ summary }: { summary: Summary }) {
+  const a = summary.agent_activity;
+  const avg = summary.averages;
+  const p = summary.policy;
+  const rows: [string, string, string][] = [
+    [
+      'Total events',
+      fmtInt(summary.total_events),
+      summary.total_events > 0
+        ? `${fmtInt(summary.events_by_severity.critical ?? 0)} critical · ${fmtInt(summary.events_by_severity.warning ?? 0)} warning`
+        : 'No telemetry in this window',
+    ],
+    ['Tokens at stake', fmtInt(summary.saved_tokens), 'Across open alerts'],
+    [
+      'Mean retrieval score',
+      fmtScore(avg.retrieval_score),
+      summary.total_events > 0 && avg.retrieval_score == null ? 'Not reported by this source' : `Floor ${fmtScore(p.retrieval_score_floor)}`,
+    ],
+  ];
+  if (a && a.events > 0) {
+    rows.push(
+      ['Tool calls', fmtInt(a.tool_calls), `${fmtInt(a.failed_tool_calls)} failed`],
+      ['Tasks', fmtInt(a.tasks), `${fmtInt(a.turns)} completed`],
+      ['Tokens used', fmtCompact(a.total_tokens), 'New input + output, by agent tasks'],
+      ['Avg tool duration', fmtDuration(a.avg_tool_duration_ms), 'Call to result'],
+      ['Agent events', fmtInt(a.events), a.last_activity ? `Last ${fmtRelative(a.last_activity)}` : 'In this window'],
     );
   }
   return (
-    <section aria-labelledby="overview-diagnosis" className={`animate-rise rounded-lg border bg-panel p-4 sm:p-5 ${border}`}>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 id="overview-diagnosis" className="text-base font-semibold">
-              Agent Task Diagnosis
-            </h2>
-            <SeverityBadge severity={diagnosis.status} />
+    <details className="group rounded-md border border-hairline bg-panel">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 px-4 text-sm font-semibold text-body select-none hover:text-ink sm:px-5 [&::-webkit-details-marker]:hidden">
+        <ChevronRight aria-hidden className="size-4 transition-transform duration-150 group-open:rotate-90" />
+        All readings
+        <span className="font-normal text-muted">({rows.length})</span>
+      </summary>
+      <dl className="grid gap-px border-t border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
+        {rows.map(([label, value, note]) => (
+          <div key={label} className="bg-panel p-4">
+            <dt className="plate-label text-muted">{label}</dt>
+            <dd className="tabular mt-1 font-display text-[30px] leading-none font-semibold text-ink">{value}</dd>
+            <dd className="mt-1 text-sm text-muted">{note}</dd>
           </div>
-          <p className={`text-[15px] leading-snug ${urgent ? 'text-ink' : 'text-body'}`}>{diagnosis.diagnosis}</p>
-          <dl className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted">
-            <div className="flex gap-1.5">
-              <dt>Blocking tool</dt>
-              <dd className="font-mono text-body">{diagnosis.blocking_tool ?? '—'}</dd>
-            </div>
-            <div className="flex gap-1.5">
-              <dt>Wasted tokens (all tasks)</dt>
-              <dd className={`tabular font-mono ${diagnosis.wasted_tokens > 0 ? 'text-coral' : 'text-body'}`}>
-                {fmtInt(diagnosis.wasted_tokens)}
-              </dd>
-            </div>
-            <div className="flex gap-1.5">
-              <dt>Blocked / failing tasks</dt>
-              <dd className="tabular font-mono text-body">
-                {diagnosis.blocked_tasks} / {diagnosis.failing_tasks}
-              </dd>
-            </div>
-          </dl>
-          {urgent && (
-            <p className="text-[13px] text-muted">
-              <span className="font-semibold text-body">Recommendation: </span>
-              {diagnosis.recommendation}
+        ))}
+      </dl>
+    </details>
+  );
+}
+
+/** The status plate: one lamp, one verdict, the diagnosis, and the track of the most urgent task. */
+function StatusPlate({
+  summary,
+  diagnosis,
+  onNavigate,
+}: {
+  summary: Summary | undefined;
+  diagnosis: AgentDiagnosis | undefined;
+  onNavigate: (view: ViewId) => void;
+}) {
+  const driftState: LampState = summary && summary.total_events > 0 ? summary.status : 'idle';
+  const agentState: LampState = diagnosis && diagnosis.task_count > 0 ? diagnosis.status : 'idle';
+  const state = worst(driftState, agentState);
+  const agentUrgent = diagnosis !== undefined && diagnosis.task_count > 0 && diagnosis.status !== 'stable';
+  const driftUrgent = summary !== undefined && summary.total_events > 0 && summary.status !== 'stable';
+  const topCause = summary?.top_root_causes[0]?.root_cause;
+  const tasks = diagnosis?.tasks ?? [];
+  const lead = tasks[0];
+
+  let headline: string;
+  let advice: string | null = null;
+  let action: { label: string; view: ViewId } | null = null;
+  if (agentUrgent && diagnosis) {
+    headline = diagnosis.diagnosis;
+    advice = diagnosis.recommendation;
+    action = { label: 'Open Agent Diagnosis', view: 'agents' };
+  } else if (driftUrgent && summary) {
+    headline = `${fmtInt(summary.events_by_severity.critical ?? 0)} critical and ${fmtInt(summary.events_by_severity.warning ?? 0)} warning events in this window.${topCause ? ` Most frequent cause: ${topCause}.` : ''}`;
+    advice = 'Open Events to see the recommended mitigation for each scored event.';
+    action = { label: 'Open Events', view: 'events' };
+  } else if (state === 'stable') {
+    headline = 'No blocked tasks and no drift beyond policy in this window.';
+  } else {
+    headline = 'No telemetry or agent events in this window yet.';
+    advice = 'Send data with the SDK or the Claude Code hook, or widen the time range.';
+    action = { label: 'How to send data', view: 'sdk' };
+  }
+
+  return (
+    <section aria-labelledby="overview-status" className="animate-rise rounded-md border border-hairline bg-panel">
+      <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-8">
+        <div className="flex items-center gap-4">
+          <Lamp state={state} size="lg" />
+          <div>
+            <h2 id="overview-status" className="font-display text-[44px] leading-none font-bold">
+              {STATE_WORD[state]}
+            </h2>
+          </div>
+        </div>
+        <div className="min-w-0 space-y-1.5">
+          <p className={`max-w-[75ch] text-lg leading-snug ${state === 'critical' || state === 'warning' ? 'text-ink' : 'text-body'}`}>
+            {headline}
+          </p>
+          {advice && (
+            <p className="max-w-[75ch] text-[15px] text-muted">
+              {agentUrgent && <span className="font-semibold text-body">Recommendation: </span>}
+              {advice}
+            </p>
+          )}
+          {agentUrgent && diagnosis && (
+            <dl className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-sm text-muted">
+              <div className="flex gap-1.5">
+                <dt>Blocking tool</dt>
+                <dd className="font-mono text-body">{diagnosis.blocking_tool ?? '—'}</dd>
+              </div>
+              <div className="flex gap-1.5">
+                <dt>Wasted tokens (all tasks)</dt>
+                <dd className={`tabular font-mono ${diagnosis.wasted_tokens > 0 ? 'text-coral' : 'text-body'}`}>
+                  {fmtInt(diagnosis.wasted_tokens)}
+                </dd>
+              </div>
+              <div className="flex gap-1.5">
+                <dt>Blocked / failing tasks</dt>
+                <dd className="tabular font-mono text-body">
+                  {diagnosis.blocked_tasks} / {diagnosis.failing_tasks}
+                </dd>
+              </div>
+            </dl>
+          )}
+        </div>
+        {action && (
+          <Button
+            variant={state === 'critical' ? 'primary' : 'secondary'}
+            onClick={() => onNavigate(action.view)}
+            icon={<ArrowRight aria-hidden className="size-4" />}
+          >
+            {action.label}
+          </Button>
+        )}
+      </div>
+      {lead && (
+        <div className="border-t border-hairline p-4 sm:p-5">
+          <TrackDiagram task={lead} />
+          {tasks.length > 1 && (
+            <p className="mt-3 text-sm text-muted">
+              {tasks.length - 1} more {tasks.length - 1 === 1 ? 'task' : 'tasks'} in this window.{' '}
+              <button type="button" onClick={() => onNavigate('agents')} className="font-semibold text-route hover:underline">
+                See all tasks
+              </button>
             </p>
           )}
         </div>
-        <Button onClick={onOpen} icon={<ArrowRight aria-hidden className="size-4" />}>
-          Agent Diagnosis
-        </Button>
-      </div>
+      )}
     </section>
   );
 }
@@ -204,13 +318,8 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
               {project.name} · <span className="font-mono">{project.project_id}</span> · {TIME_RANGE_LABELS[filters.timeRange]}
               {filters.environment !== 'all' && ` · ${filters.environment}`}
             </span>
-            {s && (
-              <span className="flex items-center gap-2">
-                <span className="text-xs">Status</span> <SeverityBadge severity={s.status} />
-              </span>
-            )}
             {s?.last_updated && (
-              <span className="font-mono text-xs" title={fmtDateTime(s.last_updated)}>
+              <span className="text-sm" title={fmtDateTime(s.last_updated)}>
                 Last activity {fmtRelative(s.last_updated)}
               </span>
             )}
@@ -224,19 +333,17 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
             <ErrorState message={summary.error} onRetry={summary.reload} />
           </Panel>
         ) : (
-          <MetricRow summary={s} loading={!s && summary.loading} />
+          <>
+            <StatusPlate summary={s} diagnosis={diagnosis.data} onNavigate={onNavigate} />
+            <OverviewInstruments summary={s} loading={!s && summary.loading} />
+            {s && <AllReadings summary={s} />}
+          </>
         )}
 
-        {s && <AgentActivityRow summary={s} />}
-
-        <ResourceView resource={diagnosis} className="py-6">
-          {(data) => <DiagnosisCallout diagnosis={data} onOpen={() => onNavigate('agents')} />}
-        </ResourceView>
-
-        <div className="grid gap-6 xl:grid-cols-3">
+        <div className="grid items-start gap-6 xl:grid-cols-3">
           <Panel
             title="Telemetry & Drift Timeline"
-            description="Latest 500 events in the window, oldest to newest."
+            description="Latest 500 events in the window, oldest to newest. Dashed lines are the policy floors and limit."
             className="xl:col-span-2"
           >
             <ResourceView
@@ -249,7 +356,14 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
                 </EmptyState>
               }
             >
-              {(data) => <TimelineChart points={toPoints(data)} promptTokenLimit={s?.policy.prompt_token_limit} />}
+              {(data) => (
+                <TimelineChart
+                  points={toPoints(data)}
+                  promptTokenLimit={s?.policy.prompt_token_limit}
+                  retrievalFloor={s?.policy.retrieval_score_floor}
+                  qualityFloor={s?.policy.response_quality_floor}
+                />
+              )}
             </ResourceView>
           </Panel>
 
@@ -264,7 +378,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
           </Panel>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-3">
+        <div className="grid items-start gap-6 xl:grid-cols-3">
           <Panel title="Top Root Causes" description="Most frequent causes among warning and critical events.">
             <ResourceView
               resource={summary}
@@ -277,12 +391,12 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
                   <ol className="space-y-3">
                     {data.top_root_causes.map((cause) => (
                       <li key={cause.root_cause}>
-                        <div className="mb-1 flex items-start justify-between gap-3 text-[13px]">
+                        <div className="mb-1 flex items-start justify-between gap-3 text-sm">
                           <span className="text-body">{cause.root_cause}</span>
                           <span className="tabular shrink-0 font-mono text-muted">{fmtInt(cause.count)}</span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-white/[0.04]" aria-hidden>
-                          <div className="h-full rounded-full bg-cyan/70" style={{ width: `${(cause.count / max) * 100}%` }} />
+                        <div className="h-1.5 rounded-sm bg-white/[0.05]" aria-hidden>
+                          <div className="h-full rounded-sm bg-route/70" style={{ width: `${(cause.count / max) * 100}%` }} />
                         </div>
                       </li>
                     ))}
@@ -293,7 +407,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
           </Panel>
 
           <Panel
-            title="Active Alerts"
+            title="Open Alerts"
             description="Latest open alerts."
             className="xl:col-span-2"
             bodyClassName=""

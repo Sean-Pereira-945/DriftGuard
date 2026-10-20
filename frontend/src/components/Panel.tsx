@@ -16,17 +16,17 @@ export function Panel({ title, description, actions, children, className = '', b
     <section
       id={id}
       aria-labelledby={title ? headingId : undefined}
-      className={`min-w-0 animate-rise rounded-lg border border-hairline bg-panel ${className}`}
+      className={`min-w-0 animate-rise rounded-md border border-hairline bg-panel ${className}`}
     >
       {(title || actions) && (
         <header className="flex flex-wrap items-start justify-between gap-3 border-b border-hairline px-4 py-3 sm:px-5">
           <div className="min-w-0">
             {title && (
-              <h2 id={headingId} className="text-base font-semibold">
+              <h2 id={headingId} className="text-[22px] font-semibold">
                 {title}
               </h2>
             )}
-            {description && <p className="mt-0.5 text-[13px] text-muted">{description}</p>}
+            {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </header>
@@ -40,15 +40,15 @@ export function PageHeader({ title, description, actions }: { title: string; des
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-[28px] font-bold tracking-tight">{title}</h1>
-        {description && <div className="mt-1 text-sm text-muted">{description}</div>}
+        <h1 className="text-[38px] font-bold">{title}</h1>
+        {description && <div className="mt-1 text-[15px] text-muted">{description}</div>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
   );
 }
 
-/** Small uppercase label used for metric categories and filter labels. */
+/** An engraved plate label for metric names and field groups. */
 export function Eyebrow({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <span className={`text-[11px] font-semibold tracking-[0.08em] text-muted uppercase ${className}`}>{children}</span>;
+  return <span className={`plate-label text-muted ${className}`}>{children}</span>;
 }

@@ -43,7 +43,7 @@ export function CopyButton({ text, label = 'Copy', compact = false }: { text: st
       onClick={onClick}
       aria-label={compact ? label : undefined}
       title={compact ? label : undefined}
-      className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border border-hairline-strong bg-raised px-2.5 text-xs font-semibold transition-colors hover:border-[#3f3f46] ${state === 'copied' ? 'text-green' : state === 'failed' ? 'text-coral' : 'text-body'}`}
+      className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-md border border-hairline-strong bg-raised px-2.5 text-xs font-semibold transition-colors hover:border-hairline-hover ${state === 'copied' ? 'text-green' : state === 'failed' ? 'text-coral' : 'text-body'}`}
     >
       <Icon aria-hidden className="size-3.5" />
       <span className={compact && state === 'idle' ? 'sr-only' : ''}>{text_}</span>
@@ -58,7 +58,7 @@ export function CodeBlock({ code, title, language = 'python' }: { code: string; 
   return (
     <figure className="overflow-hidden rounded-md border border-hairline bg-input">
       <figcaption className="flex items-center justify-between gap-2 border-b border-hairline px-3 py-1.5">
-        <span className="font-mono text-[11px] tracking-wide text-muted uppercase">{title ?? language}</span>
+        <span className="font-mono text-xs tracking-wide text-muted uppercase">{title ?? language}</span>
         <CopyButton text={code} label={title ? `Copy ${title}` : 'Copy code'} compact />
       </figcaption>
       <pre className="overflow-x-auto p-4 font-mono text-[13px] leading-relaxed text-body">
@@ -83,7 +83,7 @@ export function OneTimeSecret({ value, label = 'API key' }: { value: string; lab
         </p>
       </div>
       <div className="flex items-center gap-2 rounded-md border border-hairline-strong bg-input p-2 pl-3">
-        <code aria-label={label} className="min-w-0 flex-1 font-mono text-[13px] break-all text-cyan select-all">
+        <code aria-label={label} className="min-w-0 flex-1 font-mono text-[13px] break-all text-route select-all">
           {value}
         </code>
         <CopyButton text={value} label={`Copy ${label.toLowerCase()}`} />

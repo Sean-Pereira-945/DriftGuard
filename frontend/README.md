@@ -38,9 +38,10 @@ The build writes to `../driftguard/server/static/` (`index.html` plus `assets/`)
 ## How it works
 
 - **Auth.** Sign in or create an account (sign-up is hidden when `GET /auth/config` reports `allow_signup: false`). The session token is kept in `localStorage` under `driftguard.session` and sent as `Authorization: Bearer <token>`. Any 401 clears it and returns you to the sign-in screen.
-- **Filters.** The environment and time-range selects in the header apply to every view as the documented `environment` and `time_range` query params. `environment` is left out when set to "all". The selected project and filters are remembered in `localStorage`.
+- **Filters.** The environment and time-range selects in the header apply to every view as the documented `environment` and `time_range` query params. `environment` is left out when set to "all". The selected project and filters are remembered in `localStorage` and also written to the address (`?env=prod&range=7d&project=showcase`), so a copied link opens the same view. A valid link wins over the stored values.
 - **Realtime.** For the selected project, the dashboard opens a WebSocket to `/ws/projects/{id}` and sends the session token as the second subprotocol (`["driftguard", token]`), never in the URL. Alert messages refresh the alerts, summary and diagnosis, and a new critical alert shows a toast. The socket reconnects with exponential backoff up to 30 s. Close code 4401 signs you out.
-- **Routing.** Routes are hash-based (`#/alerts`), so the server needs no SPA fallback routes.
+- **Routing.** Routes are hash-based (`#/alerts?env=prod`), so the server needs no SPA fallback routes. `lib/route.ts` parses and writes the query.
+- **Shortcuts.** `lib/shortcuts.ts` handles `g` then a letter, `/`, `r` and `?`. It ignores keys while you type, with modifiers, or over a dialog. Search boxes opt in to `/` with a `data-shortcut-search` attribute.
 
 ## `src/` layout
 
@@ -49,7 +50,7 @@ src/
   main.tsx, App.tsx      entry point, session gate, app shell and view switch
   api.ts                 typed fetch client, ApiError, token storage, 401 handling
   types.ts               types mirroring docs/api.md
-  index.css              Tailwind theme tokens (colors, fonts, motion) and base styles
+  index.css              Tailwind theme tokens (enamel surfaces, route ivory, lamp colors, fonts, motion) and base styles
   state/
     session.tsx          session context (sign in / out / expire)
     workspace.tsx        projects, selected project, filters, refresh keys, summary, realtime
@@ -60,11 +61,13 @@ src/
     useResource.ts       loading/error/data hook with abort and stale-data refresh
     useRealtime.ts       WebSocket with backoff and connection state
     useDialog.ts         focus trap, Escape, and scroll lock for modals and drawers
-    route.ts             hash router and nav items
+    route.ts             hash router, query params and nav items
+    shortcuts.ts         keyboard shortcuts and their list
     validation.ts        project ID, email and number parsing
   components/            shell (Sidebar, Header, ConnectionIndicator), primitives (Button,
                          Field, Panel, Overlay, Badges, States, Table, Copy, MetricCard,
-                         Toasts, Logo), and modals (CreateProjectModal, TestTelemetryModal)
+                         Toasts, Logo, Lamp, Instrument), instruments (BaselineGauge, TrackDiagram), and modals
+                         (CreateProjectModal, TestTelemetryModal, ShortcutSheet)
   charts/                Recharts wrappers: timeline, metric line, scatter, severity bars,
                          risk breakdown
   views/                 SignIn, NoProjects, Overview, AgentDiagnosis, Events, Alerts,

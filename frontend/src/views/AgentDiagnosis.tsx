@@ -1,9 +1,10 @@
-import { Bot } from 'lucide-react';
+import { Bot, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { api } from '../api';
 import { Badge, SeverityBadge, TaskStatusBadge, attemptTone } from '../components/Badges';
 import { CodeBlock } from '../components/Copy';
-import { MetricCard } from '../components/MetricCard';
+import { Instrument, InstrumentStrip } from '../components/Instrument';
+import { TrackDiagram } from '../components/TrackDiagram';
 import { Drawer } from '../components/Overlay';
 import { Eyebrow, PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ResourceView } from '../components/States';
@@ -25,13 +26,49 @@ client.sync_agent_events()`;
 
 function DiagnosisStats({ data }: { data: Diagnosis }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-6">
-      <MetricCard label="Blocked tasks" value={fmtInt(data.blocked_tasks)} emphasis={data.blocked_tasks ? 'critical' : 'default'} detail={`of ${fmtInt(data.task_count)} tasks`} />
-      <MetricCard label="Failing tasks" value={fmtInt(data.failing_tasks)} emphasis={data.failing_tasks ? 'warning' : 'default'} detail="Below the block threshold" />
-      <MetricCard label="Failures" value={fmtInt(data.failure_count)} detail="Failed tool attempts" />
-      <MetricCard label="Repeated attempts" value={fmtInt(data.repeated_attempts)} detail="Failures retrying a failed tool" />
-      <MetricCard label="Redundant attempts" value={fmtInt(data.redundant_attempts)} detail="Repeats of input that succeeded" />
-      <MetricCard label="Wasted tokens" value={fmtInt(data.wasted_tokens)} emphasis={data.wasted_tokens > 0 ? 'critical' : 'default'} detail="Failed or redundant attempts" />
+    <div className="space-y-3">
+      <InstrumentStrip label="Diagnosis instruments" columns={3}>
+        <Instrument
+          label="Blocked tasks"
+          figure={fmtInt(data.blocked_tasks)}
+          figureTone={data.blocked_tasks ? 'text-coral' : 'text-ink'}
+          note={`of ${fmtInt(data.task_count)} tasks`}
+        />
+        <Instrument
+          label="Failing tasks"
+          figure={fmtInt(data.failing_tasks)}
+          figureTone={data.failing_tasks ? 'text-amber' : 'text-ink'}
+          note="Below the block threshold"
+        />
+        <Instrument
+          label="Wasted tokens"
+          figure={fmtInt(data.wasted_tokens)}
+          figureTone={data.wasted_tokens > 0 ? 'text-coral' : 'text-ink'}
+          note="Failed or redundant attempts"
+        />
+      </InstrumentStrip>
+      <details className="group rounded-md border border-hairline bg-panel">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 px-4 text-sm font-semibold text-body select-none hover:text-ink sm:px-5 [&::-webkit-details-marker]:hidden">
+          <ChevronRight aria-hidden className="size-4 transition-transform duration-150 group-open:rotate-90" />
+          All counts
+          <span className="font-normal text-muted">(3)</span>
+        </summary>
+        <dl className="grid gap-px border-t border-hairline bg-hairline sm:grid-cols-3">
+          {(
+            [
+              ['Failures', data.failure_count, 'Failed tool attempts'],
+              ['Repeated attempts', data.repeated_attempts, 'Failures retrying a failed tool'],
+              ['Redundant attempts', data.redundant_attempts, 'Repeats of input that succeeded'],
+            ] as const
+          ).map(([label, value, note]) => (
+            <div key={label} className="bg-panel p-4">
+              <dt className="plate-label text-muted">{label}</dt>
+              <dd className="tabular mt-1 font-display text-[30px] leading-none font-semibold text-ink">{fmtInt(value)}</dd>
+              <dd className="mt-1 text-sm text-muted">{note}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
     </div>
   );
 }
@@ -130,6 +167,8 @@ function TaskDrawer({ task, onClose }: { task: AgentTask | null; onClose: () => 
             </div>
           </section>
 
+          <TrackDiagram task={task} />
+
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-[13px]">
             {(
               [
@@ -215,7 +254,7 @@ export function AgentDiagnosis() {
             <DiagnosisStats data={data} />
             <section
               aria-labelledby="diag-headline"
-              className={`rounded-lg border bg-panel p-4 sm:p-5 ${data.status === 'critical' ? 'border-coral/50' : data.status === 'warning' ? 'border-amber/40' : 'border-hairline'}`}
+              className={`rounded-md border bg-panel p-4 sm:p-5 ${data.status === 'critical' ? 'border-coral/50' : data.status === 'warning' ? 'border-amber/40' : 'border-hairline'}`}
             >
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <h2 id="diag-headline" className="text-base font-semibold">
@@ -233,6 +272,11 @@ export function AgentDiagnosis() {
                 <span className="font-semibold text-body">Recommendation: </span>
                 {data.recommendation}
               </p>
+              {data.tasks[0] && (
+                <div className="mt-4 border-t border-hairline pt-4">
+                  <TrackDiagram task={data.tasks[0]} />
+                </div>
+              )}
             </section>
 
             <Panel title="Tasks" description="Most urgent first. Select a task to see its attempts." bodyClassName="">

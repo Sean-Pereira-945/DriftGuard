@@ -18,11 +18,11 @@ import { AGENT_EVENT_KINDS, type ActivityQuery, type AgentEvent, type AgentEvent
 const PAGE_SIZE = 100;
 const SEARCH_DELAY_MS = 300;
 
-const KIND_META: Record<AgentEventKind, { label: string; tone: 'neutral' | 'cyan' | 'violet' }> = {
+const KIND_META: Record<AgentEventKind, { label: string; tone: 'neutral' | 'route' | 'violet' }> = {
   tool_call: { label: 'Tool call', tone: 'neutral' },
   llm_call: { label: 'Model call', tone: 'violet' },
-  prompt: { label: 'Prompt', tone: 'cyan' },
-  response: { label: 'Response', tone: 'cyan' },
+  prompt: { label: 'Prompt', tone: 'route' },
+  response: { label: 'Response', tone: 'route' },
   session_start: { label: 'Session start', tone: 'neutral' },
   session_end: { label: 'Session end', tone: 'neutral' },
 };
@@ -383,6 +383,7 @@ export function Logs({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
               <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
               <input
                 type="search"
+                data-shortcut-search
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search tasks, tools, errors, content…"
@@ -411,13 +412,13 @@ export function Logs({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
         {taskId && (
           <div className="flex items-center gap-2 border-b border-hairline px-4 py-2 text-[13px] text-muted">
             Task
-            <span className="inline-flex items-center gap-1 rounded-md border border-cyan/30 bg-cyan/10 py-0.5 pr-1 pl-2 font-mono text-cyan">
+            <span className="inline-flex items-center gap-1 rounded-md border border-route/30 bg-route/10 py-0.5 pr-1 pl-2 font-mono text-route">
               {taskId}
               <button
                 type="button"
                 onClick={() => setTaskId(null)}
                 aria-label="Clear task filter"
-                className="rounded p-0.5 hover:bg-cyan/20"
+                className="rounded p-0.5 hover:bg-route/20"
               >
                 <X aria-hidden className="size-3.5" />
               </button>

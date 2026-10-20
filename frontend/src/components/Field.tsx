@@ -1,7 +1,7 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 
 export const inputClass =
-  'block w-full min-h-10 rounded-md border border-hairline-strong bg-input px-3 text-sm text-ink placeholder:text-[#52525b] transition-colors duration-150 hover:border-[#3f3f46] focus:border-cyan focus-visible:outline-2 focus-visible:outline-cyan aria-[invalid=true]:border-coral/70 disabled:opacity-60';
+  'block w-full min-h-10 rounded-md border border-hairline-strong bg-input px-3 text-sm text-ink placeholder:text-faint transition-colors duration-150 hover:border-hairline-hover focus:border-route focus-visible:outline-2 focus-visible:outline-route aria-[invalid=true]:border-coral/70 disabled:opacity-60';
 
 interface FieldShellProps {
   label: string;
@@ -24,12 +24,12 @@ export function FieldShell({ label, help, error, children, className = '', hideL
       </label>
       {children({ inputId, describedBy, invalid: Boolean(error) })}
       {help && (
-        <p id={helpId} className="mt-1.5 text-xs text-muted">
+        <p id={helpId} className="mt-1.5 text-[13px] text-muted">
           {help}
         </p>
       )}
       {error && (
-        <p id={errorId} className="mt-1.5 text-xs font-medium text-coral">
+        <p id={errorId} className="mt-1.5 text-[13px] font-medium text-coral">
           {error}
         </p>
       )}
