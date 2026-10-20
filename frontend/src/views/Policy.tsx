@@ -100,16 +100,26 @@ function toDraft(policy: PolicyType): Draft {
 }
 
 /** How many of the loaded events or tasks a rule would flag at a given value. */
+/**
+ * How many of the loaded events or tasks a rule would flag at a given value. An event that does
+ * not carry the reading (a source that sends no retrieval score, or only some turns with a
+ * quality score) is not counted in either number, so "54 of 417" never hides that only a few
+ * events had the reading.
+ */
 function flagged(key: PolicyField, value: number, events: TelemetryEvent[], tasks: AgentTask[]): { count: number; of: number; noun: string } | null {
+  const reading = (pick: (e: TelemetryEvent) => number | null, test: (v: number) => boolean) => {
+    const values = events.map(pick).filter((v): v is number => v !== null);
+    return { count: values.filter(test).length, of: values.length, noun: 'events' };
+  };
   switch (key) {
     case 'prompt_token_limit':
-      return { count: events.filter((e) => e.prompt_tokens !== null && e.prompt_tokens > value).length, of: events.length, noun: 'events' };
+      return reading((e) => e.prompt_tokens, (v) => v > value);
     case 'context_length_limit':
-      return { count: events.filter((e) => e.context_length !== null && e.context_length > value).length, of: events.length, noun: 'events' };
+      return reading((e) => e.context_length, (v) => v > value);
     case 'retrieval_score_floor':
-      return { count: events.filter((e) => e.retrieval_score !== null && e.retrieval_score < value).length, of: events.length, noun: 'events' };
+      return reading((e) => e.retrieval_score, (v) => v < value);
     case 'response_quality_floor':
-      return { count: events.filter((e) => e.response_quality !== null && e.response_quality < value).length, of: events.length, noun: 'events' };
+      return reading((e) => e.response_quality, (v) => v < value);
     case 'blocked_after_failures':
       return { count: tasks.filter((t) => t.consecutive_failures >= value).length, of: tasks.length, noun: 'tasks' };
     default:
@@ -210,6 +220,9 @@ function PolicyForm({
     const value = parsed[key].value;
     const now = flagged(key, policy[key], preview.events, preview.tasks);
     if (!now) return null;
+    if (now.of === 0 && key !== 'blocked_after_failures') {
+      return <span className="mt-1.5 block text-[13px] text-body">No loaded event carries this reading, so this rule flags nothing here.</span>;
+    }
     const next = value !== null ? flagged(key, value, preview.events, preview.tasks) : null;
     const changed = next !== null && value !== policy[key];
     return (

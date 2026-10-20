@@ -93,6 +93,9 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Account deletion** from Project Settings, with the email and password to confirm.
 - [x] **Attempt timeline** in the task drawer: tool calls on a shared time axis, so a
   retry loop is visible at a glance.
+- [x] **Response quality for Claude Code from outcome checks** (did the turn's tests,
+  lint, type check or build pass), with no retrieval score, and scores a source never
+  sends left off the dashboard.
 - [x] **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults`.
 - [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
   gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
@@ -118,8 +121,8 @@ runs, not by unit tests: the frontend has none yet.
   needs those fields stored on telemetry events.
 - [ ] Weights and thresholds that can be fitted to labelled data, and exposed in
   Policy.
-- [ ] Outcome signals for Claude Code (tests pass at the end of a turn, the user
-  didn't repeat the request) as a quality proxy.
+- [ ] More outcome signals for Claude Code beyond passing checks (the user didn't
+  repeat or undo the request).
 
 ### Dashboard
 - [ ] Give the panels below the Overview's first screen the same plate look as the

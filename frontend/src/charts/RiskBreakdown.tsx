@@ -15,10 +15,19 @@ function tone(rate: number): { bar: string; text: string } {
 }
 
 /** Share of events in the window that broke each policy rule (`summary.violation_rates`). */
-export function RiskBreakdown({ rates, policy }: { rates: ViolationRates; policy: Policy }) {
+export function RiskBreakdown({
+  rates,
+  policy,
+  hide = [],
+}: {
+  rates: ViolationRates;
+  policy: Policy;
+  /** Rules whose reading this source never sends, so there is nothing to measure. */
+  hide?: (keyof ViolationRates)[];
+}) {
   return (
     <ul className="space-y-4">
-      {RULES.map((rule) => {
+      {RULES.filter((rule) => !hide.includes(rule.key)).map((rule) => {
         const rate = rates[rule.key];
         const t = tone(rate);
         return (

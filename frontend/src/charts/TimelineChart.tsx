@@ -8,6 +8,9 @@ interface Props {
   promptTokenLimit?: number;
   retrievalFloor?: number;
   qualityFloor?: number;
+  /** Set false when the source never reports a score, so its line and floor are left out. */
+  showRetrieval?: boolean;
+  showQuality?: boolean;
 }
 
 /**
@@ -16,7 +19,24 @@ interface Props {
  * The policy limit and floors are drawn as dashed baselines; the span under the lower
  * floor is hatched so a breach reads as distance from the baseline.
  */
-export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualityFloor }: Props) {
+export function TimelineChart({
+  points,
+  promptTokenLimit,
+  retrievalFloor: retrievalFloorIn,
+  qualityFloor: qualityFloorIn,
+  showRetrieval = true,
+  showQuality = true,
+}: Props) {
+  const retrievalFloor = showRetrieval ? retrievalFloorIn : undefined;
+  const qualityFloor = showQuality ? qualityFloorIn : undefined;
+  const showScores = showRetrieval || showQuality;
+  // A score that only some events carry (one per checked turn) gets a dot on each reading.
+  const retrievalCount = points.filter((p) => p.retrieval_score !== null).length;
+  const qualityCount = points.filter((p) => p.response_quality !== null).length;
+  // When most events carry no value (a score sent once per checked turn), joining the few readings
+  // with a line draws slopes that mean nothing. Show them as dots instead.
+  const retrievalSparse = retrievalCount < points.length / 2;
+  const qualitySparse = qualityCount < points.length / 2;
   const [start, end] = timeDomain(points);
   const span = end - start;
   const showDots = points.length <= 40;
@@ -28,8 +48,14 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
       <ChartLegend
         items={[
           { label: 'Prompt tokens (left)', color: COLORS.route },
-          { label: 'Retrieval score (right)', color: COLORS.steel },
-          { label: 'Response quality (right)', color: COLORS.steel, dashed: true },
+          ...(showRetrieval ? [{ label: 'Retrieval score (right)', color: COLORS.steel }] : []),
+          ...(showQuality
+            ? [
+                qualitySparse
+                  ? { label: 'Response quality, one dot per checked turn (right)', color: COLORS.steel, shape: 'dot' as const }
+                  : { label: 'Response quality (right)', color: COLORS.steel, dashed: true },
+              ]
+            : []),
           ...(promptTokenLimit ? [{ label: 'Prompt token limit', color: COLORS.muted, dashed: true }] : []),
           ...(Number.isFinite(lowestFloor) ? [{ label: 'Hatched: below both score floors', color: COLORS.coral, shape: 'square' as const }] : []),
         ]}
@@ -59,15 +85,17 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               tickFormatter={(value: number) => fmtCompact(value)}
               label={{ value: 'tokens', angle: -90, position: 'insideLeft', fill: COLORS.axis, fontSize: 12, dy: 20 }}
             />
-            <YAxis
-              {...AXIS_PROPS}
-              yAxisId="score"
-              orientation="right"
-              domain={[0, 1]}
-              ticks={[0, 0.25, 0.5, 0.75, 1]}
-              width={40}
-              tickFormatter={(value: number) => value.toFixed(2)}
-            />
+            {showScores && (
+              <YAxis
+                {...AXIS_PROPS}
+                yAxisId="score"
+                orientation="right"
+                domain={[0, 1]}
+                ticks={[0, 0.25, 0.5, 0.75, 1]}
+                width={40}
+                tickFormatter={(value: number) => value.toFixed(2)}
+              />
+            )}
             {Number.isFinite(lowestFloor) && (
               <ReferenceArea yAxisId="score" y1={0} y2={lowestFloor} fill="url(#floor-hatch)" stroke="none" ifOverflow="hidden" />
             )}
@@ -110,29 +138,35 @@ export function TimelineChart({ points, promptTokenLimit, retrievalFloor, qualit
               activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
               isAnimationActive={false}
             />
-            <Line
-              yAxisId="score"
-              type="monotone"
-              dataKey="retrieval_score"
-              name="Retrieval score"
-              stroke={COLORS.steel}
-              strokeWidth={2}
-              dot={showDots ? { r: 2.5, strokeWidth: 0, fill: COLORS.steel } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
-              isAnimationActive={false}
-            />
-            <Line
-              yAxisId="score"
-              type="monotone"
-              dataKey="response_quality"
-              name="Response quality"
-              stroke={COLORS.steel}
-              strokeWidth={2}
-              strokeDasharray="5 4"
-              dot={showDots ? { r: 2.5, strokeWidth: 0, fill: COLORS.steel } : false}
-              activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
-              isAnimationActive={false}
-            />
+            {showRetrieval && (
+              <Line
+                yAxisId="score"
+                type="monotone"
+                dataKey="retrieval_score"
+                name="Retrieval score"
+                stroke={COLORS.steel}
+                strokeWidth={retrievalSparse ? 0 : 2}
+                connectNulls={!retrievalSparse}
+                dot={retrievalSparse || retrievalCount <= 40 ? { r: 3, strokeWidth: 0, fill: COLORS.steel } : false}
+                activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
+                isAnimationActive={false}
+              />
+            )}
+            {showQuality && (
+              <Line
+                yAxisId="score"
+                type="monotone"
+                dataKey="response_quality"
+                name="Response quality"
+                stroke={COLORS.steel}
+                strokeWidth={qualitySparse ? 0 : 2}
+                strokeDasharray="5 4"
+                connectNulls={!qualitySparse}
+                dot={qualitySparse || qualityCount <= 40 ? { r: 3, strokeWidth: 0, fill: COLORS.steel } : false}
+                activeDot={{ r: 4, strokeWidth: 2, stroke: '#080d0b' }}
+                isAnimationActive={false}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </div>

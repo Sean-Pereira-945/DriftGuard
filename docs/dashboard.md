@@ -117,7 +117,7 @@ between the marker and the tick.
 | --- | --- |
 | Open alerts | Unresolved alerts in the window, split into critical and warning. |
 | Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). Ticks at 0.40 (warning) and 0.75 (critical). |
-| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
+| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). For a Claude Code project it is the share of **checked** turns (tests, linter, type check or build) whose last check passed ([how](scoring-guide.md#when-you-only-have-telemetry)). If the source never sends it, the instrument is left out. |
 | Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
 
 **The spread behind each average.** Under **Mean risk score** and **Response quality**
@@ -139,6 +139,19 @@ the same length of time just before it, at least 24 hours:
 | **No clear change against the 24 hours before: was 0.23 (89 events now, 93 before)** | No meaningful change was found. This is not proof that nothing changed: with under 30 events on a side the line adds "With this few events, a small drop could be missed", because a real 0.09 drop is found only about a third of the time at 10 events ([study](../research/BASELINE_STUDY.md)). |
 | **Too few events to compare: 3 now, 40 before** | Under 10 events on a side, so no verdict. |
 | *(none)* | **All time** has no earlier period. With under 10 events it says "Only N events: too few to trust this average." |
+
+**Scores a source never sends are left out, not shown empty.** A score counts as
+sent if it appears in the window or in the period before. If a source sends no
+retrieval score (Claude Code has no retrieval step), that reading is missing from the
+instruments, the Mean retrieval score line, the Drift Risk Breakdown, the timeline and
+its legend, and **All readings** says what was left out. If it sends no response
+quality, the strip has three instruments instead of four. A project with no events at
+all still shows every instrument, empty, so you can see what it will measure.
+
+![A Claude Code project: response quality from checked turns, no retrieval score](images/dashboard-claude-code.png)
+
+This is a Claude Code-style sample: response quality comes from the 25 turns that ran
+a check (shown as dots on the timeline), and nothing is shown for retrieval.
 
 **All readings.** A collapsed list of everything the instruments leave out:
 
@@ -334,7 +347,9 @@ Each field checks its value as you leave it, and says what it flags in the
 events and tasks already loaded for the current filters, for example
 "Would flag 12 of 112 loaded events, now 44". The save bar lists every
 threshold that is changing and warns, in amber, when a change would flag fewer
-events or tasks than today. The preview counts the loaded data, up to the
+events or tasks than today. Counts only include events that carry the reading, so
+"Flags 8 of 25" means 25 events had a quality score, and a rule whose reading nothing
+sends says so instead of showing zero. The preview counts the loaded data, up to the
 latest 500 events. It doesn't predict future traffic. The retry window has no
 preview.
 

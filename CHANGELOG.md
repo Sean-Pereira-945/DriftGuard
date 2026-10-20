@@ -32,6 +32,22 @@ All notable changes to DriftGuard are recorded here. The format follows
     retrieval score, and adds a "Worse than usual" line to the status plate. It is
     advice only: it raises no alert and doesn't change the status.
   - `driftguard/baseline.py` holds the maths, with 14 new tests.
+- **Response quality for Claude Code, from outcome checks.** When a turn runs tests,
+  a linter, a type check or a build, the hook scores the turn's last model call 1.0
+  if the last check passed and 0.0 if it failed. Turns that run no check get no
+  score, so the average is over checked turns only. Pass or fail also reads the
+  output for what failing runs print, because a pipe into `tail` hides the exit code,
+  and a command that never started is ignored. The basis is in the event's metadata.
+  `"quality_from_checks": false` turns it off. There is deliberately **no retrieval
+  score** for Claude Code: it has no retrieval step, and scoring empty searches would
+  raise false degradation warnings. 54 new tests.
+- **Scores a source never sends are left off the dashboard.** The Overview drops the
+  Response quality instrument (three instruments instead of four), the Mean retrieval
+  score reading, the matching Drift Risk Breakdown row, and the timeline's line, axis
+  and legend entry, and All readings says what was left out. A score counts as sent if
+  it appears in the window or the period before. Scores sent for only some events are
+  drawn as dots, not joined by a line. The Policy preview counts only events that
+  carry the reading ("8 of 25") and says when none do.
 - **Spread behind each average.** `GET /projects/{id}/summary` gains `spread`:
   the median and the 10th and 90th percentiles of each metric, from the latest
   5,000 readings in the window. The Overview shows them under Mean risk score,

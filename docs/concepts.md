@@ -238,8 +238,10 @@ finds a 0.09 decline above the floor 36 percent of the time with 10 events and
 - It only sees what is **reported** to it. It can't look inside a closed agent
   such as GitHub Copilot.
 - It doesn't judge answers on its own. Response quality has to come from the
-  app's own evaluator, so sources without one (like Claude Code) leave it
-  blank. [Measuring retrieval score and response quality](scoring-guide.md)
+  app's own evaluator. The one exception is Claude Code, where the hook scores a
+  turn from whether its tests, linter, type check or build passed, and sends
+  nothing for turns that ran none. Retrieval has no equivalent there, so it is
+  left out. [Measuring retrieval score and response quality](scoring-guide.md)
   explains how to calculate both.
 - It **recommends**; it never acts on your prompts or providers.
 

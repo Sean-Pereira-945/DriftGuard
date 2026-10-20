@@ -16,6 +16,7 @@ import { EmptyState, ErrorState, ResourceView } from '../components/States';
 import { TrackDiagram } from '../components/TrackDiagram';
 import { fmtCompact, fmtDateTime, fmtDuration, fmtInt, fmtPercent, fmtRelative, fmtScore, TIME_RANGE_LABELS } from '../lib/format';
 import { worseSentences } from '../lib/baseline';
+import { reportedScores } from '../lib/reported';
 import type { ViewId } from '../lib/route';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
@@ -45,6 +46,7 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
   const policy = summary.policy;
   const activity = summary.agent_activity;
   const hasTelemetry = summary.total_events > 0;
+  const reported = reportedScores(summary);
 
   const risk = avg.risk_score ?? null;
   const riskTone = risk === null ? 'ok' : risk >= CRITICAL_RISK ? 'critical' : risk >= WARNING_RISK ? 'warning' : 'ok';
@@ -57,7 +59,7 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
   const rateTone = rate === null ? 'ok' : rate >= 0.25 ? 'critical' : rate >= 0.1 ? 'warning' : 'ok';
 
   return (
-    <InstrumentStrip label="Instruments">
+    <InstrumentStrip label="Instruments" columns={reported.quality ? 4 : 3}>
       <Instrument
         label="Open alerts"
         figure={fmtInt(summary.open_alerts)}
@@ -98,44 +100,46 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
           tone={riskTone}
         />
       </Instrument>
-      <Instrument
-        label="Response quality"
-        extra={
-          <>
-            <BaselineLine metric={summary.baseline.metrics.response_quality} baseline={summary.baseline} total={summary.total_events} />
-            <SpreadLine
-              spread={summary.spread.response_quality}
-              minSample={summary.baseline.min_sample}
-              tail="low"
-              belowFloorRate={summary.violation_rates.response_quality_floor}
-            />
-          </>
-        }
-        figure={fmtScore(quality)}
-        figureTone={qualityBelow ? 'text-amber' : 'text-ink'}
-        note={
-          hasTelemetry && quality === null
-            ? 'Not reported by this source'
-            : quality !== null
-              ? qualityBelow
-                ? `${fmtScore(qualityFloor - quality)} below the floor`
-                : `${fmtScore(quality - qualityFloor)} above the floor`
-              : 'No scored events in this window'
-        }
-      >
-        <BaselineGauge
-          summary={
-            quality === null
-              ? 'Mean response quality: no reading.'
-              : `Mean response quality ${fmtScore(quality)} against a floor of ${fmtScore(qualityFloor)}.`
+      {reported.quality && (
+        <Instrument
+          label="Response quality"
+          extra={
+            <>
+              <BaselineLine metric={summary.baseline.metrics.response_quality} baseline={summary.baseline} total={summary.total_events} />
+              <SpreadLine
+                spread={summary.spread.response_quality}
+                minSample={summary.baseline.min_sample}
+                tail="low"
+                belowFloorRate={summary.violation_rates.response_quality_floor}
+              />
+            </>
           }
-          value={quality}
-          max={1}
-          marks={[{ at: qualityFloor, label: `floor ${fmtScore(qualityFloor)}` }]}
-          bad={{ from: 0, to: qualityFloor }}
-          tone={qualityBelow ? 'warning' : 'ok'}
-        />
-      </Instrument>
+          figure={fmtScore(quality)}
+          figureTone={qualityBelow ? 'text-amber' : 'text-ink'}
+          note={
+            hasTelemetry && quality === null
+              ? 'Not reported by this source'
+              : quality !== null
+                ? qualityBelow
+                  ? `${fmtScore(qualityFloor - quality)} below the floor`
+                  : `${fmtScore(quality - qualityFloor)} above the floor`
+                : 'No scored events in this window'
+          }
+        >
+          <BaselineGauge
+            summary={
+              quality === null
+                ? 'Mean response quality: no reading.'
+                : `Mean response quality ${fmtScore(quality)} against a floor of ${fmtScore(qualityFloor)}.`
+            }
+            value={quality}
+            max={1}
+            marks={[{ at: qualityFloor, label: `floor ${fmtScore(qualityFloor)}` }]}
+            bad={{ from: 0, to: qualityFloor }}
+            tone={qualityBelow ? 'warning' : 'ok'}
+          />
+        </Instrument>
+      )}
       <Instrument
         label="Tool failure rate"
         figure={rate === null ? '—' : fmtPercent(rate, 1)}
@@ -164,6 +168,7 @@ function OverviewInstruments({ summary, loading }: { summary: Summary | undefine
 
 /** Everything the strip leaves out, one click away. */
 function AllReadings({ summary }: { summary: Summary }) {
+  const reported = reportedScores(summary);
   const a = summary.agent_activity;
   const avg = summary.averages;
   const p = summary.policy;
@@ -176,11 +181,13 @@ function AllReadings({ summary }: { summary: Summary }) {
         : 'No telemetry in this window',
     ],
     ['Tokens at stake', fmtInt(summary.saved_tokens), 'Across open alerts'],
-    [
+  ];
+  if (reported.retrieval) {
+    rows.push([
       'Mean retrieval score',
       fmtScore(avg.retrieval_score),
       <>
-        {summary.total_events > 0 && avg.retrieval_score == null ? 'Not reported by this source' : `Floor ${fmtScore(p.retrieval_score_floor)}`}
+        Floor {fmtScore(p.retrieval_score_floor)}
         <BaselineLine metric={summary.baseline.metrics.retrieval_score} baseline={summary.baseline} total={summary.total_events} />
         <SpreadLine
           spread={summary.spread.retrieval_score}
@@ -189,8 +196,8 @@ function AllReadings({ summary }: { summary: Summary }) {
           belowFloorRate={summary.violation_rates.retrieval_score_floor}
         />
       </>,
-    ],
-  ];
+    ]);
+  }
   if (a && a.events > 0) {
     rows.push(
       ['Tool calls', fmtInt(a.tool_calls), `${fmtInt(a.failed_tool_calls)} failed`],
@@ -216,6 +223,12 @@ function AllReadings({ summary }: { summary: Summary }) {
           </div>
         ))}
       </dl>
+      {(!reported.quality || !reported.retrieval) && (
+        <p className="border-t border-hairline px-4 py-3 text-sm text-muted sm:px-5">
+          Left out because this source doesn't send them:{' '}
+          {[!reported.quality && 'response quality', !reported.retrieval && 'retrieval score'].filter(Boolean).join(' and ')}.
+        </p>
+      )}
     </details>
   );
 }
@@ -399,6 +412,8 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
                   promptTokenLimit={s?.policy.prompt_token_limit}
                   retrievalFloor={s?.policy.retrieval_score_floor}
                   qualityFloor={s?.policy.response_quality_floor}
+                  showRetrieval={reportedScores(s).retrieval}
+                  showQuality={reportedScores(s).quality}
                 />
               )}
             </ResourceView>
@@ -411,7 +426,13 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
                 isEmpty={(data) => data.total_events === 0}
                 empty={<EmptyState title="No telemetry in this window">Rates appear once events are scored.</EmptyState>}
               >
-                {(data) => <RiskBreakdown rates={data.violation_rates} policy={data.policy} />}
+                {(data) => {
+                  const reported = reportedScores(data);
+                  const hide: ('retrieval_score_floor' | 'response_quality_floor')[] = [];
+                  if (!reported.retrieval) hide.push('retrieval_score_floor');
+                  if (!reported.quality) hide.push('response_quality_floor');
+                  return <RiskBreakdown rates={data.violation_rates} policy={data.policy} hide={hide} />;
+                }}
               </ResourceView>
             </Panel>
 

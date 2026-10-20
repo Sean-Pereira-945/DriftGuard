@@ -135,7 +135,7 @@ Motion conveys state. Transitions are 150–200ms with an exponential ease-out. 
 - Skip link, semantic headings, landmarks, live regions for refresh, and accessible names for icon-only controls. Gauges and the track expose text equivalents.
 - Alerts tabs use arrow keys, Home and End. Rows open from the keyboard. Single-key shortcuts are documented under `?`, and are off while typing.
 - Filters and selections can be reached without a pointer, and chart data is available as a table.
-- Define loading, empty, error, stale and success states for every data view. Missing values read "Not reported by this source", never zero.
+- Define loading, empty, error, stale and success states for every data view. A reading a source never sends is left out of the screen instead of shown empty, and a gap in a reading that is otherwise sent reads "—", never zero.
 
 ## 8. Product language
 

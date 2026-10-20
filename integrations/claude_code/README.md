@@ -23,9 +23,19 @@ Each finished turn also sends **LLM telemetry**: one event per model call, with
 its new input tokens (`prompt_tokens`) and the full context it used
 (`context_length`, including cached context). The model and task go in
 metadata. That data feeds the Overview cards, the timeline, Events and
-Analytics. Claude Code has no retrieval or answer-quality score (see
-[how to calculate them](../../docs/scoring-guide.md#when-you-only-have-telemetry)), so those are
-left out, not invented. Set `"send_telemetry": false` to skip it.
+Analytics. Set `"send_telemetry": false` to skip it.
+
+**Response quality** comes from an outcome check, not a guess. When a turn runs a
+checking command (tests, a linter, a type check or a build), the turn's last model
+call carries `response_quality`: **1.0 if the last check passed, 0.0 if it failed**.
+A turn that ran no check carries no score and is left out of the average. Which
+commands count, how a pass or fail is decided, and the limits are in
+[the scoring guide](../../docs/scoring-guide.md#when-you-only-have-telemetry). Set
+`"quality_from_checks": false` to send none.
+
+**There is no retrieval score.** Claude Code has no retrieval step to grade, and a
+search that finds nothing is normal exploration. The dashboard leaves retrieval out for
+this project instead of showing an empty cell.
 
 The default policy limits (3,000 prompt tokens, 4,000 context) are meant for
 chat requests. For a Claude Code project, raise them in the Policy view, for

@@ -15,8 +15,9 @@ result into a risk score and a severity, and compares them with the period befor
 | **Recommendation when below the floor** | Trim retrieval results and prioritise high-value documents | Fall back to a lower-cost model for non-critical requests |
 | **Leave it out when** | You don't retrieve anything | You have no evaluator |
 
-Leave a value out rather than sending a made-up one. A missing score is shown as
-**Not reported by this source** and never counts against you.
+Leave a value out rather than sending a made-up one. A missing score never counts
+against you, and a score a source never sends is left off the dashboard instead of
+shown as an empty cell.
 
 ## Retrieval score
 
@@ -88,29 +89,55 @@ send.
 
 Some sources report activity but can't grade anything. **Claude Code** is the
 example: its hook sends token counts, tool successes and failures, retries and
-durations, but no relevance and no answer grade. DriftGuard leaves the two scores
-blank there instead of inventing them.
+durations. DriftGuard treats the two scores differently there, because only one of
+them has an honest signal.
 
-If you want a number anyway, you can build a **proxy** from what is recorded.
-These are suggestions, not something DriftGuard computes today:
+**Response quality: whether the turn's checks passed.** When a turn runs a checking
+command (tests, a linter, a type check or a build), its last model call carries a
+score: **1.0 if the last check passed, 0.0 if it failed**. That is the automatic
+check from [Response quality](#response-quality) above, applied to coding work. A
+turn that runs no check gets no score and is left out of the average, so the
+average is the share of **checked** turns that ended passing.
 
-- **A quality proxy per turn:**
-  `1 − 0.6 × (failed tool calls ÷ tool calls) − 0.4 × (wasted tokens ÷ total tokens)`,
-  kept between 0 and 1. A clean turn scores near 1, and a retry loop drops fast.
-  A stronger signal is an outcome check, such as whether the last test run in the
-  turn passed.
-- **A retrieval proxy per turn:** the share of search calls (grep, glob, search
-  tools) that returned results, or the share of files read that were later
-  edited. Both need tool outputs, so they need content storage on.
+- **What counts as a check.** `pytest`, `python -m pytest`, `mypy`, `ruff check`,
+  `tsc`, `eslint`, `vitest`, `jest`, `npm test`, `npm run test|lint|build|check|typecheck`
+  (and `pnpm`, `yarn`, `bun`), `cargo test|check|clippy|build`, `go test|vet|build`,
+  `make test|check|lint`, `dotnet test|build`, `mvn test|verify` and `gradle
+  test|check|build`. Only a program at the start of a command counts, so `grep pytest`
+  is not a check. Commands joined with `&&`, `;` or a pipe are read one by one.
+- **How pass or fail is decided.** A command that fails is a fail. Because a pipe such
+  as `pytest | tail` hides the exit code, the hook also looks in the output for what a
+  failing run prints (`2 failed`, `FAILED`, `error TS2322`, `Found 3 errors`,
+  `Traceback`, `npm ERR!`). A command that never started, such as a shell syntax error
+  or a missing program, is not counted either way.
+- **The last check decides.** A red test run that is fixed and re-run green in the
+  same turn scores 1.0. That is the point: did the turn end verified? The metadata of
+  that event records the basis (`quality_basis`, `verification_runs`,
+  `verification_passed`), so you can see it in the Events view.
+- **Switch it off** with `"quality_from_checks": false` in `.claude/driftguard.json`.
 
-Be careful with proxies:
+**Retrieval score: none, on purpose.** Claude Code has no retrieval step that can be
+graded. The nearest thing is whether a search found anything, and that is normal
+exploration, not a failure: a grep that misses is part of working. Scoring it would
+raise "retrieval degradation" warnings and recommend "trim retrieval results" for
+healthy sessions. So no retrieval score is sent, and the dashboard leaves it out of the
+instruments, the risk breakdown, the timeline and the readings list for that project.
 
-- They measure how **smoothly** the agent worked, not whether the answer was
-  right. A turn with no failed tools can still be wrong, and a turn that retries
-  because the task is hard can end correct.
-- The weights above are arbitrary, so only the trend is meaningful, not the level.
-- The default floors were chosen for real evaluator scores. Re-tune them for a
-  proxy.
+Limits to keep in mind:
+
+- It only covers turns that ran a check. If your work runs few, the average rests on
+  few turns, and the Overview shows how many readings it has.
+- It is a coding-specific signal. It says the work passed its own checks, not that
+  the answer was the best one. A project with no tests scores nothing.
+- The default floor of 0.80 means "flag when under 80% of checked turns end passing".
+  Check that against how you work before trusting the warning, using the Policy
+  preview.
+- Other sources are untouched. An app that sends its own retrieval and quality scores
+  through the SDK sees both everywhere, as before.
+
+A "smoothness" score (one built from tool failures and retries) is deliberately not
+offered. It would repeat the tool failure rate already on the Overview and say little
+about whether the answer was good.
 
 ## Choosing the floors
 

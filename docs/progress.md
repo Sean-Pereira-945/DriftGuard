@@ -180,6 +180,7 @@ committed on its own. The Python suite is now **200 passed, 2 skipped**.
 | 4 | **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults` | 2 new tests, plus a browser run: change the policy, restore, save, confirm through the API |
 | 5 | An attempt timeline in the task drawer | Screenshot of a blocked task with three failed attempts |
 | 6 | **Delete account** from Project Settings | Browser run on a throwaway account: wrong password deletes nothing, the right one deletes, signs out, and the login then fails |
+| 7 | **Response quality for Claude Code from outcome checks**, no retrieval score, and unreported scores left off the dashboard | 54 new hook tests, a check of the live hook against this session's own commands (which exposed a shell-syntax-error case, now ignored), and two seeded Claude Code-style projects in the browser: one with checked turns, one with none |
 
 **Not done, and why:** alerting on a sustained drop from the baseline. It changes
 what raises an alert and what gets sent to Slack and webhooks, and needs a new
