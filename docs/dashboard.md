@@ -375,6 +375,12 @@ its prefix (`dg_live_ab12…`). Use the key you saved, or rotate a new one.
   already stored stays until retention removes it.
 - **Delete project** removes the project and all its data. To confirm, you type
   the project ID.
+- **Your account** shows your name and email. **Delete account** removes your
+  account and **every** project in it, with all of their data, and signs you out.
+  The dialog lists the projects that will go, and to confirm you type your email
+  and enter your password. A wrong password shows "Password is incorrect" and
+  deletes nothing. Sign-in, sign-up and account deletion share a per-minute limit
+  (10 by default), so repeated wrong tries are slowed down. It can't be undone.
 
 ## How events are scored
 

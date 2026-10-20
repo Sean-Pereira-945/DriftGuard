@@ -1,4 +1,4 @@
-import { FileText, KeyRound, Trash2 } from 'lucide-react';
+import { FileText, KeyRound, Trash2, UserX } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { api, errorMessage } from '../api';
 import { Button } from '../components/Button';
@@ -8,6 +8,7 @@ import { Modal } from '../components/Overlay';
 import { PageHeader, Panel } from '../components/Panel';
 import { useToast } from '../components/Toasts';
 import { fmtDateTime } from '../lib/format';
+import { useSignedIn } from '../state/session';
 import { useProject, useWorkspace } from '../state/workspace';
 
 function RotateKeyDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -221,9 +222,106 @@ function DeleteProjectDialog({ open, onClose }: { open: boolean; onClose: () => 
   );
 }
 
+function DeleteAccountDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { account, expire } = useSignedIn();
+  const { projects } = useWorkspace();
+  const toast = useToast();
+  const [confirmEmail, setConfirmEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const matches = confirmEmail.trim().toLowerCase() === account.email.toLowerCase();
+
+  const close = () => {
+    setConfirmEmail('');
+    setPassword('');
+    setError(null);
+    onClose();
+  };
+
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!matches || !password) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await api.deleteAccount(password);
+      toast.push({ tone: 'success', title: 'Account deleted', message: 'Your account and all of its projects were removed.' });
+      expire('Your account was deleted.');
+    } catch (err) {
+      setError(errorMessage(err));
+      setBusy(false);
+    }
+  };
+
+  const shown = projects.slice(0, 6);
+
+  return (
+    <Modal
+      open={open}
+      onClose={close}
+      title="Delete your account?"
+      description="This permanently deletes your account and every project in it, with all of their events, agent events, alerts and policies. It can’t be undone."
+      footer={
+        <>
+          <Button onClick={close}>Cancel</Button>
+          <Button
+            type="submit"
+            form="delete-account-form"
+            variant="danger"
+            busy={busy}
+            disabled={!matches || !password}
+            icon={<UserX aria-hidden className="size-4" />}
+          >
+            Delete account
+          </Button>
+        </>
+      }
+    >
+      <form id="delete-account-form" onSubmit={onSubmit} noValidate className="space-y-4">
+        <div className="rounded-md border border-hairline-strong bg-raised px-3 py-2.5 text-sm">
+          <p className="font-semibold text-ink">
+            {projects.length} {projects.length === 1 ? 'project' : 'projects'} will be deleted
+          </p>
+          <ul className="mt-1 space-y-0.5 text-muted">
+            {shown.map((p) => (
+              <li key={p.project_id}>
+                {p.name} <span className="font-mono text-faint">({p.project_id})</span>
+              </li>
+            ))}
+            {projects.length > shown.length && <li>and {projects.length - shown.length} more</li>}
+          </ul>
+        </div>
+        <TextField
+          label={`Type ${account.email} to confirm`}
+          value={confirmEmail}
+          onChange={(e) => setConfirmEmail(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+          data-autofocus
+        />
+        <TextField
+          label="Your password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
+        />
+        {error && (
+          <p role="alert" className="rounded-md border border-coral/40 bg-coral/5 px-3 py-2 text-[13px] text-coral">
+            {error}
+          </p>
+        )}
+      </form>
+    </Modal>
+  );
+}
+
 export function ProjectSettings() {
   const project = useProject();
-  const [dialog, setDialog] = useState<'rotate' | 'delete' | null>(null);
+  const { account } = useSignedIn();
+  const [dialog, setDialog] = useState<'rotate' | 'delete' | 'account' | null>(null);
 
   const details: [string, string][] = [
     ['Project ID', project.project_id],
@@ -274,9 +372,31 @@ export function ProjectSettings() {
             </Button>
           </div>
         </Panel>
+
+        <Panel title="Your account" className="border-coral/30">
+          <dl className="mb-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="text-muted">Name</dt>
+              <dd className="text-ink">{account.name}</dd>
+            </div>
+            <div>
+              <dt className="text-muted">Email</dt>
+              <dd className="font-mono text-ink">{account.email}</dd>
+            </div>
+          </dl>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="max-w-md text-[13px] text-muted">
+              Delete your account and every project in it, with all of their data. This is separate from deleting one project.
+            </p>
+            <Button variant="danger" onClick={() => setDialog('account')} icon={<UserX aria-hidden className="size-4" />}>
+              Delete account
+            </Button>
+          </div>
+        </Panel>
       </div>
       <RotateKeyDialog open={dialog === 'rotate'} onClose={() => setDialog(null)} />
       <DeleteProjectDialog open={dialog === 'delete'} onClose={() => setDialog(null)} />
+      <DeleteAccountDialog open={dialog === 'account'} onClose={() => setDialog(null)} />
     </>
   );
 }

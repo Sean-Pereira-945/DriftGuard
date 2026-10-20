@@ -263,8 +263,6 @@ walkthrough and talking points are in [demo.md](demo.md).
   values from `GET /projects/{id}/policy/defaults`.
 - The open-alerts badge counts only alerts inside the current time and
   environment filter; there's no unfiltered count endpoint.
-- The dashboard has no account-deletion screen. The API supports it
-  (`DELETE /auth/me`).
 - The test client prints a Starlette deprecation warning about `httpx`. It's
   harmless.
 - Password reset and email verification need an email provider.

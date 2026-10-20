@@ -45,6 +45,10 @@ All notable changes to DriftGuard are recorded here. The format follows
   axis, with each bar ending when the attempt was recorded and running back by its
   duration. A retry loop shows as a bunch of red bars. It shows the latest 40
   attempts and has a text summary.
+- **Delete account from the dashboard.** Project Settings has a "Your account"
+  panel. Deleting lists the projects that will go, and asks for your email and
+  password. A wrong password deletes nothing. It uses the existing
+  `DELETE /auth/me`.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.

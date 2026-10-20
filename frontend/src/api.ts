@@ -173,6 +173,8 @@ export const api = {
   register: (body: RegisterRequest) => request<Session>('/auth/register', { method: 'POST', body, auth: false }),
   login: (body: LoginRequest) => request<Session>('/auth/login', { method: 'POST', body, auth: false }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),
+  /** Permanently deletes the account, every project and all of their data. Needs the password. */
+  deleteAccount: (password: string) => request<void>('/auth/me', { method: 'DELETE', body: { password } }),
   me: (signal?: AbortSignal) => request<Account>('/auth/me', { signal }),
 
   listProjects: (signal?: AbortSignal) => request<Project[]>('/projects', { signal }),
