@@ -8,10 +8,26 @@ interface PanelProps {
   className?: string;
   bodyClassName?: string;
   id?: string;
+  /**
+   * `plate` names the panel with an engraved plate label over a sleeper rule, like an
+   * instrument, so a chart or list below the Overview's first screen reads as part of the
+   * same desk rather than a separate card. The default keeps the 22px title.
+   */
+  variant?: 'default' | 'plate';
 }
 
-export function Panel({ title, description, actions, children, className = '', bodyClassName = 'p-4 sm:p-5', id }: PanelProps) {
+export function Panel({
+  title,
+  description,
+  actions,
+  children,
+  className = '',
+  bodyClassName = 'p-4 sm:p-5',
+  id,
+  variant = 'default',
+}: PanelProps) {
   const headingId = id ? `${id}-title` : undefined;
+  const plate = variant === 'plate';
   return (
     <section
       id={id}
@@ -19,18 +35,21 @@ export function Panel({ title, description, actions, children, className = '', b
       className={`min-w-0 animate-rise rounded-md border border-hairline bg-panel ${className}`}
     >
       {(title || actions) && (
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-hairline px-4 py-3 sm:px-5">
+        <header
+          className={`flex flex-wrap items-start justify-between gap-3 px-4 sm:px-5 ${plate ? 'pt-4 pb-3 sm:pt-5' : 'border-b border-hairline py-3'}`}
+        >
           <div className="min-w-0">
             {title && (
-              <h2 id={headingId} className="text-[22px] font-semibold">
+              <h2 id={headingId} className={plate ? 'plate-label text-muted' : 'text-[22px] font-semibold'}>
                 {title}
               </h2>
             )}
-            {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
+            {description && <p className={`mt-0.5 ${plate ? 'text-[15px] text-body' : 'text-sm text-muted'}`}>{description}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </header>
       )}
+      {plate && (title || actions) && <div aria-hidden className="sleepers mx-4 h-px sm:mx-5" />}
       <div className={bodyClassName}>{children}</div>
     </section>
   );

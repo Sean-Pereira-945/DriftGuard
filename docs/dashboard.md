@@ -55,7 +55,7 @@ can close sign-ups with `DRIFTGUARD_ALLOW_SIGNUP=false`.
 | **Updated** | The time the data on screen was last loaded. |
 | **Live indicator** | The realtime connection: **Live**, **Connecting**, **Reconnecting** or **Offline**. While live, new alerts and agent activity appear without a refresh, and a new critical alert pops up a notification. |
 | **Refresh** | Reloads every view and the project list. |
-| **Test Telemetry** | Sends one event with the four metrics you type, and shows how the server scored it. Handy for trying out thresholds. |
+| **Test Telemetry** | Sends one event with the metrics you type (prompt tokens, context length, retrieval score, response quality, latency), and shows how the server scored it. Handy for trying out thresholds. |
 
 The project and filters are remembered in this browser.
 
@@ -66,6 +66,15 @@ The address bar carries the view, the project and both filters, for example
 same view. Opening a link applies its filters and project. Someone who isn't
 signed in is asked to sign in first, and a project they can't see falls back to
 their first project.
+
+A view's own filters are in the address too, while you are on that view:
+Alerts adds `tab` (`open`, `resolved`, `all`) and `severity`; Logs adds `q`
+(the search), `kind`, `outcome` and `task`. So
+`#/logs?q=pytest&outcome=failed` opens the Logs view already filtered, and
+`#/alerts?tab=resolved` opens the resolved list. Defaults are left out, and the
+values are dropped from the address when you leave the view, so they never
+follow you to another one. The browser's back and forward buttons move
+between them too.
 
 ### Keyboard shortcuts
 
@@ -102,7 +111,7 @@ amber line adds it, for example "Worse than usual. Response quality is 0.08
 lower than the 24 hours before." This is advice only: it doesn't change the
 lamp or raise an alert. See [the baseline comparison](concepts.md#is-it-worse-than-usual-baseline-comparison).
 
-**Track.** The most urgent task drawn as a track. Each tool the task used is a
+**Track.** The most urgent task drawn as a track, with its sections sharing the full width. Each tool the task used is a
 block section, in the order it was first used. The blocking tool is lit red
 under a red signal, with the number of failures in a row. Other tools say "No
 block reported". Below it you see the latest error, and how many more tasks the
@@ -117,8 +126,16 @@ between the marker and the tick.
 | --- | --- |
 | Open alerts | Unresolved alerts in the window, split into critical and warning. |
 | Mean risk score | Average server-computed risk per event (see [scoring](#how-events-are-scored)). Ticks at 0.40 (warning) and 0.75 (critical). |
-| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). It says **Not reported by this source** when telemetry exists but carries no score, as with Claude Code. |
+| Response quality | Average 0–1 answer quality from your evaluator, with the policy floor ticked ([how to calculate it](scoring-guide.md)). For a Claude Code project it is the share of **checked** turns (tests, linter, type check or build) whose last check passed ([how](scoring-guide.md#when-you-only-have-telemetry)). If the source never sends it, the instrument is left out. |
 | Tool failure rate | Failed ÷ all tool calls. Ticks at 10% (amber) and 25% (red). Shown as a dash until the project has agent events. |
+
+**The spread behind each average.** Under **Mean risk score** and **Response quality**
+(and **Mean retrieval score** in All readings) a line gives the **median**, the
+weak end (the lowest 10% for scores, the highest 10% for risk) and, for scores,
+the share of events under the floor. A mean can hide a split: half the answers
+near 1.0 and half near 0.6 average to 0.8, but the median and the weak end show
+it. The line appears from 10 events. These use the latest 5,000 readings in the
+window.
 
 **Compared with before.** Under **Mean risk score** and **Response quality**
 (and **Mean retrieval score** in All readings) a line compares the window with
@@ -126,17 +143,31 @@ the same length of time just before it, at least 24 hours:
 
 | Line | Meaning |
 | --- | --- |
-| **Worse: 0.08 lower than the 24 hours before** | A meaningful drop in quality or retrieval, or rise in risk. |
+| **Worse: 0.08 lower than the 24 hours before (107 events now, 78 before)** | A meaningful drop in quality or retrieval, or rise in risk, with the event counts it rests on. |
 | **Better: …** | A meaningful move the other way. |
-| **Steady against the 24 hours before, was 0.23** | No meaningful change. |
+| **No clear change against the 24 hours before: was 0.23 (89 events now, 93 before)** | No meaningful change was found. This is not proof that nothing changed: with under 30 events on a side the line adds "With this few events, a small drop could be missed", because a real 0.09 drop is found only about a third of the time at 10 events ([study](../research/BASELINE_STUDY.md)). |
 | **Too few events to compare: 3 now, 40 before** | Under 10 events on a side, so no verdict. |
 | *(none)* | **All time** has no earlier period. With under 10 events it says "Only N events: too few to trust this average." |
+
+**Scores a source never sends are left out, not shown empty.** A score counts as
+sent if it appears in the window or in the period before. If a source sends no
+retrieval score (Claude Code has no retrieval step), that reading is missing from the
+instruments, the Mean retrieval score line, the Drift Risk Breakdown, the timeline and
+its legend, and **All readings** says what was left out. If it sends no response
+quality, the strip has three instruments instead of four. A project with no events at
+all still shows every instrument, empty, so you can see what it will measure.
+
+![A Claude Code project: response quality from checked turns, no retrieval score](images/dashboard-claude-code.png)
+
+This is a Claude Code-style sample: response quality comes from the 25 turns that ran
+a check (shown as dots on the timeline), and nothing is shown for retrieval.
 
 **All readings.** A collapsed list of everything the instruments leave out:
 
 | Reading | Meaning |
 | --- | --- |
 | Total events | Telemetry events in the window, split into critical and warning. |
+| Mean latency | The average `latency_ms` of events that reported it, with the policy limit and the share over it. Only shown when some event carried a latency. |
 | Tokens at stake | The sum of `saved_tokens` over open alerts. For a **drift** alert it's the tokens a mitigation would save; for an **agent** alert it's the tokens already wasted on the blocked task. These are estimates, not invoices. |
 | Mean retrieval score | Average 0–1 relevance of retrieved documents; higher is better. Shows the policy floor, with the same "Not reported" rule. |
 | Tool calls | Tool calls in the window, and how many failed. |
@@ -154,7 +185,7 @@ rows Logs lists.
   Dashed lines mark the prompt-token limit and the two score floors, and the
   span under the lower floor is hatched. **View the latest 12 readings as a
   table** gives the same data without hovering.
-- **Drift Risk Breakdown.** The share of events that broke each policy rule.
+- **Drift Risk Breakdown.** The share of events that broke each policy rule, including **Latency over limit** once any event reports a latency.
 - **Top Root Causes.** The most frequent causes among warning and critical
   events. It shows "No drift detected" when every event is stable.
 - **Open Alerts.** The five newest open alerts.
@@ -171,7 +202,7 @@ rest.
 
 | Reading | Meaning |
 | --- | --- |
-| Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. |
+| Blocked tasks | Tasks where one tool has failed at least *blocked after failures* times in a row (3 by default) and hasn't succeeded since. A gauge under it draws the longest run of failures in a row against that threshold. |
 | Failing tasks | A shorter run of failures in a row. |
 | Wasted tokens | Tokens of failed attempts plus redundant ones. |
 | Failures *(All counts)* | All failed tool attempts. |
@@ -198,6 +229,16 @@ limits and malformed input each get their own advice.
 | Last error | The most recent error message, scrubbed of secrets. |
 | Last seen | Time of the task's latest event. |
 
+![A task's drawer: its track, details and a timeline of its attempts](images/dashboard-task-drawer.png)
+
+The task drawer ends with a **timeline of the attempts**: one row per tool call on a
+shared time axis. A bar ends when the attempt was recorded and runs back by its
+duration, so a retry loop shows as a bunch of red bars with the gaps between them,
+and a slow attempt is a long bar. Red bars failed. It shows the latest 40
+attempts, and says so when there are more. Without recorded durations each
+attempt is a thin mark. The list of attempts below it carries the same data as
+text, with each error.
+
 A blocked task raises an **agent** alert. The alert's token count stays
 current while the task is blocked, and it **resolves itself** when the task
 recovers.
@@ -207,7 +248,9 @@ recovers.
 ![Logs: every agent action, newest first](images/dashboard-logs.png)
 
 The full history of what your agents did, newest first, 100 rows at a time,
-with **Load more** for older rows.
+with **Load more** for older rows. The search, kind and outcome filters and a
+"show only this task" choice are kept in the address (`?q=…&kind=…&outcome=…&task=…`),
+so a filtered list can be linked.
 
 The kind filter offers **Tool call**, **Prompt** and **Response**. Model calls
 and session start or end rows aren't in the filter. If your SDK or the hook
@@ -269,14 +312,17 @@ attached (for Claude Code: model, task and request ID).
 
 ![Alerts: agent and drift alerts](images/dashboard-alerts.png)
 
-**Open**, **Resolved** and **All** tabs, plus a severity filter. Arrow keys,
-Home and End move between the tabs. Each alert shows a lamp, its severity, its
+**Open**, **Resolved** and **All** tabs, plus a severity filter, both kept in
+the address (`?tab=resolved&severity=critical`) so the list can be linked.
+Arrow keys, Home and End move between the tabs. Each alert shows a lamp, its severity, its
 **source**, how long ago it fired, the tokens at stake, and its task or
 environment.
 
 **Bulk actions.** Tick alerts, or **Select all**, then **Resolve** or
-**Reopen** the selection in one step. If some fail, the notification says how
-many and why. The selection clears when you change tab or filter.
+**Reopen** the selection in one request (`PATCH /projects/{id}/alerts`). If an
+alert has gone since the list loaded, the notification says how many were
+skipped and the list refreshes. The selection clears when you change tab or
+filter.
 
 | Source | Raised when | Resolves |
 | --- | --- | --- |
@@ -316,9 +362,18 @@ Each field checks its value as you leave it, and says what it flags in the
 events and tasks already loaded for the current filters, for example
 "Would flag 12 of 112 loaded events, now 44". The save bar lists every
 threshold that is changing and warns, in amber, when a change would flag fewer
-events or tasks than today. The preview counts the loaded data, up to the
+events or tasks than today. Counts only include events that carry the reading, so
+"Flags 8 of 25" means 25 events had a quality score, and a rule whose reading nothing
+sends says so instead of showing zero. The preview counts the loaded data, up to the
 latest 500 events. It doesn't predict future traffic. The retry window has no
 preview.
+
+**Restore defaults** fills every field with the thresholds a new project
+starts with. It saves nothing: the save bar lists what would change and the
+preview shows the effect, and the policy only changes when you press **Save
+policy**. **Reset** discards your unsaved edits and goes back to the stored
+policy. **Restore defaults** is greyed out when the form already matches the
+defaults.
 
 | Setting | Default | Meaning |
 | --- | ---: | --- |
@@ -331,7 +386,7 @@ preview.
 
 The defaults suit chat apps. A coding agent like Claude Code sends far larger
 requests: about **30000** prompt tokens and **400000** context are sensible
-there. **Reset** discards unsaved edits.
+there. **Reset** discards unsaved edits, and **Restore defaults** loads the defaults for you to review.
 
 ## SDK Integration
 
@@ -350,6 +405,12 @@ its prefix (`dg_live_ab12…`). Use the key you saved, or rotate a new one.
   already stored stays until retention removes it.
 - **Delete project** removes the project and all its data. To confirm, you type
   the project ID.
+- **Your account** shows your name and email. **Delete account** removes your
+  account and **every** project in it, with all of their data, and signs you out.
+  The dialog lists the projects that will go, and to confirm you type your email
+  and enter your password. A wrong password shows "Password is incorrect" and
+  deletes nothing. Sign-in, sign-up and account deletion share a per-minute limit
+  (10 by default), so repeated wrong tries are slowed down. It can't be undone.
 
 ## How events are scored
 

@@ -58,3 +58,37 @@ def test_recommend_mitigation_savings_ratio_is_bounded():
 def test_default_policy_includes_agent_settings():
     assert DEFAULT_POLICY["blocked_after_failures"] == 3
     assert DEFAULT_POLICY["retry_window_minutes"] == 60
+
+
+def test_latency_over_limit_is_a_violation_but_stays_under_warning_alone():
+    result = evaluate_drift({"latency_ms": 15000})
+    assert "latency_limit_ms" in result["violations"]
+    assert result["risk_score"] == 0.15
+    assert result["severity"] == "stable"  # 0.15 < the 0.4 warning threshold
+    assert "high response latency" in result["root_cause"]
+    assert result["recommendation"] == "reduce_latency_with_streaming_or_a_faster_model"
+
+
+def test_latency_tips_a_borderline_case_into_warning():
+    # prompt alone (0.25) is stable; adding latency (0.15) reaches the 0.4 warning band.
+    base = evaluate_drift({"prompt_tokens": 5000})
+    assert base["severity"] == "stable"
+    tipped = evaluate_drift({"prompt_tokens": 5000, "latency_ms": 20000})
+    assert tipped["severity"] == "warning"
+    assert round(tipped["risk_score"], 2) == 0.40
+
+
+def test_missing_or_fast_latency_never_flags():
+    assert "latency_limit_ms" not in evaluate_drift({})["violations"]
+    assert "latency_limit_ms" not in evaluate_drift({"latency_ms": 500})["violations"]
+    assert "latency_limit_ms" not in evaluate_drift({"latency_ms": None})["violations"]
+
+
+def test_latency_limit_is_configurable():
+    strict = {"latency_limit_ms": 1000}
+    assert "latency_limit_ms" in evaluate_drift({"latency_ms": 1500}, strict)["violations"]
+    assert "latency_limit_ms" not in evaluate_drift({"latency_ms": 1500}, {"latency_limit_ms": 2000})["violations"]
+
+
+def test_default_policy_has_a_latency_limit():
+    assert DEFAULT_POLICY["latency_limit_ms"] == 10000.0

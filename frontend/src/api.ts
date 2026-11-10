@@ -9,6 +9,7 @@ import type {
   AgentDiagnosis,
   AgentEvent,
   Alert,
+  AlertBulkResult,
   AlertCreateRequest,
   AuthConfig,
   EventIngestRequest,
@@ -173,6 +174,8 @@ export const api = {
   register: (body: RegisterRequest) => request<Session>('/auth/register', { method: 'POST', body, auth: false }),
   login: (body: LoginRequest) => request<Session>('/auth/login', { method: 'POST', body, auth: false }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),
+  /** Permanently deletes the account, every project and all of their data. Needs the password. */
+  deleteAccount: (password: string) => request<void>('/auth/me', { method: 'DELETE', body: { password } }),
   me: (signal?: AbortSignal) => request<Account>('/auth/me', { signal }),
 
   listProjects: (signal?: AbortSignal) => request<Project[]>('/projects', { signal }),
@@ -183,6 +186,8 @@ export const api = {
   rotateApiKey: (id: string) => request<ProjectWithKey>(`/projects/${enc(id)}/api-key`, { method: 'POST' }),
 
   getPolicy: (id: string, signal?: AbortSignal) => request<Policy>(`/projects/${enc(id)}/policy`, { signal }),
+  getPolicyDefaults: (id: string, signal?: AbortSignal) =>
+    request<Policy>(`/projects/${enc(id)}/policy/defaults`, { signal }),
   updatePolicy: (id: string, body: PolicyUpdate) =>
     request<Policy>(`/projects/${enc(id)}/policy`, { method: 'PUT', body }),
 
@@ -211,6 +216,8 @@ export const api = {
     request<Alert>(`/projects/${enc(id)}/alerts`, { method: 'POST', body }),
   setAlertResolved: (id: string, alertId: number, resolved: boolean) =>
     request<Alert>(`/projects/${enc(id)}/alerts/${alertId}`, { method: 'PATCH', body: { resolved } }),
+  setAlertsResolved: (id: string, ids: number[], resolved: boolean) =>
+    request<AlertBulkResult>(`/projects/${enc(id)}/alerts`, { method: 'PATCH', body: { ids, resolved } }),
 
   listAgentEvents: (
     id: string,

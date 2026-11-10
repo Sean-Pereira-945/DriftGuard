@@ -79,7 +79,8 @@ are for planning only; they aren't commitments.
 
 ### Dashboard redesign (October 2026, branch `feature/signal-box-redesign`, not merged)
 These are checked by the type check, the build, the design detector and browser
-runs, not by unit tests: the frontend has none yet.
+runs. The pure logic under `frontend/src/lib/` has unit tests since November
+2026; the views do not.
 
 - [x] **Signal box look.** A dark enamel panel where colour appears only where
   state deviates. `PRODUCT.md` and `DESIGN.md` record the product and the design.
@@ -90,42 +91,60 @@ runs, not by unit tests: the frontend has none yet.
 - [x] **Operator efficiency.** Keyboard shortcuts, shareable links that carry
   the view, project and filters, bulk resolve and reopen, arrow-key tabs.
 - [x] **Policy impact preview**, inline validation and a change summary.
+- [x] **Account deletion** from Project Settings, with the email and password to confirm.
+- [x] **Attempt timeline** in the task drawer: tool calls on a shared time axis, so a
+  retry loop is visible at a glance.
+- [x] **Response quality for Claude Code from outcome checks** (did the turn's tests,
+  lint, type check or build pass), with no retrieval score, and scores a source never
+  sends left off the dashboard.
+- [x] **Restore defaults** on Policy, from a new `GET /projects/{id}/policy/defaults`.
+- [x] Redesign review fixes: a track that fills its width, a failures-in-a-row
+  gauge on Agent Diagnosis, no gaps below the Overview's charts, and a readable
+  phone layout.
+- [x] The median, the weak end and the share under the floor beneath each average,
+  so a mean can't hide a split.
+- [x] The baseline line reads "No clear change" and shows its sample size, after the
+  [baseline study](../research/BASELINE_STUDY.md) found "steady" over-claimed.
 - [x] **Baseline comparison.** Mean retrieval, quality and risk against the period
   before the window, with a minimum sample of 10 events and a z-test, shown on the
   Overview as advice.
 - [x] Contrast, visible filter labels and grouped navigation.
+- [x] **Plate panels** (November 2026): the Overview's timeline, risk breakdown, root
+  causes and open alerts are named with engraved plate labels over a sleeper rule,
+  closing the last open item from the redesign review.
+- [x] **View filters in the address** (November 2026): the Alerts tab and severity,
+  and the Logs search, kind, outcome and task, so a filtered list can be linked.
+- [x] **Bulk alerts endpoint** (`PATCH /projects/{id}/alerts`, November 2026): the
+  dashboard's Resolve and Reopen on a selection send one request instead of one
+  per alert.
+- [x] **Frontend unit tests** (Vitest, November 2026): routing and shareable links,
+  keyboard shortcuts, validation, reported scores, baseline wording and the Policy
+  impact preview. `npm test` runs in CI before the build.
 
 ## Next
 
 ### Analytics
-- [ ] Reword "Steady" to "No clear change" and show the sample size beside it. The
-  [baseline study](../research/BASELINE_STUDY.md) found that at 10 events a real
-  0.09 decline reads steady about two times in three.
 - [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
   control-chart rule, instead of showing advice only. The study says to require at
   least 3 checks in a row plus a cooldown, and to consider a sequential method
   (CUSUM or EWMA), because a 3-sigma check repeated at every event raises false
   alarms in about 5 percent of streams.
-- [ ] Percentiles (median and 10th) beside each mean, and a breakdown by model,
-  route and environment so a drift can be pinned to one cause.
+- [ ] A breakdown by model and route so a drift can be pinned to one cause. This
+  needs those fields stored on telemetry events.
 - [ ] Weights and thresholds that can be fitted to labelled data, and exposed in
   Policy.
-- [ ] Outcome signals for Claude Code (tests pass at the end of a turn, the user
-  didn't repeat the request) as a quality proxy.
+- [ ] More outcome signals for Claude Code beyond passing checks (the user didn't
+  repeat or undo the request).
 
 ### Dashboard
-- [ ] Finish the redesign review items: a fuller track diagram, gauges and the
-  same look on Agent Diagnosis and the lower Overview panels, and a better phone
-  layout for the timeline legend and header.
-- [ ] Frontend unit tests, starting with shortcuts, URL filters and the Policy
-  preview.
-- [ ] Saved views, and tab and search state in the address.
-- [ ] A bulk alerts endpoint, and a server-side impact preview for Policy that
-  replays stored history instead of the loaded events.
+- [ ] Saved views.
+- [ ] A server-side impact preview for Policy that replays stored history instead
+  of the loaded events.
 
 ### Integrations
-- [ ] A standalone **MCP gateway** (`driftguard-mcp-proxy`) that sits between
-  any MCP client and its servers. This is the most direct way to observe closed
+- [x] A standalone **MCP gateway** (`driftguard-mcp-proxy`, November 2026) that
+  sits between any MCP client and its servers over stdio, forwarding every
+  message and recording each `tools/call`. The most direct way to observe closed
   agents that support MCP.
 - [ ] Framework adapters: LangChain/LangGraph callbacks, the OpenAI Agents SDK,
   and the Claude Agent SDK hooks.
@@ -135,10 +154,13 @@ runs, not by unit tests: the frontend has none yet.
   [agent-integration.md](agent-integration.md#what-driftguard-cannot-observe).
 
 ### Product
-- [ ] Trace waterfall view: a timeline of a task's model turns and tool calls.
+- [ ] Add model turns to the attempt timeline. It shows a task's tool calls today.
 - [ ] Per-project notification settings (webhooks, email) instead of global
   environment variables.
-- [ ] Latency as a first-class metric: ingest `latency_ms` and add a policy rule.
+- [x] **Latency as a first-class metric** (November 2026): telemetry carries
+  `latency_ms`, a `latency_limit_ms` policy rule flags slow requests, and the
+  Overview, Drift Risk Breakdown and Policy preview show it. A slow request adds
+  to drift risk but can't raise an alert on its own.
 - [ ] Provider pricing profiles, to show wasted tokens as cost.
 - [ ] Teams: several users per account, with roles.
 

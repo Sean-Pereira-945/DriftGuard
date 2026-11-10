@@ -11,13 +11,14 @@ import { SelectField, TextField } from './Field';
 import { Modal } from './Overlay';
 import { Eyebrow } from './Panel';
 
-type MetricKey = 'prompt_tokens' | 'context_length' | 'retrieval_score' | 'response_quality';
+type MetricKey = 'prompt_tokens' | 'context_length' | 'retrieval_score' | 'response_quality' | 'latency_ms';
 
 const METRICS: { key: MetricKey; label: string; help: string; score: boolean }[] = [
   { key: 'prompt_tokens', label: 'Prompt tokens', help: 'Tokens sent in the prompt (≥ 0).', score: false },
   { key: 'context_length', label: 'Context length', help: 'Size of the assembled context (≥ 0).', score: false },
   { key: 'retrieval_score', label: 'Retrieval score', help: 'Relevance of retrieved context, 0–1.', score: true },
   { key: 'response_quality', label: 'Response quality', help: 'Quality score of the response, 0–1.', score: true },
+  { key: 'latency_ms', label: 'Latency (ms)', help: 'How long the request took, in milliseconds (≥ 0).', score: false },
 ];
 
 export function TestTelemetryModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -28,6 +29,7 @@ export function TestTelemetryModal({ open, onClose }: { open: boolean; onClose: 
     context_length: '',
     retrieval_score: '',
     response_quality: '',
+    latency_ms: '',
   });
   const [environment, setEnvironment] = useState<Environment>(project.environment);
   const [errors, setErrors] = useState<Partial<Record<MetricKey | 'form', string>>>({});

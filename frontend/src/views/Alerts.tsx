@@ -7,11 +7,15 @@ import { SelectField, TextAreaField } from '../components/Field';
 import { PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ResourceView } from '../components/States';
 import { useToast } from '../components/Toasts';
+import { useViewParam } from '../lib/route';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
 import type { Alert, Severity } from '../types';
 
 type Tab = 'open' | 'resolved' | 'all';
+const isTab = (value: string): value is Tab => value === 'open' || value === 'resolved' || value === 'all';
+const isSeverityFilter = (value: string): value is Severity | 'all' =>
+  value === 'all' || value === 'stable' || value === 'warning' || value === 'critical';
 
 const TABS: { id: Tab; label: string; title: string }[] = [
   { id: 'open', label: 'Open', title: 'Open alerts' },
@@ -97,8 +101,8 @@ export function Alerts() {
   const project = useProject();
   const { alertsChanged } = useWorkspace();
   const toast = useToast();
-  const [tab, setTab] = useState<Tab>('open');
-  const [severity, setSeverity] = useState<Severity | 'all'>('all');
+  const [tab, setTab] = useViewParam<Tab>('tab', 'open', isTab);
+  const [severity, setSeverity] = useViewParam<Severity | 'all'>('severity', 'all', isSeverityFilter);
   const [pending, setPending] = useState<number | null>(null);
   const [composing, setComposing] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -144,22 +148,29 @@ export function Alerts() {
 
   const bulk = async (targets: Alert[], resolved: boolean) => {
     setBulkBusy(true);
-    const results = await Promise.allSettled(targets.map((alert) => api.setAlertResolved(project.project_id, alert.id, resolved)));
-    const failed = results.filter((r) => r.status === 'rejected');
-    const done = results.length - failed.length;
-    alertsChanged();
-    setSelected(new Set());
-    setBulkBusy(false);
     const verb = resolved ? 'resolved' : 'reopened';
-    if (failed.length === 0) {
-      toast.push({ tone: 'success', title: `${done} ${done === 1 ? 'alert' : 'alerts'} ${verb}` });
-    } else {
-      const first = failed[0] as PromiseRejectedResult;
-      toast.push({
-        tone: 'error',
-        title: `${failed.length} of ${results.length} could not be ${verb}`,
-        message: errorMessage(first.reason),
-      });
+    try {
+      const result = await api.setAlertsResolved(
+        project.project_id,
+        targets.map((alert) => alert.id),
+        resolved,
+      );
+      const done = result.alerts.length;
+      if (result.missing.length === 0) {
+        toast.push({ tone: 'success', title: `${done} ${done === 1 ? 'alert' : 'alerts'} ${verb}` });
+      } else {
+        toast.push({
+          tone: 'error',
+          title: `${result.missing.length} of ${targets.length} could not be ${verb}`,
+          message: 'They no longer exist in this project. The list has been refreshed.',
+        });
+      }
+      alertsChanged();
+      setSelected(new Set());
+    } catch (error) {
+      toast.push({ tone: 'error', title: `The selection could not be ${verb}`, message: errorMessage(error) });
+    } finally {
+      setBulkBusy(false);
     }
   };
 

@@ -6,6 +6,7 @@ const RULES: { key: keyof ViolationRates; label: string; describe: (policy: Poli
   { key: 'context_length_limit', label: 'Context length over limit', describe: (p) => `> ${fmtInt(p.context_length_limit)}` },
   { key: 'retrieval_score_floor', label: 'Retrieval below floor', describe: (p) => `< ${fmtScore(p.retrieval_score_floor)}` },
   { key: 'response_quality_floor', label: 'Quality below floor', describe: (p) => `< ${fmtScore(p.response_quality_floor)}` },
+  { key: 'latency_limit_ms', label: 'Latency over limit', describe: (p) => `> ${fmtInt(p.latency_limit_ms)} ms` },
 ];
 
 function tone(rate: number): { bar: string; text: string } {
@@ -15,10 +16,19 @@ function tone(rate: number): { bar: string; text: string } {
 }
 
 /** Share of events in the window that broke each policy rule (`summary.violation_rates`). */
-export function RiskBreakdown({ rates, policy }: { rates: ViolationRates; policy: Policy }) {
+export function RiskBreakdown({
+  rates,
+  policy,
+  hide = [],
+}: {
+  rates: ViolationRates;
+  policy: Policy;
+  /** Rules whose reading this source never sends, so there is nothing to measure. */
+  hide?: (keyof ViolationRates)[];
+}) {
   return (
     <ul className="space-y-4">
-      {RULES.map((rule) => {
+      {RULES.filter((rule) => !hide.includes(rule.key)).map((rule) => {
         const rate = rates[rule.key];
         const t = tone(rate);
         return (

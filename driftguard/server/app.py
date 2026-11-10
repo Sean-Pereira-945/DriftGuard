@@ -42,6 +42,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 from driftguard import __version__
+from driftguard.policy import DEFAULT_POLICY
 
 from .notifications import Notifier
 from .ratelimit import RateLimiter, build_rate_limiter
@@ -51,6 +52,7 @@ from .schemas import (
     AgentEventBatchRequest,
     AgentEventIngestRequest,
     AgentEventKind,
+    AlertBulkUpdateRequest,
     AlertCreateRequest,
     AlertUpdateRequest,
     DeleteAccountRequest,
@@ -438,6 +440,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def get_policy(project: ReaderDep) -> dict[str, Any]:
         return service.get_policy(project["project_id"])
 
+    @app.get("/projects/{project_id}/policy/defaults", tags=["policy"], dependencies=default_limit)
+    def get_policy_defaults(project: ReaderDep) -> dict[str, Any]:
+        """The thresholds a new project starts with, so a client can offer to restore them."""
+        return dict(DEFAULT_POLICY)
+
     @app.put("/projects/{project_id}/policy", tags=["policy"], dependencies=default_limit)
     def update_policy(body: PolicyUpdateRequest, project: OwnerDep) -> dict[str, Any]:
         return service.update_policy(project["project_id"], body.model_dump(exclude_none=True))
@@ -501,6 +508,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         publish_alerts(project["project_id"], [alert])
         return alert
+
+    @app.patch("/projects/{project_id}/alerts", tags=["alerts"], dependencies=default_limit)
+    def update_alerts(body: AlertBulkUpdateRequest, project: OwnerDep) -> dict[str, Any]:
+        """Resolve or reopen up to 500 alerts in one request. Ids from other projects are reported, not changed."""
+        result = service.set_alerts_resolved(project["project_id"], body.ids, body.resolved)
+        action = "resolved" if body.resolved else "reopened"
+        for alert in result["alerts"]:
+            broadcaster.publish(project["project_id"], {"type": "alert", "action": action, "alert": alert})
+        return result
 
     @app.patch("/projects/{project_id}/alerts/{alert_id}", tags=["alerts"], dependencies=default_limit)
     def update_alert(alert_id: int, body: AlertUpdateRequest, project: OwnerDep) -> dict[str, Any]:

@@ -207,7 +207,7 @@ More detail is in
 **Run the checks** (with `.venv` active):
 
 ```bash
-pytest                                   # about 180 tests, ~25 s
+pytest                                   # about 200 tests, ~25 s
 ruff check . && ruff format --check .
 cd frontend && npm run lint && cd ..
 ```
@@ -219,6 +219,9 @@ another terminal:
 cd frontend
 npm run dev                              # http://localhost:5173, API calls go to :8000
 ```
+
+On Windows, `startup.bat` in the repo root starts both the server (port 8000,
+local SQLite file) and the Vite dev server (port 5173) for you.
 
 **Python changes** need a server restart (Ctrl+C, then start it again), or
 start it with `--reload` while you work.

@@ -15,6 +15,12 @@ DATABASE_URL=sqlite:///./driftguard-local.db driftguard-server --reload   # API 
 cd frontend && npm run dev         # dashboard on http://localhost:5173, API calls proxied to :8000
 ```
 
+On Windows, `startup.bat` in the repo root does both: it creates `.venv` and
+installs the dashboard dependencies on first run, starts the API in its own
+window on port 8000 against `driftguard-local.db`, and runs the Vite dev server
+on port 5173 with hot reload. `demo.bat` is the one for showing the product;
+`startup.bat` is the one for working on it.
+
 To have the Python server host the dashboard at `:8000`, run `npm run build`,
 which writes to `driftguard/server/static/`. That folder is gitignored.
 
@@ -31,6 +37,7 @@ driftguard/            installable package
 frontend/              React dashboard source (builds into driftguard/server/static)
   src/views/           one file per sidebar view (Overview, Logs, ...)
   src/state/           session, workspace (project and filters), per-view queries
+gateway/               MCP stdio proxy (driftguard-mcp-proxy) that records tool calls
 integrations/
   claude_code/         Claude Code hook (stdlib only) and its README
 examples/              live_demo.py (scripted demo), seed_showcase.py (sample data)
@@ -38,7 +45,8 @@ research/              baseline study (simulation) and Phase 1 drift prototypes,
 tests/                 SDK, server, adapter and hook tests
 docs/                  documentation, including PRODUCT.md; docs/images holds the diagram and screenshots
 DESIGN.md              dashboard design tokens and components
-demo.bat               one-click Windows demo
+demo.bat               one-click Windows demo (built dashboard, demo script)
+startup.bat            one-click Windows dev setup (API + Vite with hot reload)
 ```
 
 `DATABASE_URL` keeps local work on a local SQLite file even when `.env`
@@ -71,13 +79,28 @@ DRIFTGUARD_TEST_REDIS_URL=redis://localhost:56379/0 pytest tests
 so point it only at a throwaway database. The Redis tests are skipped unless
 `DRIFTGUARD_TEST_REDIS_URL` is set.
 
+The dashboard has unit tests too, run with [Vitest](https://vitest.dev) in a
+jsdom browser:
+
+```bash
+cd frontend && npm test             # once, as CI does
+cd frontend && npm run test:watch   # re-runs on save
+```
+
+They live next to the code as `src/**/*.test.ts(x)` and cover the pure logic:
+hash routing and shareable links (`lib/route.ts`), keyboard shortcuts
+(`lib/shortcuts.ts`), input validation, which scores a source reports, the
+baseline sentences and the Policy impact preview (`lib/policyPreview.ts`). The
+views themselves are still checked by the type check, the build and browser
+runs.
+
 ## Quality checks
 
 ```bash
 ruff check . && ruff format --check .
 bandit -c pyproject.toml -r driftguard
 pip-audit --skip-editable
-cd frontend && npm run lint && npm run build
+cd frontend && npm run lint && npm test && npm run build
 ```
 
 ## Continuous integration

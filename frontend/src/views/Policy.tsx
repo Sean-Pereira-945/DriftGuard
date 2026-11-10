@@ -1,4 +1,4 @@
-import { RotateCcw, Save } from 'lucide-react';
+import { History, RotateCcw, Save } from 'lucide-react';
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { api, errorMessage } from '../api';
 import { Button } from '../components/Button';
@@ -8,6 +8,7 @@ import { ResourceView } from '../components/States';
 import { useToast } from '../components/Toasts';
 import { fmtInt, TIME_RANGE_LABELS } from '../lib/format';
 import { useResource } from '../lib/useResource';
+import { flagged } from '../lib/policyPreview';
 import { parseNumber } from '../lib/validation';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
@@ -62,6 +63,14 @@ const FIELDS: { group: string; description: string; fields: FieldSpec[] }[] = [
         max: 1,
         validate: (v) => (v >= 0 && v <= 1 ? null : 'Must be between 0 and 1.'),
       },
+      {
+        key: 'latency_limit_ms',
+        label: 'Latency limit (ms)',
+        help: 'Requests slower than this (in milliseconds) are flagged as high latency. Events that report no latency never flag. A lower limit flags more events. Must be greater than 0.',
+        step: 500,
+        min: 0,
+        validate: (v) => (v > 0 ? null : 'Must be greater than 0.'),
+      },
     ],
   },
   {
@@ -99,30 +108,22 @@ function toDraft(policy: PolicyType): Draft {
   return Object.fromEntries(ALL_FIELDS.map((f) => [f.key, String(policy[f.key])])) as Draft;
 }
 
-/** How many of the loaded events or tasks a rule would flag at a given value. */
-function flagged(key: PolicyField, value: number, events: TelemetryEvent[], tasks: AgentTask[]): { count: number; of: number; noun: string } | null {
-  switch (key) {
-    case 'prompt_token_limit':
-      return { count: events.filter((e) => e.prompt_tokens !== null && e.prompt_tokens > value).length, of: events.length, noun: 'events' };
-    case 'context_length_limit':
-      return { count: events.filter((e) => e.context_length !== null && e.context_length > value).length, of: events.length, noun: 'events' };
-    case 'retrieval_score_floor':
-      return { count: events.filter((e) => e.retrieval_score !== null && e.retrieval_score < value).length, of: events.length, noun: 'events' };
-    case 'response_quality_floor':
-      return { count: events.filter((e) => e.response_quality !== null && e.response_quality < value).length, of: events.length, noun: 'events' };
-    case 'blocked_after_failures':
-      return { count: tasks.filter((t) => t.consecutive_failures >= value).length, of: tasks.length, noun: 'tasks' };
-    default:
-      return null;
-  }
-}
-
 interface Preview {
   events: TelemetryEvent[] | null;
   tasks: AgentTask[] | null;
 }
 
-function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview: Preview; onSaved: (policy: PolicyType) => void }) {
+function PolicyForm({
+  policy,
+  defaults,
+  preview,
+  onSaved,
+}: {
+  policy: PolicyType;
+  defaults: PolicyType | null;
+  preview: Preview;
+  onSaved: (policy: PolicyType) => void;
+}) {
   const project = useProject();
   const { refreshAll, filters } = useWorkspace();
   const toast = useToast();
@@ -155,6 +156,7 @@ function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview:
   const shownError = (key: PolicyField) => (touched[key] || submitted ? parsed[key].error : null);
   const changes = ALL_FIELDS.filter((f) => parsed[f.key].value !== null && parsed[f.key].value !== policy[f.key]);
   const dirty = ALL_FIELDS.some((f) => parseNumber(draft[f.key]) !== policy[f.key]);
+  const atDefaults = defaults === null || ALL_FIELDS.every((f) => parseNumber(draft[f.key]) === defaults[f.key]);
 
   // Coverage after the change, from the events and tasks already loaded.
   const coverage = changes
@@ -199,6 +201,9 @@ function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview:
     const value = parsed[key].value;
     const now = flagged(key, policy[key], preview.events, preview.tasks);
     if (!now) return null;
+    if (now.of === 0 && key !== 'blocked_after_failures') {
+      return <span className="mt-1.5 block text-[13px] text-body">No loaded event carries this reading, so this rule flags nothing here.</span>;
+    }
     const next = value !== null ? flagged(key, value, preview.events, preview.tasks) : null;
     const changed = next !== null && value !== policy[key];
     return (
@@ -297,6 +302,20 @@ function PolicyForm({ policy, preview, onSaved }: { policy: PolicyType; preview:
           >
             Reset
           </Button>
+          <Button
+            onClick={() => {
+              if (!defaults) return;
+              setDraft(toDraft(defaults));
+              setTouched({});
+              setSubmitted(false);
+              setStatus({ tone: 'success', text: 'Defaults loaded. Check the changes above, then save.' });
+            }}
+            disabled={atDefaults || busy}
+            title="Fill every field with the thresholds a new project starts with. Nothing is saved until you press Save policy."
+            icon={<History aria-hidden className="size-4" />}
+          >
+            Restore defaults
+          </Button>
           <span aria-live="polite" className={`text-sm ${status?.tone === 'error' ? 'text-coral' : 'text-green'}`}>
             {status?.text ?? (dirty ? <span className="text-amber">Unsaved changes</span> : '')}
           </span>
@@ -311,6 +330,7 @@ export function Policy() {
   const { refreshKey } = useWorkspace();
   const [saved, setSaved] = useState<PolicyType | null>(null);
   const policy = useResource<PolicyType>((signal) => api.getPolicy(project.project_id, signal), `policy|${project.project_id}`, refreshKey);
+  const defaults = useResource<PolicyType>((signal) => api.getPolicyDefaults(project.project_id, signal), `policy-defaults|${project.project_id}`, 0);
   const events = useProjectQuery('policy-events-500', (id, f, signal) => api.listEvents(id, f, { limit: 500 }, signal));
   const diagnosis = useProjectQuery('policy-diagnosis', (id, f, signal) => api.agentDiagnosis(id, f, signal));
 
@@ -320,10 +340,10 @@ export function Policy() {
     <>
       <PageHeader
         title="Policy"
-        description="Thresholds that score telemetry and decide when an agent task is blocked. Each field shows what it flags in the data already loaded for the current filters. Reset discards unsaved edits."
+        description="Thresholds that score telemetry and decide when an agent task is blocked. Each field shows what it flags in the data already loaded for the current filters. Reset discards unsaved edits. Restore defaults fills the form with the thresholds a new project starts with; nothing changes until you save."
       />
       <ResourceView resource={policy} loadingLabel="Loading policy…">
-        {(data) => <PolicyForm policy={saved ?? data} preview={{ events: events.data ?? null, tasks: diagnosis.data?.tasks ?? null }} onSaved={setSaved} />}
+        {(data) => <PolicyForm policy={saved ?? data} defaults={defaults.data ?? null} preview={{ events: events.data ?? null, tasks: diagnosis.data?.tasks ?? null }} onSaved={setSaved} />}
       </ResourceView>
     </>
   );

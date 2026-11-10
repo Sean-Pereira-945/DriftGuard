@@ -101,20 +101,20 @@ export function Header({ onOpenMenu, menuOpen, onNewProject, onTestTelemetry }: 
         )}
 
         {project && (
-          <div className="order-last flex w-full gap-3 sm:order-none sm:w-auto">
+          <div className="order-last flex w-full flex-wrap items-center gap-x-3 gap-y-1 sm:order-none sm:w-auto">
             <LabeledSelect
               label="Env"
               value={filters.environment}
               onChange={(value) => setFilters({ ...filters, environment: value as Environment | 'all' })}
               options={ENV_OPTIONS}
-              className="flex-1 sm:w-36 sm:flex-none"
+              className="w-[7.25rem] shrink-0 sm:w-36"
             />
             <LabeledSelect
               label="Range"
               value={filters.timeRange}
               onChange={(value) => setFilters({ ...filters, timeRange: value as TimeRange })}
               options={RANGE_OPTIONS}
-              className="flex-1 sm:w-48 sm:flex-none"
+              className="min-w-[11rem] flex-1 sm:w-48 sm:flex-none"
             />
             {filtered && (
               <Button size="sm" variant="ghost" className="self-center" onClick={() => setFilters({ environment: 'all', timeRange: '24h' })}>
@@ -143,9 +143,14 @@ export function Header({ onOpenMenu, menuOpen, onNewProject, onTestTelemetry }: 
               >
                 <RefreshCw aria-hidden className={`size-4 ${refreshing ? 'animate-spin text-route' : ''}`} />
               </IconButton>
-              <Button variant="primary" onClick={onTestTelemetry} icon={<FlaskConical aria-hidden className="size-4" />}>
+              <Button
+                variant="primary"
+                onClick={onTestTelemetry}
+                aria-label="Test Telemetry"
+                title="Test Telemetry"
+                icon={<FlaskConical aria-hidden className="size-4" />}
+              >
                 <span className="hidden sm:inline">Test Telemetry</span>
-                <span className="sm:hidden">Test</span>
               </Button>
             </>
           )}

@@ -58,6 +58,7 @@ Documentation = "https://github.com/Sean-Pereira-945/DriftGuard/tree/main/docs"
 
 [project.scripts]
 driftguard-server = "driftguard.server.cli:main"
+driftguard-mcp-proxy = "driftguard.gateway.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

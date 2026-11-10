@@ -27,9 +27,22 @@ export function parseHash(): ParsedHash {
   return { view, params: new URLSearchParams(query) };
 }
 
-/** The hash for a view, keeping the current filters in the query so links can be shared. */
+/** The filters every view shares. Anything else in the query belongs to the view it was set on. */
+export const GLOBAL_PARAMS = ['env', 'range', 'project'] as const;
+
+/**
+ * The hash for a view, keeping the current filters in the query so links can be shared. A link
+ * to a different view keeps only the global filters, so a Logs search never ends up in an
+ * Alerts link.
+ */
 export function hashFor(view: ViewId, params: URLSearchParams = parseHash().params): string {
-  const query = params.toString();
+  const kept = new URLSearchParams(params);
+  if (view !== parseHash().view) {
+    for (const key of [...kept.keys()]) {
+      if (!(GLOBAL_PARAMS as readonly string[]).includes(key)) kept.delete(key);
+    }
+  }
+  const query = kept.toString();
   return `#/${view}${query ? `?${query}` : ''}`;
 }
 
@@ -42,6 +55,39 @@ export function replaceParams(update: Record<string, string | null>): void {
   }
   const next = hashFor(view, params);
   if (next !== window.location.hash) window.history.replaceState(null, '', next);
+}
+
+/**
+ * A view's own filter (a tab, a search) in the address, next to the global ones. It is read
+ * when the view mounts and whenever the address changes underneath it (back, forward, an
+ * edited URL), written on every change (the default is left out), and removed when the view
+ * unmounts, so a link opens the same list and the address never carries a stale filter into
+ * another view.
+ */
+export function useViewParam<T extends string>(
+  key: string,
+  fallback: T,
+  accept: (value: string) => value is T,
+): [T, (next: T) => void] {
+  const read = (): T => {
+    const raw = parseHash().params.get(key);
+    return raw !== null && accept(raw) ? raw : fallback;
+  };
+  const [value, setValue] = useState<T>(read);
+  useEffect(() => {
+    replaceParams({ [key]: value === fallback ? null : value });
+  }, [key, value, fallback]);
+  useEffect(() => {
+    const onChange = () => setValue(read());
+    window.addEventListener('hashchange', onChange);
+    return () => {
+      window.removeEventListener('hashchange', onChange);
+      replaceParams({ [key]: null });
+    };
+    // `read` closes over key/fallback/accept, which are constants for a given call site.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return [value, setValue];
 }
 
 /** Hash-based routing (`#/alerts?env=prod`) so reloads and shared links keep the view and filters. */

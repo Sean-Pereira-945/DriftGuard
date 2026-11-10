@@ -68,9 +68,13 @@ export interface LegendItem {
 /** HTML legend so identity never depends on color alone (dashes and shapes differ). */
 export function ChartLegend({ items }: { items: LegendItem[] }) {
   return (
-    <ul className="mb-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted" aria-label="Legend">
+    <ul
+      tabIndex={0}
+      className="mb-3 flex gap-x-4 gap-y-1.5 overflow-x-auto pb-1 text-xs whitespace-nowrap text-muted sm:flex-wrap sm:overflow-visible sm:pb-0"
+      aria-label="Legend"
+    >
       {items.map((item) => (
-        <li key={item.label} className="flex items-center gap-1.5">
+        <li key={item.label} className="flex shrink-0 items-center gap-1.5">
           <LegendSwatch item={item} />
           {item.label}
         </li>

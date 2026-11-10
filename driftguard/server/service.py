@@ -18,7 +18,7 @@ from sqlalchemy.engine import Connection, Engine, RowMapping
 from sqlalchemy.exc import IntegrityError
 
 from driftguard.agent_analysis import FAILED_STATUSES, SUCCESS_STATUSES, analyze_agent_events
-from driftguard.baseline import METRICS, MIN_BASELINE_HOURS, MIN_SAMPLE, compare
+from driftguard.baseline import METRICS, MIN_BASELINE_HOURS, MIN_SAMPLE, SPREAD_SAMPLE, compare, spread
 from driftguard.policy import DEFAULT_POLICY, evaluate_drift
 
 from . import db
@@ -115,6 +115,7 @@ def _event_dict(row: RowMapping) -> dict[str, Any]:
         "retrieval_score": row["retrieval_score"],
         "context_length": row["context_length"],
         "response_quality": row["response_quality"],
+        "latency_ms": row["latency_ms"],
         "environment": row["environment"],
         "risk_score": row["risk_score"],
         "severity": row["severity"],
@@ -474,6 +475,26 @@ class DriftGuardService:
                 raise NotFoundError("Alert not found")
             return _alert_dict(conn.execute(select(alerts).where(alerts.c.id == alert_id)).mappings().one())
 
+    def set_alerts_resolved(self, project_id: str, alert_ids: Iterable[int], resolved: bool) -> dict[str, Any]:
+        """Resolve or reopen several alerts in one statement.
+
+        Returns ``{"alerts": [...], "missing": [...]}``: every alert that now has
+        the requested state, and the ids that don't belong to this project. Ids
+        from other projects are never touched. An alert already in the requested
+        state is returned unchanged (its ``resolved_at`` is kept).
+        """
+        wanted = sorted({int(i) for i in alert_ids})
+        with self.engine.begin() as conn:
+            scope = and_(alerts.c.id.in_(wanted), alerts.c.project_id == project_id)
+            conn.execute(
+                update(alerts)
+                .where(and_(scope, alerts.c.resolved != resolved))
+                .values(resolved=resolved, resolved_at=utcnow() if resolved else None)
+            )
+            rows = conn.execute(select(alerts).where(scope).order_by(alerts.c.id)).mappings().all()
+        found = {row["id"] for row in rows}
+        return {"alerts": [_alert_dict(row) for row in rows], "missing": [i for i in wanted if i not in found]}
+
     # ------------------------------------------------------------------
     # LLM telemetry
     # ------------------------------------------------------------------
@@ -506,6 +527,7 @@ class DriftGuardService:
                         "retrieval_score": item.get("retrieval_score"),
                         "context_length": item.get("context_length"),
                         "response_quality": item.get("response_quality"),
+                        "latency_ms": item.get("latency_ms"),
                         "environment": item.get("environment") or project["environment"],
                         "risk_score": evaluation["risk_score"],
                         "severity": evaluation["severity"],
@@ -606,12 +628,14 @@ class DriftGuardService:
                         func.avg(events.c.context_length).label("context_length"),
                         func.avg(events.c.retrieval_score).label("retrieval_score"),
                         func.avg(events.c.response_quality).label("response_quality"),
+                        func.avg(events.c.latency_ms).label("latency_ms"),
                         func.avg(events.c.risk_score).label("risk_score"),
                         func.max(events.c.created_at).label("last_event"),
                         rate(events.c.prompt_tokens > policy["prompt_token_limit"]).label("prompt_rate"),
                         rate(events.c.context_length > policy["context_length_limit"]).label("context_rate"),
                         rate(events.c.retrieval_score < policy["retrieval_score_floor"]).label("retrieval_rate"),
                         rate(events.c.response_quality < policy["response_quality_floor"]).label("quality_rate"),
+                        rate(events.c.latency_ms > policy["latency_limit_ms"]).label("latency_rate"),
                     ).where(*event_filter)
                 )
                 .mappings()
@@ -631,6 +655,20 @@ class DriftGuardService:
             ).all()
             activity = self._agent_activity(conn, project_id, environment, cutoff)
             baseline = self._baseline(conn, project_id, environment, time_range, cutoff)
+            spreads = {
+                metric: spread(
+                    [
+                        row[0]
+                        for row in conn.execute(
+                            select(events.c[metric])
+                            .where(*event_filter, events.c[metric].is_not(None))
+                            .order_by(events.c.created_at.desc())
+                            .limit(SPREAD_SAMPLE)
+                        )
+                    ]
+                )
+                for metric in METRICS
+            }
 
         open_alerts = self.list_alerts(
             project_id, severity=severity, environment=environment, time_range=time_range, resolved=False
@@ -655,6 +693,7 @@ class DriftGuardService:
                 "context_length": rounded(stats["context_length"], 1),
                 "retrieval_score": rounded(stats["retrieval_score"]),
                 "response_quality": rounded(stats["response_quality"]),
+                "latency_ms": rounded(stats["latency_ms"], 1),
                 "risk_score": rounded(stats["risk_score"]),
             },
             "violation_rates": {
@@ -662,6 +701,7 @@ class DriftGuardService:
                 "context_length_limit": rounded(stats["context_rate"]) or 0.0,
                 "retrieval_score_floor": rounded(stats["retrieval_rate"]) or 0.0,
                 "response_quality_floor": rounded(stats["quality_rate"]) or 0.0,
+                "latency_limit_ms": rounded(stats["latency_rate"]) or 0.0,
             },
             "top_root_causes": [{"root_cause": cause, "count": int(n)} for cause, n in causes],
             "open_alerts": len(open_alerts),
@@ -669,6 +709,7 @@ class DriftGuardService:
             "warning_alerts": warning,
             "saved_tokens": saved,
             "agent_activity": activity,
+            "spread": spreads,
             "baseline": baseline,
             "last_updated": max(filter(None, (last_event, last_alert, last_activity)), default=None),
             "policy": policy,

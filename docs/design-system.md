@@ -70,7 +70,21 @@ The top of the Overview. A lamp and one word (`Critical`, `Warning`, `Stable`, `
 
 A task drawn as a track. Each tool is a block section: a 6px rail, a row of sleepers, the tool name in mono. The blocking section is lit red under a red signal lamp and says how many failures in a row. The track continues past the last section in a dim rail. Sections are listed in the order the tools were first used.
 
+### Attempt timeline
+
+In a task's drawer, one thin row per tool call on a shared time axis: a bar ends
+when the attempt was recorded and runs back by its duration. Failed attempts are
+coral and successful ones ivory, so a retry loop reads as a bunch of red bars.
+The axis shows 0, the midpoint and the span in mono. It has a text summary, and the
+list of attempts below is its text equivalent.
+
 ### Instrument strip and baseline gauge
+
+Panels further down a page, such as the Overview's timeline, risk breakdown,
+root causes and open alerts, use the **plate** variant: the name is an engraved
+plate label over a sleeper rule instead of a 22px title over a hairline, so
+they read as instruments on the same desk rather than separate cards. The
+surface, border and corners are unchanged.
 
 Four readings in one panel, separated by hairlines, not four cards. A gauge is a track with a tick at each policy limit, a hatched span past the baseline, and a diamond marker for the reading. The marker is ivory when fine, amber or red when it breaches. Each gauge has a plain-language `aria-label`. Less important readings sit in a collapsed **All readings** list.
 
@@ -80,7 +94,7 @@ Square-ish corners (4px), 40px minimum height. The primary action is a push-butt
 
 ### Navigation
 
-Fixed 248px rail. Items are grouped by a rule into **Monitor** (Overview, Agent Diagnosis, Logs, Events, Alerts, Analytics) and **Configure** (Policy, SDK Integration, Project Settings). The active item has a raised surface and an ivory marker. The alert count is a small plate, amber or red, whose screen-reader text says whether any alert is critical. Disabled items stay readable and say why in a tooltip. On mobile the rail collapses into a labeled menu.
+Fixed 248px rail. Items are grouped by a rule into **Monitor** (Overview, Agent Diagnosis, Logs, Events, Alerts, Analytics) and **Configure** (Policy, SDK Integration, Project Settings). The active item has a raised surface and an ivory marker. The alert count is a small plate, amber or red, whose screen-reader text says whether any alert is critical. Disabled items stay readable and say why in a tooltip. On mobile the rail collapses into a labeled menu. In the header, **Test Telemetry** becomes an icon on a phone and the filter row wraps, so the Range select stays readable.
 
 ### Filters
 
@@ -127,7 +141,7 @@ Motion conveys state. Transitions are 150–200ms with an exponential ease-out. 
 - Skip link, semantic headings, landmarks, live regions for refresh, and accessible names for icon-only controls. Gauges and the track expose text equivalents.
 - Alerts tabs use arrow keys, Home and End. Rows open from the keyboard. Single-key shortcuts are documented under `?`, and are off while typing.
 - Filters and selections can be reached without a pointer, and chart data is available as a table.
-- Define loading, empty, error, stale and success states for every data view. Missing values read "Not reported by this source", never zero.
+- Define loading, empty, error, stale and success states for every data view. A reading a source never sends is left out of the screen instead of shown empty, and a gap in a reading that is otherwise sent reads "—", never zero.
 
 ## 8. Product language
 

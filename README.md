@@ -24,6 +24,8 @@ quality.
 - **Alerts that manage themselves.** Critical drift and blocked tasks raise
   alerts. Agent alerts resolve themselves when the task recovers. Alerts are
   pushed live to the dashboard, Slack, or any webhook.
+- **Any agent, no code.** An `driftguard-mcp-proxy` gateway records any MCP
+  client's tool calls from the middle of the stdio stream.
 - **Drop-in adapters.** A `@driftguard_tool` decorator, MCP session
   instrumentation, token extraction from OpenAI, Anthropic, and Gemini
   responses, and a no-code [Claude Code hook](integrations/claude_code/README.md).
@@ -49,6 +51,7 @@ it never changes prompts or providers. See
 | Run it from this repo | `pip install -e ".[server]"`, `cd frontend && npm ci && npm run build`, then `driftguard-server`. Details in [Getting started](docs/quickstart.md#b-from-source-windows-macos-linux). |
 | Fill the dashboard with sample data | `python examples/seed_showcase.py --api-key dg_live_... --project-id showcase` |
 | Watch my own Claude Code sessions | [Claude Code hook](integrations/claude_code/README.md) |
+| Watch any MCP client's tools (no code) | `driftguard-mcp-proxy` ([MCP gateway](docs/agent-integration.md#the-mcp-gateway-no-code-any-mcp-client)) |
 | Understand how it works | [How DriftGuard works](docs/concepts.md), then [Architecture](docs/architecture.md) |
 | Send retrieval and quality scores | [Measuring retrieval score and response quality](docs/scoring-guide.md) |
 

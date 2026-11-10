@@ -16,7 +16,7 @@ because with enough events a tiny shift is always "significant".
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 # Readings needed on each side before any comparison is made.
@@ -30,6 +30,8 @@ MIN_BASELINE_HOURS = 24
 # For these metrics a rise is bad. For the others a fall is bad.
 HIGHER_IS_WORSE = frozenset({"risk_score"})
 METRICS = ("retrieval_score", "response_quality", "risk_score")
+# The most recent readings used for percentiles, so a huge window stays cheap.
+SPREAD_SAMPLE = 5000
 _Z_CAP = 99.0
 
 
@@ -87,3 +89,30 @@ def compare(metric: str, current: Mapping[str, Any], baseline: Mapping[str, Any]
         status = "worse" if worse else "better"
     result.update({"delta": _round(delta), "z": round(z, 2), "status": status})
     return result
+
+
+def _quantile(ordered: Sequence[float], q: float) -> float:
+    """The ``q`` quantile of sorted values, interpolating between neighbours."""
+    position = (len(ordered) - 1) * q
+    low = math.floor(position)
+    high = math.ceil(position)
+    if low == high:
+        return float(ordered[low])
+    return float(ordered[low] + (ordered[high] - ordered[low]) * (position - low))
+
+
+def spread(values: Sequence[float]) -> dict[str, Any]:
+    """The median and the 10th and 90th percentiles of a window's readings.
+
+    A mean can hide a split distribution: half the answers near 1.0 and half near
+    0.6 average to 0.8. The percentiles show it. ``n`` is how many readings they rest on.
+    """
+    if not values:
+        return {"n": 0, "median": None, "p10": None, "p90": None}
+    ordered = sorted(float(v) for v in values)
+    return {
+        "n": len(ordered),
+        "median": _round(_quantile(ordered, 0.5)),
+        "p10": _round(_quantile(ordered, 0.1)),
+        "p90": _round(_quantile(ordered, 0.9)),
+    }

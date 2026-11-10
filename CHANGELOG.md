@@ -7,6 +7,57 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Latency as a first-class metric.** Telemetry accepts `latency_ms`, a new
+  `latency_limit_ms` policy rule (default 10,000 ms) flags requests slower than
+  the limit, and the reading flows through the summary (`averages.latency_ms`,
+  `violation_rates.latency_limit_ms`), the Overview's All readings, the Drift
+  Risk Breakdown, the Policy page and its impact preview, and the Test Telemetry
+  form. A slow request adds 0.15 to its risk score — enough to tip a borderline
+  event into `warning`, never enough to flag a fast one, and an event that
+  reports no latency is never flagged. The SDK already forwards it
+  (`capture_metrics(latency_ms=...)`). Existing databases gain the two columns on
+  startup. 9 new backend tests and a frontend preview test.
+- **MCP gateway (`driftguard-mcp-proxy`).** A stdio proxy that sits between any
+  MCP client and a downstream MCP server, forwards every JSON-RPC message
+  unchanged, and records each `tools/call` as a DriftGuard agent event with its
+  duration and outcome — so closed agents that speak MCP can be observed with no
+  code change. One session's calls group under one task, so a retried failing
+  tool is flagged as blocked. Config comes from flags, `DRIFTGUARD_*` env vars or
+  a JSON file (the same keys as the Claude Code integration). It logs only to
+  stderr, passes a message it can't parse through untouched, and resolves the
+  server command on `PATH` (including `.cmd` wrappers on Windows). New
+  `driftguard.gateway` package, 13 tests.
+- **View filters in the address.** Alerts keeps its tab and severity in the
+  address (`#/alerts?tab=resolved&severity=critical`) and Logs keeps its search,
+  kind, outcome and task (`#/logs?q=pytest&outcome=failed`), so a filtered list
+  can be linked. Defaults are left out and the values go when you leave the view.
+  Back and forward move between them, and a link to another view carries only
+  the global filters.
+- **Plate panels.** The Overview's timeline, Drift Risk Breakdown, Top Root
+  Causes and Open Alerts are named with engraved plate labels over a sleeper
+  rule, the same idiom as the instruments, instead of a plain title over a
+  hairline. `Panel` gains `variant="plate"`.
+- **Bulk resolve and reopen in one request.** `PATCH /projects/{id}/alerts` takes
+  `{"ids": [...], "resolved": bool}` for up to 500 alerts and returns the alerts
+  now in that state plus any ids that weren't the project's. Ids from other
+  projects are never touched. Each changed alert is still pushed on the
+  WebSocket. The Alerts view's selection actions use it, so resolving a hundred
+  alerts is one round trip. 3 new tests.
+- **Frontend unit tests.** The dashboard gains Vitest with jsdom: 33 tests over
+  hash routing and shareable links, the keyboard shortcuts (including the `g`
+  timeout, typing, modifiers and dialogs), input validation, which scores a
+  source reports, the baseline wording, and the Policy impact preview, whose
+  maths moved from the view into `lib/policyPreview.ts`. `npm test` runs in CI
+  before the build.
+- **Demo slides.** `docs/demo.md` links a nine-card deck that follows the running
+  order, built from the current screenshots.
+- **`startup.bat`** for Windows development: creates the environment on first
+  run, starts the API on port 8000 against the local SQLite file and the Vite dev
+  server on port 5173 with hot reload. `demo.bat` stays the one-click demo.
+- **Claude Code templates** (`integrations/claude_code/templates/`): a
+  `driftguard.json` and a `settings.local.json` with all six hooks, ready to copy
+  into another repository's `.claude/` folder. Three placeholders to fill in; no
+  key is shipped.
 - **Signal box redesign of the dashboard.** The Overview now leads with one
   status plate, then a track diagram of the most urgent task, then four
   instruments.
@@ -32,6 +83,39 @@ All notable changes to DriftGuard are recorded here. The format follows
     retrieval score, and adds a "Worse than usual" line to the status plate. It is
     advice only: it raises no alert and doesn't change the status.
   - `driftguard/baseline.py` holds the maths, with 14 new tests.
+- **Response quality for Claude Code, from outcome checks.** When a turn runs tests,
+  a linter, a type check or a build, the hook scores the turn's last model call 1.0
+  if the last check passed and 0.0 if it failed. Turns that run no check get no
+  score, so the average is over checked turns only. Pass or fail also reads the
+  output for what failing runs print, because a pipe into `tail` hides the exit code,
+  and a command that never started is ignored. The basis is in the event's metadata.
+  `"quality_from_checks": false` turns it off. There is deliberately **no retrieval
+  score** for Claude Code: it has no retrieval step, and scoring empty searches would
+  raise false degradation warnings. 54 new tests.
+- **Scores a source never sends are left off the dashboard.** The Overview drops the
+  Response quality instrument (three instruments instead of four), the Mean retrieval
+  score reading, the matching Drift Risk Breakdown row, and the timeline's line, axis
+  and legend entry, and All readings says what was left out. A score counts as sent if
+  it appears in the window or the period before. Scores sent for only some events are
+  drawn as dots, not joined by a line. The Policy preview counts only events that
+  carry the reading ("8 of 25") and says when none do.
+- **Spread behind each average.** `GET /projects/{id}/summary` gains `spread`:
+  the median and the 10th and 90th percentiles of each metric, from the latest
+  5,000 readings in the window. The Overview shows them under Mean risk score,
+  Response quality and Mean retrieval score, with the share of events under the
+  floor, so an average can't hide a split. It appears from 10 events. 6 new tests.
+- **Restore defaults on Policy.** A button fills every field with the thresholds a
+  new project starts with, for you to review and save. It is backed by a new
+  `GET /projects/{id}/policy/defaults` (session or key), so the defaults live only
+  on the server. 2 new tests.
+- **Attempt timeline in the task drawer.** One row per tool call on a shared time
+  axis, with each bar ending when the attempt was recorded and running back by its
+  duration. A retry loop shows as a bunch of red bars. It shows the latest 40
+  attempts and has a text summary.
+- **Delete account from the dashboard.** Project Settings has a "Your account"
+  panel. Deleting lists the projects that will go, and asks for your email and
+  password. A wrong password deletes nothing. It uses the existing
+  `DELETE /auth/me`.
 - **Keyboard shortcuts.** `g` then `o` `d` `l` `e` `a` `n` `p` `s` `t` jumps
   between views, `/` focuses the search box, `r` refreshes and `?` lists them.
   They are off while typing or with a dialog open.
@@ -119,6 +203,17 @@ All notable changes to DriftGuard are recorded here. The format follows
   the open list is a black panel with a hairline border, a highlighted row and a
   check mark on the chosen item. Other browsers keep their own list in the same
   colours.
+- **Layout fixes from the design review.** The track diagram's sections share the
+  full width. Agent Diagnosis gains a gauge of the longest run of failures in a
+  row against the block threshold. Top Root Causes moves under Drift Risk
+  Breakdown and Open Alerts runs full width, so there are no empty gaps. On a
+  phone the chart legend is one scrolling line, Test Telemetry is an icon, and the
+  filter row wraps.
+- The baseline line says **No clear change** instead of "Steady", and every verdict
+  shows the events it rests on, for example "(89 events now, 93 before)". Under 30
+  events on a side it adds that a small drop could be missed. The research study
+  found a real 0.09 drop is detected only about a third of the time at 10 events,
+  so "steady" over-claimed.
 - Disabled navigation, placeholder and footer text now meets 4.5:1 contrast.
   The header selects have visible labels (**Env**, **Range**), and the
   **Updated** time shows from tablet width up. The sidebar groups its nine

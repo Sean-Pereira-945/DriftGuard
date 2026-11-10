@@ -93,6 +93,7 @@ export interface Policy {
   retrieval_score_floor: number;
   context_length_limit: number;
   response_quality_floor: number;
+  latency_limit_ms: number;
   blocked_after_failures: number;
   retry_window_minutes: number;
 }
@@ -110,6 +111,7 @@ export interface EventIngestRequest {
   context_length?: number;
   retrieval_score?: number;
   response_quality?: number;
+  latency_ms?: number;
   environment?: Environment;
   occurred_at?: string;
   metadata?: Record<string, MetadataValue>;
@@ -133,6 +135,7 @@ export interface TelemetryEvent {
   retrieval_score: number | null;
   context_length: number | null;
   response_quality: number | null;
+  latency_ms: number | null;
   environment: Environment | null;
   risk_score: number | null;
   severity: Severity | null;
@@ -149,6 +152,7 @@ export interface SummaryAverages {
   context_length: number | null;
   retrieval_score: number | null;
   response_quality: number | null;
+  latency_ms: number | null;
   risk_score: number | null;
 }
 
@@ -157,6 +161,7 @@ export interface ViolationRates {
   context_length_limit: number;
   retrieval_score_floor: number;
   response_quality_floor: number;
+  latency_limit_ms: number;
 }
 
 export interface RootCauseCount {
@@ -183,6 +188,13 @@ export interface AgentActivity {
   last_activity: string | null;
 }
 
+/** The middle and the ends of a window's readings, so a mean can't hide a split. */
+export interface Spread {
+  n: number;
+  median: number | null;
+  p10: number | null;
+  p90: number | null;
+}
 export type BaselineStatus = 'insufficient' | 'steady' | 'worse' | 'better';
 export interface BaselineMetric {
   current: number | null;
@@ -219,6 +231,7 @@ export interface Summary {
   warning_alerts: number;
   saved_tokens: number;
   agent_activity: AgentActivity;
+  spread: Record<'retrieval_score' | 'response_quality' | 'risk_score', Spread>;
   baseline: Baseline;
   last_updated: string | null;
   policy: Policy;
@@ -240,6 +253,12 @@ export interface Alert {
   resolved: boolean;
   resolved_at: string | null;
   created_at: string;
+}
+
+/** The answer to a bulk resolve or reopen: the alerts now in that state, and ids that weren't this project's. */
+export interface AlertBulkResult {
+  alerts: Alert[];
+  missing: number[];
 }
 
 export interface AlertCreateRequest {

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from driftguard.baseline import MIN_SAMPLE, compare
+from driftguard.baseline import spread as readings_spread
 
 
 def stats(values):
@@ -143,3 +144,51 @@ def test_an_empty_project_has_a_baseline_with_nothing_in_it(client, project):
     baseline = _summary(client, project, time_range="24h")["baseline"]
     assert baseline["available"] is True
     assert all(m["status"] == "insufficient" and m["current"] is None for m in baseline["metrics"].values())
+
+
+def test_spread_of_nothing_is_empty():
+    assert readings_spread([]) == {"n": 0, "median": None, "p10": None, "p90": None}
+
+
+def test_spread_of_one_reading_is_that_reading():
+    assert readings_spread([0.7]) == {"n": 1, "median": 0.7, "p10": 0.7, "p90": 0.7}
+
+
+def test_spread_matches_known_percentiles():
+    result = readings_spread([i / 100 for i in range(1, 101)])  # 0.01 .. 1.00
+    assert result["n"] == 100
+    assert result["median"] == pytest.approx(0.505, abs=1e-3)
+    assert result["p10"] == pytest.approx(0.109, abs=1e-3)
+    assert result["p90"] == pytest.approx(0.901, abs=1e-3)
+
+
+def test_spread_shows_a_split_the_mean_hides():
+    split = [1.0] * 10 + [0.6] * 10  # the mean is 0.8
+    result = readings_spread(split)
+    assert sum(split) / len(split) == pytest.approx(0.8)
+    assert result["p10"] == 0.6 and result["p90"] == 1.0
+
+
+def test_summary_reports_the_spread_of_each_metric(client, project):
+    for i in range(20):
+        body = {
+            "prompt_tokens": 1000,
+            "context_length": 2000,
+            "retrieval_score": 0.9,
+            "response_quality": 0.5 + i * 0.02,
+        }
+        assert (
+            client.post(f"/events/{project['project_id']}", json=body, headers=project["key_headers"]).status_code
+            == 200
+        )
+    summary = client.get(f"/projects/{project['project_id']}/summary", headers=project["key_headers"]).json()
+    quality = summary["spread"]["response_quality"]
+    assert quality["n"] == 20
+    assert quality["median"] == pytest.approx(0.69, abs=0.01)
+    assert quality["p10"] < quality["median"] < quality["p90"]
+    assert summary["spread"]["retrieval_score"]["median"] == 0.9
+
+
+def test_summary_spread_is_empty_for_an_empty_project(client, project):
+    summary = client.get(f"/projects/{project['project_id']}/summary", headers=project["key_headers"]).json()
+    assert summary["spread"]["response_quality"] == {"n": 0, "median": None, "p10": None, "p90": None}

@@ -183,6 +183,15 @@ card numbers first, and cut to 2,000 characters. Data older than 30 days is
 deleted automatically. Passwords are hashed with scrypt, API keys are stored
 only as hashes, and one account can never see another account's projects.
 
+## Averages and spread
+
+The Overview shows averages, but an average can hide how readings are spread. A
+mean quality of 0.80 could be every answer near 0.80, or half near 1.0 and half
+near 0.60. So each average has a line beneath it with the **median** (the typical
+event), the **weak end** (the lowest 10% of scores, or the highest 10% of risk),
+and the share of events under the floor. If the mean and the median are far
+apart, a few extreme events are pulling the average.
+
 ## Is it worse than usual? (baseline comparison)
 
 A floor says "below a line". It can't say "worse than normal". A project whose
@@ -229,8 +238,10 @@ finds a 0.09 decline above the floor 36 percent of the time with 10 events and
 - It only sees what is **reported** to it. It can't look inside a closed agent
   such as GitHub Copilot.
 - It doesn't judge answers on its own. Response quality has to come from the
-  app's own evaluator, so sources without one (like Claude Code) leave it
-  blank. [Measuring retrieval score and response quality](scoring-guide.md)
+  app's own evaluator. The one exception is Claude Code, where the hook scores a
+  turn from whether its tests, linter, type check or build passed, and sends
+  nothing for turns that ran none. Retrieval has no equivalent there, so it is
+  left out. [Measuring retrieval score and response quality](scoring-guide.md)
   explains how to calculate both.
 - It **recommends**; it never acts on your prompts or providers.
 

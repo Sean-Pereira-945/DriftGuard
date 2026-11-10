@@ -145,15 +145,22 @@ immediately.
   "retrieval_score_floor": 0.5,
   "context_length_limit": 4000.0,
   "response_quality_floor": 0.8,
+  "latency_limit_ms": 10000.0,
   "blocked_after_failures": 3,
   "retry_window_minutes": 60.0
 }
 ```
 
+### `GET /projects/{id}/policy/defaults` *(session or key)*
+The thresholds a new project starts with, in the same shape as the policy above.
+The dashboard's **Restore defaults** button uses it, so the defaults live in one
+place. It does not change anything: restoring is a `PUT` of these values.
+
 ### `PUT /projects/{id}/policy` *(session)*
 Send any subset of the fields above. Unknown fields return `422`. Constraints:
-limits `> 0`; floors between 0 and 1; `blocked_after_failures` 1–100;
-`retry_window_minutes` 0–10080 (0 turns off the window). Returns the merged policy.
+limits `> 0` (including `latency_limit_ms`, in milliseconds); floors between 0
+and 1; `blocked_after_failures` 1–100; `retry_window_minutes` 0–10080 (0 turns
+off the window). Returns the merged policy.
 
 ## SDK ingestion *(API key)*
 
@@ -166,13 +173,17 @@ Sends one LLM request's telemetry. Every field is optional.
   "context_length": 6100,
   "retrieval_score": 0.31,
   "response_quality": 0.62,
+  "latency_ms": 8200,
   "environment": "prod",
   "occurred_at": "2026-09-30T04:13:48Z",
   "metadata": {"model": "claude-x", "request_id": "r-42"}
 }
 ```
 
-- Scores must be between 0 and 1. Token and length values must be `>= 0`.
+- Scores must be between 0 and 1. Token, length and `latency_ms` values must be
+  `>= 0`. An event over `latency_limit_ms` adds 0.15 to its risk score, enough to
+  tip a borderline event into `warning` but not to flag a fast one; an event that
+  reports no latency is never flagged.
 - `occurred_at` defaults to the server time. Timestamps more than 5 minutes in
   the future are replaced with the server time.
 - `metadata` takes at most 32 keys with scalar values. String values are
@@ -277,15 +288,19 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   "total_events": 1,
   "events_by_severity": {"critical": 1},
   "averages": {"prompt_tokens": 5200.0, "context_length": 6100.0, "retrieval_score": 0.31,
-               "response_quality": 0.62, "risk_score": 1.0},
+               "response_quality": 0.62, "latency_ms": 8200.0, "risk_score": 1.0},
   "violation_rates": {"prompt_token_limit": 1.0, "context_length_limit": 1.0,
-                      "retrieval_score_floor": 1.0, "response_quality_floor": 1.0},
+                      "retrieval_score_floor": 1.0, "response_quality_floor": 1.0,
+                      "latency_limit_ms": 0.5},
   "top_root_causes": [{"root_cause": "prompt context inflation; …", "count": 1}],
   "open_alerts": 2, "critical_alerts": 2, "warning_alerts": 0,
   "saved_tokens": 8940.0,
   "agent_activity": {"events": 24, "tool_calls": 23, "failed_tool_calls": 0, "failure_rate": 0.0,
                      "turns": 1, "tasks": 2, "total_tokens": 120600, "avg_tool_duration_ms": 12400.0,
                      "last_activity": "2026-10-01T07:29:25Z"},
+  "spread": {"response_quality": {"n": 107, "median": 0.8123, "p10": 0.62, "p90": 0.9351},
+             "retrieval_score": {"n": 107, "median": 0.7, "p10": 0.31, "p90": 0.93},
+             "risk_score": {"n": 107, "median": 0.0, "p10": 0.0, "p90": 0.6}},
   "baseline": {"available": true, "reason": null, "window_seconds": 86400, "start": "2026-09-29T04:13:48Z",
                "end": "2026-09-30T04:13:48Z", "min_sample": 10,
                "metrics": {"response_quality": {"current": 0.8124, "baseline": 0.8962, "n_current": 107, "n_baseline": 78,
@@ -305,6 +320,10 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   - `turns` counts `response` events, which are finished turns.
   - `total_tokens` takes each finished task's `response` total, or the sum of
     its tool calls while the task is unfinished.
+- `spread` gives, for `retrieval_score`, `response_quality` and `risk_score`, the
+  count `n` of readings and their `median`, 10th (`p10`) and 90th (`p90`)
+  percentiles. They use the latest 5,000 readings in the window, and are `null`
+  without any. A mean can hide a split distribution; these show it.
 - `baseline` compares the window's averages with the period just before it. See
   [How DriftGuard works](concepts.md#is-it-worse-than-usual-baseline-comparison).
   - It covers `retrieval_score`, `response_quality` and `risk_score`. The
@@ -361,6 +380,16 @@ Body `{"severity", "message", "saved_tokens"?, "environment"?}`. Creates a
 ### `PATCH /projects/{id}/alerts/{alert_id}` *(session)*
 Body `{"resolved": true}` resolves the alert. `false` reopens it. Returns the
 alert.
+
+### `PATCH /projects/{id}/alerts` *(session)*
+Body `{"ids": [12, 15, 16], "resolved": true}` resolves (or with `false`
+reopens) up to 500 alerts in one statement. Returns
+`{"alerts": [...], "missing": [...]}`: every listed alert that now has the
+requested state, in id order, and the ids that don't belong to this project.
+Ids from other projects are reported, never changed. An alert already in the
+requested state keeps its `resolved_at`. Each changed alert is also sent on
+the WebSocket as an `alert` message with `action` `resolved` or `reopened`. An
+empty list is a `422`.
 
 ### `GET /projects/{id}/agent-events` *(session or key)*
 The activity log, newest first. Every filter is optional, and filters combine:

@@ -178,7 +178,7 @@ A near-monochrome black enamel and ivory palette with three lamp colours held in
 - **Data** (JetBrains Mono 12-15px): task ids, tool names, errors, mono inputs.
 
 ### Named Rules
-**The Engraved Label Rule.** Names of instruments and field groups are plate labels: condensed, uppercase, 0.08em tracking, Muted. Nothing else is set that way.
+**The Engraved Label Rule.** Names of instruments, field groups and plate panels (the charts and lists below a page's first screen) are plate labels: condensed, uppercase, 0.08em tracking, Muted. Nothing else is set that way.
 **The Tabular Rule.** Every number that changes is set with tabular numerals.
 
 ## Layout

@@ -109,6 +109,7 @@ class PolicyUpdateRequest(BaseModel):
     retrieval_score_floor: Score | None = None
     context_length_limit: float | None = Field(default=None, gt=0)
     response_quality_floor: Score | None = None
+    latency_limit_ms: float | None = Field(default=None, gt=0)
     blocked_after_failures: int | None = Field(default=None, ge=1, le=100)
     retry_window_minutes: float | None = Field(default=None, ge=0, le=10080)
 
@@ -129,6 +130,13 @@ class AlertUpdateRequest(BaseModel):
     resolved: bool
 
 
+class AlertBulkUpdateRequest(BaseModel):
+    """Resolve or reopen several alerts of one project in one request."""
+
+    ids: list[int] = Field(min_length=1, max_length=500)
+    resolved: bool
+
+
 # ---------------------------------------------------------------------------
 # Ingestion
 # ---------------------------------------------------------------------------
@@ -141,6 +149,7 @@ class EventIngestRequest(BaseModel):
     retrieval_score: Score | None = None
     context_length: NonNegative | None = None
     response_quality: Score | None = None
+    latency_ms: NonNegative | None = None
     environment: Environment | None = None
     occurred_at: datetime | None = None
     metadata: dict[str, MetadataValue] | None = None

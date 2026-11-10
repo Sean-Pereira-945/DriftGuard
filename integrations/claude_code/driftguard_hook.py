@@ -13,6 +13,15 @@ Each finished turn also sends LLM telemetry, one event per model call, with
 its new input tokens and its full context size, so the Overview, Events and
 Analytics views chart the session. Set ``"send_telemetry": false`` to skip it.
 
+**Response quality** comes from an outcome check, not a guess. When a turn ran a
+checking command (tests, a linter, a type check or a build), the turn's last
+model call carries ``response_quality`` of 1.0 if the last such command passed
+and 0.0 if it failed. A turn that ran no check carries no score, so the average
+is over checked turns only. The event's metadata says so (``quality_basis``). Set
+``"quality_from_checks": false`` to send none.
+There is **no retrieval score**: Claude Code has no retrieval step that can be
+graded, and a search that finds nothing is normal exploration, so none is sent.
+
 Session start and end events are off by default (they carry no duration or
 tokens); set ``"session_events": true`` to send them.
 
@@ -43,6 +52,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -118,6 +128,129 @@ def _response_failed(response: Any) -> bool:
     if response.get("is_error") or response.get("isError") or response.get("interrupted"):
         return True
     return response.get("success") is False
+
+
+# ---- Outcome checks: did the work pass its own tests, linter, type check or build? ----
+
+# How many checks of one turn are remembered, so a runaway loop can't grow the state file.
+MAX_VERIFICATIONS = 50
+_SHELL_TOOLS = {"Bash", "PowerShell"}
+_SEGMENT = re.compile(r"&&|\|\||[;|\n]")
+_ENV_ASSIGNMENT = re.compile(r"^[A-Za-z_]\w*=")
+_PATH_SPLIT = re.compile(r"[\\/]")
+_PYTHON = re.compile(r"python\d*(?:\.\d+)?")
+_CHECKERS = {
+    "pytest",
+    "py.test",
+    "mypy",
+    "pyright",
+    "flake8",
+    "pylint",
+    "tsc",
+    "eslint",
+    "vitest",
+    "jest",
+    "playwright",
+}
+_PYTHON_MODULES = {"pytest", "unittest", "mypy", "pyright", "flake8", "pylint", "ruff"}
+_NPX_TOOLS = {"tsc", "eslint", "vitest", "jest", "playwright"}
+_NODE_SCRIPTS = {"test", "lint", "build", "check", "typecheck", "type-check", "verify"}
+_NODE_RUNNERS = {"npm", "pnpm", "yarn", "bun"}
+_SUBCOMMANDS = {
+    "cargo": {"test", "check", "clippy", "build"},
+    "go": {"test", "vet", "build"},
+    "make": {"test", "check", "lint"},
+    "dotnet": {"test", "build"},
+    "mvn": {"test", "verify"},
+    "mvnw": {"test", "verify"},
+    "gradle": {"test", "check", "build"},
+    "gradlew": {"test", "check", "build"},
+}
+# What a failing check prints even when the shell reports success, for example when the
+# command is piped into ``tail``. Counts of zero ("0 failed") do not match.
+_FAILURE_MARKERS = re.compile(
+    r"\b[1-9]\d* (?:failed|errors?)\b|\bFAILED\b|\bFAIL\b|error TS\d+|Found [1-9]\d* errors?"
+    r"|Traceback \(most recent call last\)|npm ERR!|error during build"
+)
+
+
+# The shell or the system refusing to start the command at all, as opposed to the check failing.
+_NOT_STARTED = re.compile(
+    r"(?:^|\n)(?:/usr/bin/|/bin/)?(?:ba|z)?sh: |command not found|is not recognized as the name"
+    r"|is not recognized as an internal"
+)
+
+
+def check_did_not_run(failed: bool, error_text: str | None) -> bool:
+    """Whether a failed command never got as far as running the check (syntax error, program missing).
+
+    That is not a failing check, so it is not counted for or against the turn.
+    """
+    return failed and bool(error_text) and _NOT_STARTED.search(str(error_text)[:400]) is not None
+
+
+def _program(token: str) -> str:
+    name = _PATH_SPLIT.split(token)[-1].lower()
+    for suffix in (".exe", ".cmd", ".bat", ".ps1"):
+        if name.endswith(suffix):
+            return name[: -len(suffix)]
+    return name
+
+
+def verification_command(tool_name: str, tool_input: Any) -> str | None:
+    """The checking tool a shell command runs, such as ``pytest`` or ``tsc``, or ``None``.
+
+    Only a program at the start of a command segment counts, so ``grep pytest file``
+    is not a check. Commands joined by ``&&``, ``;`` or a pipe are looked at one by one.
+    """
+    if tool_name not in _SHELL_TOOLS or not isinstance(tool_input, dict):
+        return None
+    command = tool_input.get("command")
+    if not isinstance(command, str):
+        return None
+    for segment in _SEGMENT.split(command):
+        tokens = segment.replace("(", " ").replace(")", " ").split()
+        while tokens and _ENV_ASSIGNMENT.match(tokens[0]):
+            tokens.pop(0)
+        if not tokens:
+            continue
+        first = _program(tokens[0])
+        rest = [t.lower() for t in tokens[1:]]
+        args = [t for t in rest if not t.startswith("-")]
+        if first in _CHECKERS:
+            return first
+        if (first in {"python", "py"} or _PYTHON.fullmatch(first)) and len(rest) >= 2 and rest[0] == "-m":
+            if rest[1] in _PYTHON_MODULES:
+                return rest[1]
+        if first == "ruff" and ("check" in rest or "--check" in rest):
+            return "ruff"
+        if first in {"npx", "pnpx", "bunx"} and args and args[0] in _NPX_TOOLS:
+            return args[0]
+        if first in _NODE_RUNNERS and args:
+            if args[0] in {"test", "t"}:
+                return f"{first} test"
+            if len(args) >= 2 and args[0] == "run" and args[1] in _NODE_SCRIPTS:
+                return f"{first} run {args[1]}"
+            if first != "npm" and args[0] in _NODE_SCRIPTS:
+                return f"{first} {args[0]}"
+        if first in _SUBCOMMANDS and args and args[0] in _SUBCOMMANDS[first]:
+            return f"{first} {args[0]}"
+    return None
+
+
+def _response_text(response: Any) -> str:
+    """Everything a tool printed, as one string, for looking for failure markers."""
+    if isinstance(response, str):
+        return response
+    if not isinstance(response, dict):
+        return ""
+    parts = [response.get(key) for key in ("stdout", "stderr", "output", "content", "result", "message")]
+    return "\n".join(part for part in parts if isinstance(part, str))
+
+
+def verification_passed(failed: bool, response: Any) -> bool:
+    """Whether a check passed: the call did not fail and its output shows no failure."""
+    return not failed and _FAILURE_MARKERS.search(_response_text(response)) is None
 
 
 def _parse_time(value: Any) -> datetime | None:
@@ -268,12 +401,27 @@ def turn_summary(transcript_path: Any, since: datetime | None) -> dict[str, Any]
     return summary
 
 
-def telemetry_events(turn: dict[str, Any], task_id: str) -> list[dict[str, Any]]:
+def turn_checks(state: dict[str, Any], config: dict[str, Any]) -> list[dict[str, Any]]:
+    """The checking commands the current turn has run so far, or none when scoring is switched off."""
+    if not config.get("quality_from_checks", True):
+        return []
+    return list(state.get("verifications") or [])
+
+
+def telemetry_events(
+    turn: dict[str, Any], task_id: str, verifications: list[dict[str, Any]] | None = None
+) -> list[dict[str, Any]]:
     """One LLM telemetry event per model call in the turn, for the Overview and Events views.
 
     ``prompt_tokens`` is the new input of the call and ``context_length`` the full
-    context it used (including cached context). Claude Code reports no retrieval
-    or answer-quality score, so those metrics are left out rather than invented.
+    context it used (including cached context). Claude Code has no retrieval step
+    to grade, so there is no retrieval score.
+
+    ``verifications`` are the checking commands the turn ran (tests, linter, type
+    check, build), oldest first. When there are any, the turn's last model call
+    carries ``response_quality``: 1.0 if the last check passed, else 0.0. It goes on
+    one event only, so a turn counts once however many model calls it made. A turn
+    with no check gets no score, and is left out of the average rather than guessed.
     """
     events = []
     for call in turn.get("calls") or []:
@@ -284,6 +432,15 @@ def telemetry_events(turn: dict[str, Any], task_id: str) -> list[dict[str, Any]]
         if call.get("timestamp"):
             event["occurred_at"] = call["timestamp"]
         events.append(event)
+    if events and verifications:
+        last = verifications[-1]
+        events[-1]["response_quality"] = 1.0 if last.get("passed") else 0.0
+        events[-1]["metadata"].update(
+            quality_basis="last_verification_run",
+            verification_runner=str(last.get("runner", ""))[:64],
+            verification_runs=len(verifications),
+            verification_passed=sum(1 for v in verifications if v.get("passed")),
+        )
     return events[-500:]
 
 
@@ -335,6 +492,7 @@ def build_events(
         state["prompts"] = int(state.get("prompts", 0)) + 1
         state["task_id"] = f"{session_id[:8]}-p{state['prompts']}"
         state["attempts"] = {}
+        state["verifications"] = []
         state["prompt"] = preview(payload.get("prompt"))
         state["turn_started"] = base["occurred_at"]
         return []
@@ -348,6 +506,11 @@ def build_events(
         tool_input = payload.get("tool_input")
         response = payload.get("tool_response")
         failed = event_name == "PostToolUseFailure" or _response_failed(response)
+        runner = verification_command(tool_name, tool_input)
+        if runner and not check_did_not_run(failed, _error_text(payload) or _response_text(response)):
+            checks = state.setdefault("verifications", [])
+            checks.append({"runner": runner, "passed": verification_passed(failed, response)})
+            del checks[:-MAX_VERIFICATIONS]
         event: dict[str, Any] = {
             **base,
             "task_id": task_id,
@@ -399,6 +562,7 @@ def build_events(
             )
         prompt = state.pop("prompt", None) or turn.get("prompt")
         state.pop("turn_started", None)
+        state["verifications"] = []  # the caller read them before this call, for the telemetry
         return [content(event, input=prompt, output=payload.get("last_assistant_message") or turn.get("last_text"))]
 
     if event_name == "SessionEnd":
@@ -457,6 +621,9 @@ def main() -> None:
         details: dict[str, Any] = {}
         turn: dict[str, Any] = {}
         event_name = payload.get("hook_event_name")
+        # The turn's checks, read before building the Stop event clears them. Off with
+        # ``"quality_from_checks": false``, which sends no response quality at all.
+        verifications = turn_checks(state, config)
         if event_name in {"PostToolUse", "PostToolUseFailure"}:
             details = transcript_details(payload.get("transcript_path"), payload.get("tool_use_id"))
         elif event_name == "Stop":
@@ -472,7 +639,7 @@ def main() -> None:
         state_path.write_text(json.dumps(state), encoding="utf-8")
         if payload.get("hook_event_name") == "SessionEnd":
             state_path.unlink(missing_ok=True)
-        telemetry = telemetry_events(turn, events[0]["task_id"]) if turn and events else []
+        telemetry = telemetry_events(turn, events[0]["task_id"], verifications) if turn and events else []
         if events:
             started = time.perf_counter()
             send(config, events)
