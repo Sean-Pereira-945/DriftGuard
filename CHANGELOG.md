@@ -7,6 +7,14 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **View filters in the address.** Alerts keeps its tab and severity in the
+  address (`#/alerts?tab=resolved&severity=critical`) and Logs keeps its search,
+  kind, outcome and task (`#/logs?q=pytest&outcome=failed`), so a filtered list
+  can be linked. Defaults are left out and the values go when you leave the view.
+- **Plate panels.** The Overview's timeline, Drift Risk Breakdown, Top Root
+  Causes and Open Alerts are named with engraved plate labels over a sleeper
+  rule, the same idiom as the instruments, instead of a plain title over a
+  hairline. `Panel` gains `variant="plate"`.
 - **Bulk resolve and reopen in one request.** `PATCH /projects/{id}/alerts` takes
   `{"ids": [...], "resolved": bool}` for up to 500 alerts and returns the alerts
   now in that state plus any ids that weren't the project's. Ids from other

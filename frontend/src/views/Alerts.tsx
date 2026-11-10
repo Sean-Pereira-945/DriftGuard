@@ -7,11 +7,15 @@ import { SelectField, TextAreaField } from '../components/Field';
 import { PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ResourceView } from '../components/States';
 import { useToast } from '../components/Toasts';
+import { useViewParam } from '../lib/route';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
 import type { Alert, Severity } from '../types';
 
 type Tab = 'open' | 'resolved' | 'all';
+const isTab = (value: string): value is Tab => value === 'open' || value === 'resolved' || value === 'all';
+const isSeverityFilter = (value: string): value is Severity | 'all' =>
+  value === 'all' || value === 'stable' || value === 'warning' || value === 'critical';
 
 const TABS: { id: Tab; label: string; title: string }[] = [
   { id: 'open', label: 'Open', title: 'Open alerts' },
@@ -97,8 +101,8 @@ export function Alerts() {
   const project = useProject();
   const { alertsChanged } = useWorkspace();
   const toast = useToast();
-  const [tab, setTab] = useState<Tab>('open');
-  const [severity, setSeverity] = useState<Severity | 'all'>('all');
+  const [tab, setTab] = useViewParam<Tab>('tab', 'open', isTab);
+  const [severity, setSeverity] = useViewParam<Severity | 'all'>('severity', 'all', isSeverityFilter);
   const [pending, setPending] = useState<number | null>(null);
   const [composing, setComposing] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set());

@@ -466,7 +466,7 @@
       },
       {
         "name": "The Engraved Label Rule",
-        "body": "Names of instruments and field groups are plate labels: condensed, uppercase, 0.08em tracking, Muted. Nothing else is set that way.",
+        "body": "Names of instruments, field groups and plate panels (the charts and lists below a page's first screen) are plate labels: condensed, uppercase, 0.08em tracking, Muted. Nothing else is set that way.",
         "section": "typography"
       },
       {

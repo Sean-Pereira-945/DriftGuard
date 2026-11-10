@@ -80,6 +80,12 @@ list of attempts below is its text equivalent.
 
 ### Instrument strip and baseline gauge
 
+Panels further down a page, such as the Overview's timeline, risk breakdown,
+root causes and open alerts, use the **plate** variant: the name is an engraved
+plate label over a sleeper rule instead of a 22px title over a hairline, so
+they read as instruments on the same desk rather than separate cards. The
+surface, border and corners are unchanged.
+
 Four readings in one panel, separated by hairlines, not four cards. A gauge is a track with a tick at each policy limit, a hatched span past the baseline, and a diamond marker for the reading. The marker is ivory when fine, amber or red when it breaches. Each gauge has a plain-language `aria-label`. Less important readings sit in a collapsed **All readings** list.
 
 ### Buttons

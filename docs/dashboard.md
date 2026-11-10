@@ -67,6 +67,14 @@ same view. Opening a link applies its filters and project. Someone who isn't
 signed in is asked to sign in first, and a project they can't see falls back to
 their first project.
 
+A view's own filters are in the address too, while you are on that view:
+Alerts adds `tab` (`open`, `resolved`, `all`) and `severity`; Logs adds `q`
+(the search), `kind`, `outcome` and `task`. So
+`#/logs?q=pytest&outcome=failed` opens the Logs view already filtered, and
+`#/alerts?tab=resolved` opens the resolved list. Defaults are left out, and the
+values are dropped from the address when you leave the view, so they never
+follow you to another one.
+
 ### Keyboard shortcuts
 
 Press `?` anywhere for the list. They are off while you type in a field or
@@ -238,7 +246,9 @@ recovers.
 ![Logs: every agent action, newest first](images/dashboard-logs.png)
 
 The full history of what your agents did, newest first, 100 rows at a time,
-with **Load more** for older rows.
+with **Load more** for older rows. The search, kind and outcome filters and a
+"show only this task" choice are kept in the address (`?q=…&kind=…&outcome=…&task=…`),
+so a filtered list can be linked.
 
 The kind filter offers **Tool call**, **Prompt** and **Response**. Model calls
 and session start or end rows aren't in the filter. If your SDK or the hook
@@ -300,8 +310,9 @@ attached (for Claude Code: model, task and request ID).
 
 ![Alerts: agent and drift alerts](images/dashboard-alerts.png)
 
-**Open**, **Resolved** and **All** tabs, plus a severity filter. Arrow keys,
-Home and End move between the tabs. Each alert shows a lamp, its severity, its
+**Open**, **Resolved** and **All** tabs, plus a severity filter, both kept in
+the address (`?tab=resolved&severity=critical`) so the list can be linked.
+Arrow keys, Home and End move between the tabs. Each alert shows a lamp, its severity, its
 **source**, how long ago it fired, the tokens at stake, and its task or
 environment.
 

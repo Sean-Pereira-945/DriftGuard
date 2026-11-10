@@ -392,6 +392,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
 
         <div className="grid items-start gap-6 xl:grid-cols-3">
           <Panel
+            variant="plate"
             title="Telemetry & Drift Timeline"
             description="Latest 500 events in the window, oldest to newest. Dashed lines are the policy floors and limit."
             className="xl:col-span-2"
@@ -420,7 +421,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
           </Panel>
 
           <div className="space-y-6">
-            <Panel title="Drift Risk Breakdown" description="Share of events violating each policy rule.">
+            <Panel variant="plate" title="Drift Risk Breakdown" description="Share of events violating each policy rule.">
               <ResourceView
                 resource={summary}
                 isEmpty={(data) => data.total_events === 0}
@@ -436,7 +437,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
               </ResourceView>
             </Panel>
 
-            <Panel title="Top Root Causes" description="Most frequent causes among warning and critical events.">
+            <Panel variant="plate" title="Top Root Causes" description="Most frequent causes among warning and critical events.">
               <ResourceView
                 resource={summary}
                 isEmpty={(data) => data.top_root_causes.length === 0}
@@ -466,6 +467,7 @@ export function Overview({ onNavigate }: { onNavigate: (view: ViewId) => void })
         </div>
 
         <Panel
+          variant="plate"
           title="Open Alerts"
           description="Latest open alerts."
           bodyClassName=""

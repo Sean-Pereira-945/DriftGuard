@@ -44,6 +44,28 @@ export function replaceParams(update: Record<string, string | null>): void {
   if (next !== window.location.hash) window.history.replaceState(null, '', next);
 }
 
+/**
+ * A view's own filter (a tab, a search) in the address, next to the global ones. It is read
+ * once when the view mounts, written on every change (the default is left out), and removed
+ * when the view unmounts, so a link opens the same list and the address never carries a
+ * stale filter into another view.
+ */
+export function useViewParam<T extends string>(
+  key: string,
+  fallback: T,
+  accept: (value: string) => value is T,
+): [T, (next: T) => void] {
+  const [value, setValue] = useState<T>(() => {
+    const raw = parseHash().params.get(key);
+    return raw !== null && accept(raw) ? raw : fallback;
+  });
+  useEffect(() => {
+    replaceParams({ [key]: value === fallback ? null : value });
+  }, [key, value, fallback]);
+  useEffect(() => () => replaceParams({ [key]: null }), [key]);
+  return [value, setValue];
+}
+
 /** Hash-based routing (`#/alerts?env=prod`) so reloads and shared links keep the view and filters. */
 export function useHashRoute(): [ViewId, (view: ViewId) => void] {
   const [view, setView] = useState<ViewId>(() => parseHash().view);

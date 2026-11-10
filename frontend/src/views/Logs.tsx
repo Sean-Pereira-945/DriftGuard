@@ -10,7 +10,7 @@ import { Eyebrow, PageHeader, Panel } from '../components/Panel';
 import { EmptyState, ErrorState, LoadingState, StaleBanner } from '../components/States';
 import { ClickableRow, TableScroll, Td, Th } from '../components/Table';
 import { useToast } from '../components/Toasts';
-import type { ViewId } from '../lib/route';
+import { useViewParam, type ViewId } from '../lib/route';
 import { DASH, fmtDateTime, fmtDuration, fmtInt } from '../lib/format';
 import { useProject, useWorkspace } from '../state/workspace';
 import { type ActivityQuery, type AgentEvent, type AgentEventKind, type Outcome } from '../types';
@@ -223,14 +223,22 @@ function ActivityDrawer({
   );
 }
 
+const isText = (value: string): value is string => value.length <= 200;
+const isKindFilter = (value: string): value is AgentEventKind | '' =>
+  value === '' || KIND_OPTIONS.some((option) => option.value === value);
+const isOutcomeFilter = (value: string): value is Outcome | '' =>
+  value === '' || OUTCOME_OPTIONS.some((option) => option.value === value);
+
 export function Logs({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
   const project = useProject();
   const { filters } = useWorkspace();
   const toast = useToast();
-  const [search, setSearch] = useState('');
-  const [kind, setKind] = useState<AgentEventKind | ''>('');
-  const [outcome, setOutcome] = useState<Outcome | ''>('');
-  const [taskId, setTaskId] = useState<string | null>(null);
+  const [search, setSearch] = useViewParam<string>('q', '', isText);
+  const [kind, setKind] = useViewParam<AgentEventKind | ''>('kind', '', isKindFilter);
+  const [outcome, setOutcome] = useViewParam<Outcome | ''>('outcome', '', isOutcomeFilter);
+  const [task, setTask] = useViewParam<string>('task', '', isText);
+  const taskId = task || null;
+  const setTaskId = (next: string | null) => setTask(next ?? '');
   const [live, setLive] = useState(true);
   const [exporting, setExporting] = useState<'csv' | 'json' | null>(null);
   const [selected, setSelected] = useState<AgentEvent | null>(null);

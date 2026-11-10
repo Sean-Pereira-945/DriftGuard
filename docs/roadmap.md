@@ -109,6 +109,11 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   before the window, with a minimum sample of 10 events and a z-test, shown on the
   Overview as advice.
 - [x] Contrast, visible filter labels and grouped navigation.
+- [x] **Plate panels** (November 2026): the Overview's timeline, risk breakdown, root
+  causes and open alerts are named with engraved plate labels over a sleeper rule,
+  closing the last open item from the redesign review.
+- [x] **View filters in the address** (November 2026): the Alerts tab and severity,
+  and the Logs search, kind, outcome and task, so a filtered list can be linked.
 - [x] **Bulk alerts endpoint** (`PATCH /projects/{id}/alerts`, November 2026): the
   dashboard's Resolve and Reopen on a selection send one request instead of one
   per alert.
@@ -132,9 +137,7 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   repeat or undo the request).
 
 ### Dashboard
-- [ ] Give the panels below the Overview's first screen the same plate look as the
-  status plate and instruments.
-- [ ] Saved views, and tab and search state in the address.
+- [ ] Saved views.
 - [ ] A server-side impact preview for Policy that replays stored history instead
   of the loaded events.
 
