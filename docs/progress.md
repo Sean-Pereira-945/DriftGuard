@@ -258,6 +258,48 @@ browser drops a connection mid-reload is Windows noise, not DriftGuard.
 "Slides" in [demo.md](demo.md). The Overview screenshot in `docs/images/` was
 retaken from the verification run (account `verify@driftguard.local`).
 
+## New integrations and metrics (2026-11-10)
+
+Two roadmap features built on the same branch after round 2.
+
+### MCP gateway (`driftguard-mcp-proxy`)
+
+A stdio proxy between any MCP client and a downstream MCP server. It forwards
+every JSON-RPC message unchanged and records each `tools/call` as an agent
+event, so a closed agent that speaks MCP is observed with no code change. One
+session's calls group under one task, so a retried failing tool is flagged as
+blocked. It reuses the existing `MCPMiddleware`; config comes from flags,
+`DRIFTGUARD_*` env vars or a JSON file; it logs only to stderr and resolves the
+server command on `PATH` (including `.cmd` wrappers on Windows).
+
+| Check | Result |
+| --- | --- |
+| `driftguard.gateway` unit tests (tap, config, the proxy against a real subprocess, command resolution) | 13 passed |
+| End to end against a live server | A fake MCP server behind the proxy: all responses forwarded verbatim; session start/end plus three tool calls (one success, two failures with the right attempt numbers and durations) landed on the server; the diagnosis flagged `read_file` as the blocking tool with 2 consecutive failures. |
+| Installed CLI | `driftguard-mcp-proxy --help`, a missing-command error, and a transparent forward all checked. |
+| bandit | Clean (the two intentional `subprocess` findings are `# nosec` with a reason). |
+
+New `driftguard-mcp-proxy` entry point. Docs in `agent-integration.md`.
+
+### Latency as a first-class metric
+
+Telemetry accepts `latency_ms`; a `latency_limit_ms` policy rule (default
+10,000 ms) flags slow requests. A slow request adds 0.15 to its risk score —
+enough to tip a borderline event into `warning`, never enough to flag a fast
+one, and an event that reports no latency is never flagged. It flows through the
+summary (`averages.latency_ms`, `violation_rates.latency_limit_ms`), the
+Overview's All readings, the Drift Risk Breakdown, the Policy page and its impact
+preview, and the Test Telemetry form. Existing databases gain the two columns on
+startup via the additive migration.
+
+| Check | Result |
+| --- | --- |
+| Scoring and server tests | 9 new (policy scoring, ingest→store, summary aggregation, policy update, defaults, null latency) |
+| End to end against a live server | A 12 s event scored stable at 0.15 risk with root cause "high response latency"; a prompt-over-limit event tipped to `warning` once latency was added; averages and violation rates matched; lowering the limit raised the flagged share to 1.0. |
+| Frontend | Type check, 39 unit tests (incl. a latency preview case) and the build pass. |
+
+Python suite after both: **279 passed, 2 skipped**. Lint, format and bandit clean.
+
 ## What still needs to be done
 
 ### Before merging (owner decisions or quick tasks)
@@ -333,9 +375,8 @@ walkthrough and talking points are in [demo.md](demo.md).
 - Password reset and email verification need an email provider.
 
 ### Next features (from [roadmap.md](roadmap.md))
-- Standalone MCP gateway, so closed agents that support MCP can be observed
 - LangChain/LangGraph, OpenAI Agents SDK, and Claude Agent SDK adapters; a JS/TS SDK
-- Trace waterfall view, per-project notification settings, latency metric,
+- Trace waterfall view, per-project notification settings,
   cost from provider pricing
 - Teams and roles, Alembic migrations, secret-store integration, Helm chart,
   OpenTelemetry export
