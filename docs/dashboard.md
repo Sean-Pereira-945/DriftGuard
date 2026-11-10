@@ -73,7 +73,8 @@ Alerts adds `tab` (`open`, `resolved`, `all`) and `severity`; Logs adds `q`
 `#/logs?q=pytest&outcome=failed` opens the Logs view already filtered, and
 `#/alerts?tab=resolved` opens the resolved list. Defaults are left out, and the
 values are dropped from the address when you leave the view, so they never
-follow you to another one.
+follow you to another one. The browser's back and forward buttons move
+between them too.
 
 ### Keyboard shortcuts
 

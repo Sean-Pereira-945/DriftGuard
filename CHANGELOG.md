@@ -11,6 +11,8 @@ All notable changes to DriftGuard are recorded here. The format follows
   address (`#/alerts?tab=resolved&severity=critical`) and Logs keeps its search,
   kind, outcome and task (`#/logs?q=pytest&outcome=failed`), so a filtered list
   can be linked. Defaults are left out and the values go when you leave the view.
+  Back and forward move between them, and a link to another view carries only
+  the global filters.
 - **Plate panels.** The Overview's timeline, Drift Risk Breakdown, Top Root
   Causes and Open Alerts are named with engraved plate labels over a sleeper
   rule, the same idiom as the instruments, instead of a plain title over a

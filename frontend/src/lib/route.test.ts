@@ -39,7 +39,13 @@ describe('hashFor', () => {
   it('leaves the query off when there is none', () => {
     window.location.hash = '#/overview';
     expect(hashFor('alerts')).toBe('#/alerts');
-    expect(hashFor('alerts', new URLSearchParams('tab=resolved'))).toBe('#/alerts?tab=resolved');
+  });
+
+  it("keeps a view's own filters only for that view", () => {
+    window.location.hash = '#/logs?env=prod&q=pytest&outcome=failed';
+    expect(hashFor('logs')).toBe('#/logs?env=prod&q=pytest&outcome=failed');
+    expect(hashFor('alerts')).toBe('#/alerts?env=prod');
+    expect(hashFor('alerts', new URLSearchParams('project=x&tab=resolved'))).toBe('#/alerts?project=x');
   });
 });
 

@@ -30,6 +30,21 @@ describe('useViewParam', () => {
     expect(window.location.hash).toBe('#/alerts?env=prod');
   });
 
+  it('follows the address when it changes underneath the view (back, forward, an edit)', () => {
+    window.location.hash = '#/alerts?tab=resolved';
+    const { result } = renderHook(() => useViewParam<Tab>('tab', 'open', isTab));
+    act(() => {
+      window.location.hash = '#/alerts?tab=all';
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    expect(result.current[0]).toBe('all');
+    act(() => {
+      window.location.hash = '#/alerts';
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    expect(result.current[0]).toBe('open');
+  });
+
   it('removes its key when the view unmounts, keeping the global filters', () => {
     window.location.hash = '#/alerts?env=prod&tab=resolved';
     const { unmount } = renderHook(() => useViewParam<Tab>('tab', 'open', isTab));
