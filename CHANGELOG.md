@@ -7,6 +7,15 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Framework adapters for LangChain, the OpenAI Agents SDK and the Claude Agent
+  SDK.** `DriftGuardCallbackHandler` (a LangChain/LangGraph callback handler),
+  `DriftGuardRunHooks` (OpenAI Agents SDK run hooks) and
+  `DriftGuardClaudeAgentHooks` (Claude Agent SDK tool hooks) each record one
+  agent event per tool call — with its duration and outcome — and attribute each
+  model turn's tokens to the next tool, reusing `AgentContext`. Each plugs into
+  the framework's own hook mechanism in one or two lines. None of the frameworks
+  is a dependency: each adapter subclasses its framework's base when installed
+  and still works for testing without it. 10 new tests.
 - **Latency as a first-class metric.** Telemetry accepts `latency_ms`, a new
   `latency_limit_ms` policy rule (default 10,000 ms) flags requests slower than
   the limit, and the reading flows through the summary (`averages.latency_ms`,

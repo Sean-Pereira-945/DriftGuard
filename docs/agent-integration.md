@@ -105,6 +105,57 @@ serialised to JSON. The SDK and the server both cut each field to 2,000
 characters, and the server redacts secrets, emails and card numbers before
 storing it.
 
+## Framework adapters (LangChain, OpenAI Agents, Claude Agent SDK)
+
+If your agent runs on a framework, you don't need the decorator. Each adapter
+plugs into the framework's own hook mechanism and records one agent event per
+tool call, with its duration and outcome, and attributes each model turn's
+tokens to the next tool. None of the frameworks are a dependency of DriftGuard;
+install whichever you use.
+
+**LangChain / LangGraph** — a callback handler. Pass it in `callbacks`:
+
+```python
+from driftguard import DriftGuardClient
+from driftguard.adapters import DriftGuardCallbackHandler
+
+client = DriftGuardClient(api_key="dg_live_...", project_id="my-agent", base_url="http://127.0.0.1:8000")
+handler = DriftGuardCallbackHandler(client, task_id="answer-question")
+agent_executor.invoke({"input": "..."}, config={"callbacks": [handler]})
+client.sync_agent_events()
+```
+
+**OpenAI Agents SDK** — run hooks. Pass them to `Runner.run`:
+
+```python
+from agents import Runner
+from driftguard.adapters import DriftGuardRunHooks
+
+hooks = DriftGuardRunHooks(client, task_id="triage")
+await Runner.run(agent, "...", hooks=hooks)
+client.sync_agent_events()
+```
+
+Token usage is read from the run context's cumulative total, and the increase
+since the previous tool is attributed to each tool.
+
+**Claude Agent SDK** — tool hooks. Build them and pass them in the options:
+
+```python
+from claude_agent_sdk import ClaudeAgentOptions, query
+from driftguard.adapters import DriftGuardClaudeAgentHooks
+
+recorder = DriftGuardClaudeAgentHooks(client, task_id="build-feature")
+options = ClaudeAgentOptions(hooks=recorder.options_hooks())   # or options_hooks("Bash|Edit") to match some tools
+async for message in query(prompt="...", options=options):
+    ...
+client.sync_agent_events()
+```
+
+Like every adapter, these see tool calls only. Each handler or hook set is one
+task, so a tool retried after failures is flagged as blocked just as with the
+decorator.
+
 ## Option 2: MCP tools
 
 Use this when your agent calls tools through the Model Context Protocol.
