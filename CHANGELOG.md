@@ -6,6 +6,13 @@ All notable changes to DriftGuard are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- **`driftguard-server` fails gracefully without the server extra.** Running it
+  from a base `pip install driftguard` now prints `pip install "driftguard[server]"`
+  instead of a `ModuleNotFoundError` traceback. Importing `driftguard.server` is
+  lazy, so the entry point and the `driftguard-mcp-proxy` command never pull in
+  FastAPI.
+
 ### Added
 - **Framework adapters for LangChain, the OpenAI Agents SDK and the Claude Agent
   SDK.** `DriftGuardCallbackHandler` (a LangChain/LangGraph callback handler),

@@ -115,3 +115,49 @@ source checkout, run `npm ci && npm run build` in `frontend/` first.
   endpoints they call still exist. The 0.4 SDK uses the new batch endpoints, so
   it needs a 0.4 server. The list of breaking changes is in
   [CHANGELOG.md](../CHANGELOG.md).
+
+## Publishing to PyPI
+
+Releases are automated. The [`release.yml`](../.github/workflows/release.yml)
+workflow fires on a tag matching `v*`: it runs CI, builds the dashboard into
+`driftguard/server/static`, checks the tag equals the package version, builds
+the sdist and wheel, verifies the wheel bundles the dashboard, runs
+`twine check`, and publishes to PyPI with
+[Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (OIDC — no token
+is stored).
+
+**One-time setup**
+
+- On PyPI, add a *pending publisher* for project `driftguard`: owner
+  `Sean-Pereira-945`, repository `DriftGuard`, workflow `release.yml`,
+  environment `pypi`.
+- In GitHub, create an environment named `pypi` (repo *Settings → Environments*).
+  Add required reviewers there if you want a manual gate before each publish.
+
+**Each release**
+
+1. Bump the version in **both** `pyproject.toml` and `driftguard/__init__.py`
+   (they must match; the workflow checks the tag against `pyproject.toml`).
+2. Update `CHANGELOG.md` and merge to `main`.
+3. Tag and push:
+
+   ```bash
+   git tag v0.5.0
+   git push origin v0.5.0
+   ```
+
+Actions builds and publishes. `pip install driftguard` then gives the
+httpx-only SDK, with the `driftguard-server` and `driftguard-mcp-proxy`
+commands; the server needs `pip install "driftguard[server]"`.
+
+**Building and checking locally** (what the workflow does before publishing):
+
+```bash
+cd frontend && npm ci && npm run build && cd ..   # bundle the dashboard
+python -m build                                   # dist/*.whl and *.tar.gz
+python -m zipfile -l dist/*.whl | grep static/index.html   # dashboard bundled
+twine check dist/*
+```
+
+Smoke-test on [TestPyPI](https://test.pypi.org) first if you like:
+`twine upload --repository testpypi dist/*`.

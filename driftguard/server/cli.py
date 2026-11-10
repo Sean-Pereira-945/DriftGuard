@@ -5,6 +5,14 @@ from __future__ import annotations
 import argparse
 import os
 
+# Dependencies pulled in by the server extra; a clear message beats an import traceback.
+_SERVER_DEPS = {"uvicorn", "fastapi", "starlette", "sqlalchemy", "jwt", "dotenv"}
+
+
+def _missing_server_extra(exc: ModuleNotFoundError) -> bool:
+    """Whether this import error is a missing piece of the ``[server]`` extra."""
+    return exc.name in _SERVER_DEPS
+
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="driftguard-server", description="Run the DriftGuard server.")
@@ -22,7 +30,15 @@ def main(argv: list[str] | None = None) -> None:
     )
     args = parser.parse_args(argv)
 
-    import uvicorn
+    try:
+        import uvicorn
+    except ModuleNotFoundError as exc:
+        if _missing_server_extra(exc):
+            raise SystemExit(
+                f"driftguard-server needs the server extra (missing {exc.name}).\n"
+                'Install it with:  pip install "driftguard[server]"'
+            ) from None
+        raise
 
     uvicorn.run(
         "driftguard.server.app:create_app",
