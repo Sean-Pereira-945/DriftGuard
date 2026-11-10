@@ -64,7 +64,7 @@ Every view is described in the [dashboard guide](docs/dashboard.md).
 ## Quickstart (SDK)
 
 ```bash
-pip install "driftguard[server]"
+pip install "driftguard-tokepi[server]"   # PyPI name is driftguard-tokepi; you still import driftguard
 driftguard-server                    # dashboard and API at http://127.0.0.1:8000
 ```
 
@@ -95,7 +95,7 @@ with AgentContext(client, task_id="fix-tests", auto_sync=True) as ctx:
 client.fetch_agent_diagnosis()["diagnosis"]
 ```
 
-The SDK itself (`pip install driftguard`) depends only on `httpx`. The full
+The SDK itself (`pip install driftguard-tokepi`) depends only on `httpx`. The full
 walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 
 ## Documentation

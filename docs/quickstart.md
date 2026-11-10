@@ -179,7 +179,7 @@ In short:
 ### 4. Your own app (Python SDK)
 
 ```bash
-pip install driftguard        # the SDK needs only httpx
+pip install driftguard-tokepi    # the SDK needs only httpx (import name stays `driftguard`)
 ```
 
 **LLM telemetry**, one event per model call:

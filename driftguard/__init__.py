@@ -1,7 +1,7 @@
 """DriftGuard SDK: capture LLM and agent telemetry, check drift, and diagnose failed tools.
 
 The SDK depends only on ``httpx``. The hosted server lives in
-:mod:`driftguard.server` and needs ``pip install "driftguard[server]"``.
+:mod:`driftguard.server` and needs ``pip install "driftguard-tokepi[server]"``.
 """
 
 from .agent_analysis import analyze_agent_events

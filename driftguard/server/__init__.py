@@ -1,4 +1,4 @@
-"""DriftGuard server (FastAPI). Install with ``pip install "driftguard[server]"``.
+"""DriftGuard server (FastAPI). Install with ``pip install "driftguard-tokepi[server]"``.
 
 The server's dependencies (FastAPI, uvicorn, SQLAlchemy, ...) are an optional
 extra, so this package is imported lazily: ``from driftguard.server import

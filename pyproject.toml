@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "driftguard"
+name = "driftguard-tokepi"
 version = "0.5.0"
 description = "Observability for LLM apps and AI agents: drift checks, failed-tool diagnosis, and wasted-token accounting"
 readme = "README.md"
@@ -40,10 +40,10 @@ server = [
 ]
 postgres = ["psycopg[binary]>=3.1"]
 redis = ["redis>=5.0.0"]
-all = ["driftguard[server,postgres,redis]"]
+all = ["driftguard-tokepi[server,postgres,redis]"]
 research = ["numpy>=2.0"]
 dev = [
-  "driftguard[all,research]",
+  "driftguard-tokepi[all,research]",
   "pytest>=8.0",
   "ruff>=0.6.0",
   "bandit>=1.7.0",
