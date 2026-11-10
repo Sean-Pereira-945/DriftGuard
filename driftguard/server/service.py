@@ -115,6 +115,7 @@ def _event_dict(row: RowMapping) -> dict[str, Any]:
         "retrieval_score": row["retrieval_score"],
         "context_length": row["context_length"],
         "response_quality": row["response_quality"],
+        "latency_ms": row["latency_ms"],
         "environment": row["environment"],
         "risk_score": row["risk_score"],
         "severity": row["severity"],
@@ -526,6 +527,7 @@ class DriftGuardService:
                         "retrieval_score": item.get("retrieval_score"),
                         "context_length": item.get("context_length"),
                         "response_quality": item.get("response_quality"),
+                        "latency_ms": item.get("latency_ms"),
                         "environment": item.get("environment") or project["environment"],
                         "risk_score": evaluation["risk_score"],
                         "severity": evaluation["severity"],
@@ -626,12 +628,14 @@ class DriftGuardService:
                         func.avg(events.c.context_length).label("context_length"),
                         func.avg(events.c.retrieval_score).label("retrieval_score"),
                         func.avg(events.c.response_quality).label("response_quality"),
+                        func.avg(events.c.latency_ms).label("latency_ms"),
                         func.avg(events.c.risk_score).label("risk_score"),
                         func.max(events.c.created_at).label("last_event"),
                         rate(events.c.prompt_tokens > policy["prompt_token_limit"]).label("prompt_rate"),
                         rate(events.c.context_length > policy["context_length_limit"]).label("context_rate"),
                         rate(events.c.retrieval_score < policy["retrieval_score_floor"]).label("retrieval_rate"),
                         rate(events.c.response_quality < policy["response_quality_floor"]).label("quality_rate"),
+                        rate(events.c.latency_ms > policy["latency_limit_ms"]).label("latency_rate"),
                     ).where(*event_filter)
                 )
                 .mappings()
@@ -689,6 +693,7 @@ class DriftGuardService:
                 "context_length": rounded(stats["context_length"], 1),
                 "retrieval_score": rounded(stats["retrieval_score"]),
                 "response_quality": rounded(stats["response_quality"]),
+                "latency_ms": rounded(stats["latency_ms"], 1),
                 "risk_score": rounded(stats["risk_score"]),
             },
             "violation_rates": {
@@ -696,6 +701,7 @@ class DriftGuardService:
                 "context_length_limit": rounded(stats["context_rate"]) or 0.0,
                 "retrieval_score_floor": rounded(stats["retrieval_rate"]) or 0.0,
                 "response_quality_floor": rounded(stats["quality_rate"]) or 0.0,
+                "latency_limit_ms": rounded(stats["latency_rate"]) or 0.0,
             },
             "top_root_causes": [{"root_cause": cause, "count": int(n)} for cause, n in causes],
             "open_alerts": len(open_alerts),

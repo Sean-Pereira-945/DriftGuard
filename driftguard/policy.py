@@ -16,6 +16,8 @@ DEFAULT_POLICY: dict[str, float] = {
     "retrieval_score_floor": 0.5,
     "context_length_limit": 4000.0,
     "response_quality_floor": 0.8,
+    # Milliseconds a request may take before it counts as slow. Missing latency never flags.
+    "latency_limit_ms": 10000.0,
     # Agent diagnosis: consecutive failures of one tool before a task counts as blocked.
     "blocked_after_failures": 3,
     # Agent diagnosis: failures further apart than this are not treated as one retry loop.
@@ -28,6 +30,8 @@ RISK_WEIGHTS: dict[str, float] = {
     "retrieval_score_floor": 0.35,
     "context_length_limit": 0.2,
     "response_quality_floor": 0.2,
+    # Latency alone (0.15) stays under the warning threshold; it tips borderline cases.
+    "latency_limit_ms": 0.15,
 }
 
 WARNING_RISK = 0.4
@@ -37,6 +41,7 @@ _RECOMMENDATIONS = {
     "compress_prompt_context": "compress_prompt_context_and_reduce_context_window",
     "trim_retrieval_results": "trim_retrieval_results_and_prioritize_high_value_documents",
     "fallback_to_lower_cost_model": "fallback_to_lower_cost_model_for_non_critical_requests",
+    "reduce_latency": "reduce_latency_with_streaming_or_a_faster_model",
     "no_action_required": "no_action_required",
 }
 
@@ -75,6 +80,9 @@ def recommend_mitigation(metrics: Mapping[str, Any], policy: Mapping[str, float]
         actions.append("fallback_to_lower_cost_model")
         causes.append("response quality degradation")
         savings_ratio += 0.1
+    if _num(metrics, "latency_ms", 0.0) > limits["latency_limit_ms"]:
+        actions.append("reduce_latency")
+        causes.append("high response latency")
 
     if not actions:
         actions = ["no_action_required"]
@@ -104,6 +112,8 @@ def evaluate_drift(metrics: Mapping[str, Any], policy: Mapping[str, float] | Non
         violations.append("context_length_limit")
     if _num(metrics, "response_quality", 1.0) < limits["response_quality_floor"]:
         violations.append("response_quality_floor")
+    if _num(metrics, "latency_ms", 0.0) > limits["latency_limit_ms"]:
+        violations.append("latency_limit_ms")
 
     risk_score = min(1.0, sum(RISK_WEIGHTS[rule] for rule in violations))
     if risk_score >= CRITICAL_RISK:

@@ -63,6 +63,14 @@ const FIELDS: { group: string; description: string; fields: FieldSpec[] }[] = [
         max: 1,
         validate: (v) => (v >= 0 && v <= 1 ? null : 'Must be between 0 and 1.'),
       },
+      {
+        key: 'latency_limit_ms',
+        label: 'Latency limit (ms)',
+        help: 'Requests slower than this (in milliseconds) are flagged as high latency. Events that report no latency never flag. A lower limit flags more events. Must be greater than 0.',
+        step: 500,
+        min: 0,
+        validate: (v) => (v > 0 ? null : 'Must be greater than 0.'),
+      },
     ],
   },
   {

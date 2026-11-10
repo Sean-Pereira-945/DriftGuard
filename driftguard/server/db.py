@@ -114,6 +114,7 @@ policies = Table(
     Column("retrieval_score_floor", Float),
     Column("context_length_limit", Float),
     Column("response_quality_floor", Float),
+    Column("latency_limit_ms", Float),
     Column("blocked_after_failures", Float),
     Column("retry_window_minutes", Float),
 )
@@ -145,6 +146,7 @@ events = Table(
     Column("retrieval_score", Float),
     Column("context_length", Float),
     Column("response_quality", Float),
+    Column("latency_ms", Float),
     Column("environment", String(16)),
     Column("risk_score", Float),
     Column("severity", String(16)),

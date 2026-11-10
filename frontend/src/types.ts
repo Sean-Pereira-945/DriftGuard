@@ -93,6 +93,7 @@ export interface Policy {
   retrieval_score_floor: number;
   context_length_limit: number;
   response_quality_floor: number;
+  latency_limit_ms: number;
   blocked_after_failures: number;
   retry_window_minutes: number;
 }
@@ -110,6 +111,7 @@ export interface EventIngestRequest {
   context_length?: number;
   retrieval_score?: number;
   response_quality?: number;
+  latency_ms?: number;
   environment?: Environment;
   occurred_at?: string;
   metadata?: Record<string, MetadataValue>;
@@ -133,6 +135,7 @@ export interface TelemetryEvent {
   retrieval_score: number | null;
   context_length: number | null;
   response_quality: number | null;
+  latency_ms: number | null;
   environment: Environment | null;
   risk_score: number | null;
   severity: Severity | null;
@@ -149,6 +152,7 @@ export interface SummaryAverages {
   context_length: number | null;
   retrieval_score: number | null;
   response_quality: number | null;
+  latency_ms: number | null;
   risk_score: number | null;
 }
 
@@ -157,6 +161,7 @@ export interface ViolationRates {
   context_length_limit: number;
   retrieval_score_floor: number;
   response_quality_floor: number;
+  latency_limit_ms: number;
 }
 
 export interface RootCauseCount {

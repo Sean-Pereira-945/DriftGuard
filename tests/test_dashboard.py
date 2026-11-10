@@ -225,3 +225,42 @@ def test_built_dashboard_is_served(settings, tmp_path):
         assert "<title>DriftGuard</title>" in client.get("/").text
         assert client.get("/assets/app.js").status_code == 200
         assert client.get("/health").json()["status"] == "ok"
+
+
+def test_latency_is_stored_and_aggregated(client, project):
+    pid, h = project["project_id"], project["key_headers"]
+    ingest(client, project, prompt_tokens=100, latency_ms=2000, response_quality=0.95)
+    ingest(client, project, prompt_tokens=100, latency_ms=20000, response_quality=0.95)
+    events = client.get(f"/projects/{pid}/events", headers=h).json()
+    assert sorted(e["latency_ms"] for e in events) == [2000.0, 20000.0]
+    summary = client.get(f"/projects/{pid}/summary", headers=h).json()
+    assert summary["averages"]["latency_ms"] == 11000.0
+    # One of two events is over the 10,000 ms default limit.
+    assert summary["violation_rates"]["latency_limit_ms"] == 0.5
+
+
+def test_latency_limit_can_be_set_in_policy(client, account, project):
+    pid, h = project["project_id"], account["headers"]
+    updated = client.put(f"/projects/{pid}/policy", json={"latency_limit_ms": 1500}, headers=h)
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["latency_limit_ms"] == 1500
+    ingest(client, project, prompt_tokens=100, latency_ms=2000)
+    summary = client.get(f"/projects/{pid}/summary", headers=project["key_headers"]).json()
+    assert summary["violation_rates"]["latency_limit_ms"] == 1.0
+    # A negative or zero limit is rejected.
+    assert client.put(f"/projects/{pid}/policy", json={"latency_limit_ms": 0}, headers=h).status_code == 422
+
+
+def test_policy_defaults_include_latency(client, account, project):
+    pid, h = project["project_id"], account["headers"]
+    defaults = client.get(f"/projects/{pid}/policy/defaults", headers=h).json()
+    assert defaults["latency_limit_ms"] == 10000.0
+
+
+def test_events_without_latency_stay_null(client, project):
+    pid, h = project["project_id"], project["key_headers"]
+    ingest(client, project, prompt_tokens=100, response_quality=0.9)
+    assert client.get(f"/projects/{pid}/events", headers=h).json()[0]["latency_ms"] is None
+    summary = client.get(f"/projects/{pid}/summary", headers=h).json()
+    assert summary["averages"]["latency_ms"] is None
+    assert summary["violation_rates"]["latency_limit_ms"] == 0.0

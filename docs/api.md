@@ -145,6 +145,7 @@ immediately.
   "retrieval_score_floor": 0.5,
   "context_length_limit": 4000.0,
   "response_quality_floor": 0.8,
+  "latency_limit_ms": 10000.0,
   "blocked_after_failures": 3,
   "retry_window_minutes": 60.0
 }
@@ -157,8 +158,9 @@ place. It does not change anything: restoring is a `PUT` of these values.
 
 ### `PUT /projects/{id}/policy` *(session)*
 Send any subset of the fields above. Unknown fields return `422`. Constraints:
-limits `> 0`; floors between 0 and 1; `blocked_after_failures` 1–100;
-`retry_window_minutes` 0–10080 (0 turns off the window). Returns the merged policy.
+limits `> 0` (including `latency_limit_ms`, in milliseconds); floors between 0
+and 1; `blocked_after_failures` 1–100; `retry_window_minutes` 0–10080 (0 turns
+off the window). Returns the merged policy.
 
 ## SDK ingestion *(API key)*
 
@@ -171,13 +173,17 @@ Sends one LLM request's telemetry. Every field is optional.
   "context_length": 6100,
   "retrieval_score": 0.31,
   "response_quality": 0.62,
+  "latency_ms": 8200,
   "environment": "prod",
   "occurred_at": "2026-09-30T04:13:48Z",
   "metadata": {"model": "claude-x", "request_id": "r-42"}
 }
 ```
 
-- Scores must be between 0 and 1. Token and length values must be `>= 0`.
+- Scores must be between 0 and 1. Token, length and `latency_ms` values must be
+  `>= 0`. An event over `latency_limit_ms` adds 0.15 to its risk score, enough to
+  tip a borderline event into `warning` but not to flag a fast one; an event that
+  reports no latency is never flagged.
 - `occurred_at` defaults to the server time. Timestamps more than 5 minutes in
   the future are replaced with the server time.
 - `metadata` takes at most 32 keys with scalar values. String values are
@@ -282,9 +288,10 @@ Overview numbers. Filters: `environment`, `severity` (applies to alerts), `time_
   "total_events": 1,
   "events_by_severity": {"critical": 1},
   "averages": {"prompt_tokens": 5200.0, "context_length": 6100.0, "retrieval_score": 0.31,
-               "response_quality": 0.62, "risk_score": 1.0},
+               "response_quality": 0.62, "latency_ms": 8200.0, "risk_score": 1.0},
   "violation_rates": {"prompt_token_limit": 1.0, "context_length_limit": 1.0,
-                      "retrieval_score_floor": 1.0, "response_quality_floor": 1.0},
+                      "retrieval_score_floor": 1.0, "response_quality_floor": 1.0,
+                      "latency_limit_ms": 0.5},
   "top_root_causes": [{"root_cause": "prompt context inflation; …", "count": 1}],
   "open_alerts": 2, "critical_alerts": 2, "warning_alerts": 0,
   "saved_tokens": 8940.0,

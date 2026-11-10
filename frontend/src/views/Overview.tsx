@@ -198,6 +198,13 @@ function AllReadings({ summary }: { summary: Summary }) {
       </>,
     ]);
   }
+  if (avg.latency_ms !== null) {
+    rows.push([
+      'Mean latency',
+      fmtDuration(avg.latency_ms),
+      `Limit ${fmtDuration(p.latency_limit_ms)} · ${fmtPercent(summary.violation_rates.latency_limit_ms)} over`,
+    ]);
+  }
   if (a && a.events > 0) {
     rows.push(
       ['Tool calls', fmtInt(a.tool_calls), `${fmtInt(a.failed_tool_calls)} failed`],

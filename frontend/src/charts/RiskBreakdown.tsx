@@ -6,6 +6,7 @@ const RULES: { key: keyof ViolationRates; label: string; describe: (policy: Poli
   { key: 'context_length_limit', label: 'Context length over limit', describe: (p) => `> ${fmtInt(p.context_length_limit)}` },
   { key: 'retrieval_score_floor', label: 'Retrieval below floor', describe: (p) => `< ${fmtScore(p.retrieval_score_floor)}` },
   { key: 'response_quality_floor', label: 'Quality below floor', describe: (p) => `< ${fmtScore(p.response_quality_floor)}` },
+  { key: 'latency_limit_ms', label: 'Latency over limit', describe: (p) => `> ${fmtInt(p.latency_limit_ms)} ms` },
 ];
 
 function tone(rate: number): { bar: string; text: string } {

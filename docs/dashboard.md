@@ -55,7 +55,7 @@ can close sign-ups with `DRIFTGUARD_ALLOW_SIGNUP=false`.
 | **Updated** | The time the data on screen was last loaded. |
 | **Live indicator** | The realtime connection: **Live**, **Connecting**, **Reconnecting** or **Offline**. While live, new alerts and agent activity appear without a refresh, and a new critical alert pops up a notification. |
 | **Refresh** | Reloads every view and the project list. |
-| **Test Telemetry** | Sends one event with the four metrics you type, and shows how the server scored it. Handy for trying out thresholds. |
+| **Test Telemetry** | Sends one event with the metrics you type (prompt tokens, context length, retrieval score, response quality, latency), and shows how the server scored it. Handy for trying out thresholds. |
 
 The project and filters are remembered in this browser.
 
@@ -167,6 +167,7 @@ a check (shown as dots on the timeline), and nothing is shown for retrieval.
 | Reading | Meaning |
 | --- | --- |
 | Total events | Telemetry events in the window, split into critical and warning. |
+| Mean latency | The average `latency_ms` of events that reported it, with the policy limit and the share over it. Only shown when some event carried a latency. |
 | Tokens at stake | The sum of `saved_tokens` over open alerts. For a **drift** alert it's the tokens a mitigation would save; for an **agent** alert it's the tokens already wasted on the blocked task. These are estimates, not invoices. |
 | Mean retrieval score | Average 0–1 relevance of retrieved documents; higher is better. Shows the policy floor, with the same "Not reported" rule. |
 | Tool calls | Tool calls in the window, and how many failed. |
@@ -184,7 +185,7 @@ rows Logs lists.
   Dashed lines mark the prompt-token limit and the two score floors, and the
   span under the lower floor is hatched. **View the latest 12 readings as a
   table** gives the same data without hovering.
-- **Drift Risk Breakdown.** The share of events that broke each policy rule.
+- **Drift Risk Breakdown.** The share of events that broke each policy rule, including **Latency over limit** once any event reports a latency.
 - **Top Root Causes.** The most frequent causes among warning and critical
   events. It shows "No drift detected" when every event is stable.
 - **Open Alerts.** The five newest open alerts.

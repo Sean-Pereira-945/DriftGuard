@@ -7,6 +7,16 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Latency as a first-class metric.** Telemetry accepts `latency_ms`, a new
+  `latency_limit_ms` policy rule (default 10,000 ms) flags requests slower than
+  the limit, and the reading flows through the summary (`averages.latency_ms`,
+  `violation_rates.latency_limit_ms`), the Overview's All readings, the Drift
+  Risk Breakdown, the Policy page and its impact preview, and the Test Telemetry
+  form. A slow request adds 0.15 to its risk score — enough to tip a borderline
+  event into `warning`, never enough to flag a fast one, and an event that
+  reports no latency is never flagged. The SDK already forwards it
+  (`capture_metrics(latency_ms=...)`). Existing databases gain the two columns on
+  startup. 9 new backend tests and a frontend preview test.
 - **MCP gateway (`driftguard-mcp-proxy`).** A stdio proxy that sits between any
   MCP client and a downstream MCP server, forwards every JSON-RPC message
   unchanged, and records each `tools/call` as a DriftGuard agent event with its

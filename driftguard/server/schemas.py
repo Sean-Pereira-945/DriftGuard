@@ -109,6 +109,7 @@ class PolicyUpdateRequest(BaseModel):
     retrieval_score_floor: Score | None = None
     context_length_limit: float | None = Field(default=None, gt=0)
     response_quality_floor: Score | None = None
+    latency_limit_ms: float | None = Field(default=None, gt=0)
     blocked_after_failures: int | None = Field(default=None, ge=1, le=100)
     retry_window_minutes: float | None = Field(default=None, ge=0, le=10080)
 
@@ -148,6 +149,7 @@ class EventIngestRequest(BaseModel):
     retrieval_score: Score | None = None
     context_length: NonNegative | None = None
     response_quality: Score | None = None
+    latency_ms: NonNegative | None = None
     environment: Environment | None = None
     occurred_at: datetime | None = None
     metadata: dict[str, MetadataValue] | None = None

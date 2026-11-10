@@ -157,7 +157,10 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
 - [ ] Add model turns to the attempt timeline. It shows a task's tool calls today.
 - [ ] Per-project notification settings (webhooks, email) instead of global
   environment variables.
-- [ ] Latency as a first-class metric: ingest `latency_ms` and add a policy rule.
+- [x] **Latency as a first-class metric** (November 2026): telemetry carries
+  `latency_ms`, a `latency_limit_ms` policy rule flags slow requests, and the
+  Overview, Drift Risk Breakdown and Policy preview show it. A slow request adds
+  to drift risk but can't raise an alert on its own.
 - [ ] Provider pricing profiles, to show wasted tokens as cost.
 - [ ] Teams: several users per account, with roles.
 

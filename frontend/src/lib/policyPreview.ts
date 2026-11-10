@@ -28,6 +28,8 @@ export function flagged(key: PolicyField, value: number, events: TelemetryEvent[
       return reading((e) => e.retrieval_score, (v) => v < value);
     case 'response_quality_floor':
       return reading((e) => e.response_quality, (v) => v < value);
+    case 'latency_limit_ms':
+      return reading((e) => e.latency_ms, (v) => v > value);
     case 'blocked_after_failures':
       return { count: tasks.filter((t) => t.consecutive_failures >= value).length, of: tasks.length, noun: 'tasks' };
     default:
