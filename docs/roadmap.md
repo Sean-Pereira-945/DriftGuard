@@ -6,7 +6,7 @@ are for planning only; they aren't commitments.
 
 ## Product principles
 
-- **Installable, not a repo artifact.** `pip install driftguard` gives you a
+- **Installable, not a repo artifact.** `pip install driftguard-tokepi` gives you a
   dependency-light SDK. The server is one command or one `docker compose up`.
 - **Explain, then act.** The value is in naming the blocking tool, counting the
   wasted tokens, and saying what to do. The dashboard exists to support that

@@ -72,7 +72,7 @@ location /ws/ {
 ## Without Docker
 
 ```bash
-pip install "driftguard[all]"      # server + PostgreSQL + Redis drivers
+pip install "driftguard-tokepi[all]"      # server + PostgreSQL + Redis drivers
 export DRIFTGUARD_ENV=production DRIFTGUARD_SECRET_KEY=... \
        DATABASE_URL=postgresql://... REDIS_URL=redis://...
 driftguard-server --host 0.0.0.0 --workers 4 --proxy-headers
@@ -146,9 +146,9 @@ is stored).
    git push origin v0.5.0
    ```
 
-Actions builds and publishes. `pip install driftguard` then gives the
+Actions builds and publishes. `pip install driftguard-tokepi` then gives the
 httpx-only SDK, with the `driftguard-server` and `driftguard-mcp-proxy`
-commands; the server needs `pip install "driftguard[server]"`.
+commands; the server needs `pip install "driftguard-tokepi[server]"`.
 
 **Building and checking locally** (what the workflow does before publishing):
 

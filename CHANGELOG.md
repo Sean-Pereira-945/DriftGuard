@@ -15,7 +15,7 @@ and the framework adapters.
 
 ### Changed
 - **`driftguard-server` fails gracefully without the server extra.** Running it
-  from a base `pip install driftguard` now prints `pip install "driftguard[server]"`
+  from a base `pip install driftguard-tokepi` now prints `pip install "driftguard-tokepi[server]"`
   instead of a `ModuleNotFoundError` traceback. Importing `driftguard.server` is
   lazy, so the entry point and the `driftguard-mcp-proxy` command never pull in
   FastAPI.

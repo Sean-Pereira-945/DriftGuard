@@ -141,7 +141,7 @@ def test_server_cli_reports_a_friendly_message_without_uvicorn(monkeypatch):
     monkeypatch.setattr(builtins, "__import__", fake_import)
     with pytest.raises(SystemExit) as excinfo:
         cli.main(["--port", "8000"])
-    assert "driftguard[server]" in str(excinfo.value)
+    assert "driftguard-tokepi[server]" in str(excinfo.value)
 
 
 def test_server_package_is_lazy_import():

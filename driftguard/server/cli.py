@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> None:
         if _missing_server_extra(exc):
             raise SystemExit(
                 f"driftguard-server needs the server extra (missing {exc.name}).\n"
-                'Install it with:  pip install "driftguard[server]"'
+                'Install it with:  pip install "driftguard-tokepi[server]"'
             ) from None
         raise
 
