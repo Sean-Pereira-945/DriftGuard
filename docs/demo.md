@@ -88,6 +88,12 @@ It adds a week of sample data:
 Turn on content storage for the project first if you want Logs to show inputs
 and outputs. Set **Range** to **Last 7 days** to see all of it.
 
+## Slides
+
+A nine-card deck that follows the running order below, with the current
+screenshots: https://gamma.app/docs/43z3pw37tivzfnb (built with Gamma on
+2026-11-10). Keep it beside the live dashboard rather than instead of it.
+
 ## Presenting the project (10–15 minutes)
 
 A running order that works for a class or a review. Open the dashboard before

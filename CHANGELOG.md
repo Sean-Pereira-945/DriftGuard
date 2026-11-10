@@ -29,6 +29,8 @@ All notable changes to DriftGuard are recorded here. The format follows
   source reports, the baseline wording, and the Policy impact preview, whose
   maths moved from the view into `lib/policyPreview.ts`. `npm test` runs in CI
   before the build.
+- **Demo slides.** `docs/demo.md` links a nine-card deck that follows the running
+  order, built from the current screenshots.
 - **`startup.bat`** for Windows development: creates the environment on first
   run, starts the API on port 8000 against the local SQLite file and the Vite dev
   server on port 5173 with hot reload. `demo.bat` stays the one-click demo.

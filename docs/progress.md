@@ -262,7 +262,7 @@ retaken from the verification run (account `verify@driftguard.local`).
 
 ### Before merging (owner decisions or quick tasks)
 1. **Merge the pending branch.** `feature/signal-box-redesign` carries the
-   setup guide, the redesign and both rounds of follow-ups. PR_PLACEHOLDER
+   setup guide, the redesign and both rounds of follow-ups. PR #11 (https://github.com/Sean-Pereira-945/DriftGuard/pull/11) is open against `main`.
    Review the screenshots in `docs/images/` and the Actions run before merging.
 2. **Repo name.** Done: the GitHub repo is now `DriftGuard`. The clone commands in
    `SETUP.md` and `docs/quickstart.md`, and the URLs in `pyproject.toml`, use the
