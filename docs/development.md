@@ -37,6 +37,7 @@ driftguard/            installable package
 frontend/              React dashboard source (builds into driftguard/server/static)
   src/views/           one file per sidebar view (Overview, Logs, ...)
   src/state/           session, workspace (project and filters), per-view queries
+gateway/               MCP stdio proxy (driftguard-mcp-proxy) that records tool calls
 integrations/
   claude_code/         Claude Code hook (stdlib only) and its README
 examples/              live_demo.py (scripted demo), seed_showcase.py (sample data)

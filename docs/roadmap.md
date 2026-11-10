@@ -142,8 +142,9 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   of the loaded events.
 
 ### Integrations
-- [ ] A standalone **MCP gateway** (`driftguard-mcp-proxy`) that sits between
-  any MCP client and its servers. This is the most direct way to observe closed
+- [x] A standalone **MCP gateway** (`driftguard-mcp-proxy`, November 2026) that
+  sits between any MCP client and its servers over stdio, forwarding every
+  message and recording each `tools/call`. The most direct way to observe closed
   agents that support MCP.
 - [ ] Framework adapters: LangChain/LangGraph callbacks, the OpenAI Agents SDK,
   and the Claude Agent SDK hooks.

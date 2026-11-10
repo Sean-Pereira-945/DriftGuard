@@ -7,6 +7,16 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **MCP gateway (`driftguard-mcp-proxy`).** A stdio proxy that sits between any
+  MCP client and a downstream MCP server, forwards every JSON-RPC message
+  unchanged, and records each `tools/call` as a DriftGuard agent event with its
+  duration and outcome — so closed agents that speak MCP can be observed with no
+  code change. One session's calls group under one task, so a retried failing
+  tool is flagged as blocked. Config comes from flags, `DRIFTGUARD_*` env vars or
+  a JSON file (the same keys as the Claude Code integration). It logs only to
+  stderr, passes a message it can't parse through untouched, and resolves the
+  server command on `PATH` (including `.cmd` wrappers on Windows). New
+  `driftguard.gateway` package, 13 tests.
 - **View filters in the address.** Alerts keeps its tab and severity in the
   address (`#/alerts?tab=resolved&severity=critical`) and Logs keeps its search,
   kind, outcome and task (`#/logs?q=pytest&outcome=failed`), so a filtered list

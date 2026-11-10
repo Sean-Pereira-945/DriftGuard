@@ -131,6 +131,49 @@ middleware.intercept_response(request_json, response_json, duration_ms=elapsed)
 Both JSON-RPC `error` responses and results with `isError: true` count as
 failures.
 
+### The MCP gateway (no code, any MCP client)
+
+For a closed agent you can't edit — Claude Desktop, an IDE, any MCP client that
+launches a server over stdio — put the **`driftguard-mcp-proxy`** command in
+front of the server. It forwards every JSON-RPC message unchanged and records
+each `tools/call` as an agent event, so the agent needs no changes.
+
+Wherever the client is configured to run the server, prepend the proxy and move
+the server command after `--`. For example, a Claude Desktop server entry:
+
+```json
+{
+  "command": "driftguard-mcp-proxy",
+  "args": [
+    "--config", "C:/path/to/driftguard-mcp.json",
+    "--", "npx", "-y", "@modelcontextprotocol/server-git", "--repository", "/repo"
+  ]
+}
+```
+
+The config file holds the key and uses the same keys as the Claude Code
+integration's `driftguard.json`:
+
+```json
+{
+  "base_url": "http://127.0.0.1:8000",
+  "project_id": "my-mcp-tools",
+  "api_key": "dg_live_...",
+  "capture_content": true
+}
+```
+
+Instead of `--config`, you can pass `--api-key`/`--project-id`/`--base-url` or
+set `DRIFTGUARD_API_KEY`, `DRIFTGUARD_PROJECT_ID` and `DRIFTGUARD_BASE_URL`. All
+of one session's calls are grouped under one task (`--task-id`, or a name
+derived from the server command), so a tool retried after failures is flagged as
+blocked. The proxy logs only to stderr — stdout is the MCP channel — and never
+alters a message it can't parse, so it's safe in the middle of the stream. The
+downstream server's own stderr passes through to the client unchanged.
+
+Only tool calls are observed; token counts aren't in MCP traffic. See
+[what DriftGuard cannot observe](#what-driftguard-cannot-observe).
+
 ## Option 3: any language, raw HTTP
 
 Send events to `POST /agent-events/{project_id}/batch` with header
@@ -197,7 +240,8 @@ decides whether to prune history or trim retrieval.
 - **Tokens the host doesn't report.** Tool calls alone carry no token counts, so
   you must attach LLM usage, as `record_llm_usage` does.
 
-For closed agents that support MCP, the practical route is a small MCP gateway
-between the agent and its MCP servers that calls
-`MCPMiddleware.intercept_response`. DriftGuard provides the middleware but not a
-ready-made gateway yet; that's on the [roadmap](roadmap.md).
+For closed agents that support MCP, the practical route is the
+**[`driftguard-mcp-proxy`](#the-mcp-gateway-no-code-any-mcp-client)** gateway,
+which sits between the agent and its MCP servers and records every `tools/call`.
+It still sees tool calls only, not the agent's model turns or private
+conversation.
