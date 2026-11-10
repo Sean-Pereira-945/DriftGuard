@@ -306,8 +306,10 @@ Home and End move between the tabs. Each alert shows a lamp, its severity, its
 environment.
 
 **Bulk actions.** Tick alerts, or **Select all**, then **Resolve** or
-**Reopen** the selection in one step. If some fail, the notification says how
-many and why. The selection clears when you change tab or filter.
+**Reopen** the selection in one request (`PATCH /projects/{id}/alerts`). If an
+alert has gone since the list loaded, the notification says how many were
+skipped and the list refreshes. The selection clears when you change tab or
+filter.
 
 | Source | Raised when | Resolves |
 | --- | --- | --- |

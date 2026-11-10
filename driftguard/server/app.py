@@ -52,6 +52,7 @@ from .schemas import (
     AgentEventBatchRequest,
     AgentEventIngestRequest,
     AgentEventKind,
+    AlertBulkUpdateRequest,
     AlertCreateRequest,
     AlertUpdateRequest,
     DeleteAccountRequest,
@@ -507,6 +508,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
         publish_alerts(project["project_id"], [alert])
         return alert
+
+    @app.patch("/projects/{project_id}/alerts", tags=["alerts"], dependencies=default_limit)
+    def update_alerts(body: AlertBulkUpdateRequest, project: OwnerDep) -> dict[str, Any]:
+        """Resolve or reopen up to 500 alerts in one request. Ids from other projects are reported, not changed."""
+        result = service.set_alerts_resolved(project["project_id"], body.ids, body.resolved)
+        action = "resolved" if body.resolved else "reopened"
+        for alert in result["alerts"]:
+            broadcaster.publish(project["project_id"], {"type": "alert", "action": action, "alert": alert})
+        return result
 
     @app.patch("/projects/{project_id}/alerts/{alert_id}", tags=["alerts"], dependencies=default_limit)
     def update_alert(alert_id: int, body: AlertUpdateRequest, project: OwnerDep) -> dict[str, Any]:

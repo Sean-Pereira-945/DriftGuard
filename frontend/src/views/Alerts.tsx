@@ -144,22 +144,29 @@ export function Alerts() {
 
   const bulk = async (targets: Alert[], resolved: boolean) => {
     setBulkBusy(true);
-    const results = await Promise.allSettled(targets.map((alert) => api.setAlertResolved(project.project_id, alert.id, resolved)));
-    const failed = results.filter((r) => r.status === 'rejected');
-    const done = results.length - failed.length;
-    alertsChanged();
-    setSelected(new Set());
-    setBulkBusy(false);
     const verb = resolved ? 'resolved' : 'reopened';
-    if (failed.length === 0) {
-      toast.push({ tone: 'success', title: `${done} ${done === 1 ? 'alert' : 'alerts'} ${verb}` });
-    } else {
-      const first = failed[0] as PromiseRejectedResult;
-      toast.push({
-        tone: 'error',
-        title: `${failed.length} of ${results.length} could not be ${verb}`,
-        message: errorMessage(first.reason),
-      });
+    try {
+      const result = await api.setAlertsResolved(
+        project.project_id,
+        targets.map((alert) => alert.id),
+        resolved,
+      );
+      const done = result.alerts.length;
+      if (result.missing.length === 0) {
+        toast.push({ tone: 'success', title: `${done} ${done === 1 ? 'alert' : 'alerts'} ${verb}` });
+      } else {
+        toast.push({
+          tone: 'error',
+          title: `${result.missing.length} of ${targets.length} could not be ${verb}`,
+          message: 'They no longer exist in this project. The list has been refreshed.',
+        });
+      }
+      alertsChanged();
+      setSelected(new Set());
+    } catch (error) {
+      toast.push({ tone: 'error', title: `The selection could not be ${verb}`, message: errorMessage(error) });
+    } finally {
+      setBulkBusy(false);
     }
   };
 

@@ -129,6 +129,13 @@ class AlertUpdateRequest(BaseModel):
     resolved: bool
 
 
+class AlertBulkUpdateRequest(BaseModel):
+    """Resolve or reopen several alerts of one project in one request."""
+
+    ids: list[int] = Field(min_length=1, max_length=500)
+    resolved: bool
+
+
 # ---------------------------------------------------------------------------
 # Ingestion
 # ---------------------------------------------------------------------------

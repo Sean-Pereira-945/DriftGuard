@@ -83,6 +83,61 @@ def test_manual_alert_lifecycle(client, account, project):
     )
 
 
+def test_bulk_resolve_and_reopen(client, account, project):
+    pid, h = project["project_id"], account["headers"]
+    ids = [
+        client.post(f"/projects/{pid}/alerts", json={"severity": "warning", "message": f"alert {i}"}, headers=h).json()[
+            "id"
+        ]
+        for i in range(3)
+    ]
+    body = client.patch(f"/projects/{pid}/alerts", json={"ids": ids[:2], "resolved": True}, headers=h)
+    assert body.status_code == 200, body.text
+    result = body.json()
+    assert [a["id"] for a in result["alerts"]] == sorted(ids[:2])
+    assert all(a["resolved"] and a["resolved_at"] for a in result["alerts"])
+    assert result["missing"] == []
+    assert client.get(f"/projects/{pid}/summary", headers=h).json()["open_alerts"] == 1
+
+    reopened = client.patch(f"/projects/{pid}/alerts", json={"ids": ids, "resolved": False}, headers=h).json()
+    assert [a["resolved"] for a in reopened["alerts"]] == [False, False, False]
+    assert all(a["resolved_at"] is None for a in reopened["alerts"])
+    assert client.get(f"/projects/{pid}/summary", headers=h).json()["open_alerts"] == 3
+
+
+def test_bulk_resolve_reports_missing_and_keeps_other_projects(client, account, project):
+    pid, h = project["project_id"], account["headers"]
+    mine = client.post(f"/projects/{pid}/alerts", json={"severity": "critical", "message": "mine"}, headers=h).json()
+    other = client.post("/projects", json={"project_id": "other-project", "name": "Other"}, headers=h).json()
+    theirs = client.post(
+        f"/projects/{other['project_id']}/alerts", json={"severity": "critical", "message": "theirs"}, headers=h
+    ).json()
+
+    result = client.patch(
+        f"/projects/{pid}/alerts", json={"ids": [mine["id"], theirs["id"], 99999], "resolved": True}, headers=h
+    ).json()
+    assert [a["id"] for a in result["alerts"]] == [mine["id"]]
+    assert sorted(result["missing"]) == sorted([theirs["id"], 99999])
+    still_open = client.get(f"/projects/{other['project_id']}/alerts?resolved=false", headers=h).json()
+    assert [a["id"] for a in still_open] == [theirs["id"]]
+
+
+def test_bulk_resolve_validation(client, account, project):
+    pid, h = project["project_id"], account["headers"]
+    assert client.patch(f"/projects/{pid}/alerts", json={"ids": [], "resolved": True}, headers=h).status_code == 422
+    assert (
+        client.patch(f"/projects/{pid}/alerts", json={"ids": list(range(501)), "resolved": True}, headers=h).status_code
+        == 422
+    )
+    assert client.patch(f"/projects/{pid}/alerts", json={"ids": [1]}, headers=h).status_code == 422
+    assert (
+        client.patch(
+            f"/projects/{pid}/alerts", json={"ids": [1], "resolved": True}, headers=project["key_headers"]
+        ).status_code
+        == 401
+    )
+
+
 def test_alert_validation(client, account, project):
     pid, h = project["project_id"], account["headers"]
     assert (

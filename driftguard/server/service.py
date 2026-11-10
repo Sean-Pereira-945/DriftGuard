@@ -474,6 +474,26 @@ class DriftGuardService:
                 raise NotFoundError("Alert not found")
             return _alert_dict(conn.execute(select(alerts).where(alerts.c.id == alert_id)).mappings().one())
 
+    def set_alerts_resolved(self, project_id: str, alert_ids: Iterable[int], resolved: bool) -> dict[str, Any]:
+        """Resolve or reopen several alerts in one statement.
+
+        Returns ``{"alerts": [...], "missing": [...]}``: every alert that now has
+        the requested state, and the ids that don't belong to this project. Ids
+        from other projects are never touched. An alert already in the requested
+        state is returned unchanged (its ``resolved_at`` is kept).
+        """
+        wanted = sorted({int(i) for i in alert_ids})
+        with self.engine.begin() as conn:
+            scope = and_(alerts.c.id.in_(wanted), alerts.c.project_id == project_id)
+            conn.execute(
+                update(alerts)
+                .where(and_(scope, alerts.c.resolved != resolved))
+                .values(resolved=resolved, resolved_at=utcnow() if resolved else None)
+            )
+            rows = conn.execute(select(alerts).where(scope).order_by(alerts.c.id)).mappings().all()
+        found = {row["id"] for row in rows}
+        return {"alerts": [_alert_dict(row) for row in rows], "missing": [i for i in wanted if i not in found]}
+
     # ------------------------------------------------------------------
     # LLM telemetry
     # ------------------------------------------------------------------

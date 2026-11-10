@@ -250,6 +250,12 @@ export interface Alert {
   created_at: string;
 }
 
+/** The answer to a bulk resolve or reopen: the alerts now in that state, and ids that weren't this project's. */
+export interface AlertBulkResult {
+  alerts: Alert[];
+  missing: number[];
+}
+
 export interface AlertCreateRequest {
   severity: Severity;
   message: string;

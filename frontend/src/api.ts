@@ -9,6 +9,7 @@ import type {
   AgentDiagnosis,
   AgentEvent,
   Alert,
+  AlertBulkResult,
   AlertCreateRequest,
   AuthConfig,
   EventIngestRequest,
@@ -215,6 +216,8 @@ export const api = {
     request<Alert>(`/projects/${enc(id)}/alerts`, { method: 'POST', body }),
   setAlertResolved: (id: string, alertId: number, resolved: boolean) =>
     request<Alert>(`/projects/${enc(id)}/alerts/${alertId}`, { method: 'PATCH', body: { resolved } }),
+  setAlertsResolved: (id: string, ids: number[], resolved: boolean) =>
+    request<AlertBulkResult>(`/projects/${enc(id)}/alerts`, { method: 'PATCH', body: { ids, resolved } }),
 
   listAgentEvents: (
     id: string,

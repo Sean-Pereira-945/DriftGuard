@@ -7,6 +7,12 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Bulk resolve and reopen in one request.** `PATCH /projects/{id}/alerts` takes
+  `{"ids": [...], "resolved": bool}` for up to 500 alerts and returns the alerts
+  now in that state plus any ids that weren't the project's. Ids from other
+  projects are never touched. Each changed alert is still pushed on the
+  WebSocket. The Alerts view's selection actions use it, so resolving a hundred
+  alerts is one round trip. 3 new tests.
 - **Frontend unit tests.** The dashboard gains Vitest with jsdom: 33 tests over
   hash routing and shareable links, the keyboard shortcuts (including the `g`
   timeout, typing, modifiers and dialogs), input validation, which scores a

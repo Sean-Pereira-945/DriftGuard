@@ -374,6 +374,16 @@ Body `{"severity", "message", "saved_tokens"?, "environment"?}`. Creates a
 Body `{"resolved": true}` resolves the alert. `false` reopens it. Returns the
 alert.
 
+### `PATCH /projects/{id}/alerts` *(session)*
+Body `{"ids": [12, 15, 16], "resolved": true}` resolves (or with `false`
+reopens) up to 500 alerts in one statement. Returns
+`{"alerts": [...], "missing": [...]}`: every listed alert that now has the
+requested state, in id order, and the ids that don't belong to this project.
+Ids from other projects are reported, never changed. An alert already in the
+requested state keeps its `resolved_at`. Each changed alert is also sent on
+the WebSocket as an `alert` message with `action` `resolved` or `reopened`. An
+empty list is a `422`.
+
 ### `GET /projects/{id}/agent-events` *(session or key)*
 The activity log, newest first. Every filter is optional, and filters combine:
 

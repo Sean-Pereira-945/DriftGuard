@@ -109,6 +109,9 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   before the window, with a minimum sample of 10 events and a z-test, shown on the
   Overview as advice.
 - [x] Contrast, visible filter labels and grouped navigation.
+- [x] **Bulk alerts endpoint** (`PATCH /projects/{id}/alerts`, November 2026): the
+  dashboard's Resolve and Reopen on a selection send one request instead of one
+  per alert.
 - [x] **Frontend unit tests** (Vitest, November 2026): routing and shareable links,
   keyboard shortcuts, validation, reported scores, baseline wording and the Policy
   impact preview. `npm test` runs in CI before the build.
@@ -132,8 +135,8 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
 - [ ] Give the panels below the Overview's first screen the same plate look as the
   status plate and instruments.
 - [ ] Saved views, and tab and search state in the address.
-- [ ] A bulk alerts endpoint, and a server-side impact preview for Policy that
-  replays stored history instead of the loaded events.
+- [ ] A server-side impact preview for Policy that replays stored history instead
+  of the loaded events.
 
 ### Integrations
 - [ ] A standalone **MCP gateway** (`driftguard-mcp-proxy`) that sits between
