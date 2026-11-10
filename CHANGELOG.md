@@ -6,6 +6,13 @@ All notable changes to DriftGuard are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-11
+
+First release published to PyPI. It contains the 0.4.0 foundation and
+everything built on top of it: the activity log, the signal box dashboard
+redesign, the analytics (baseline comparison, spread, latency), the MCP gateway,
+and the framework adapters.
+
 ### Changed
 - **`driftguard-server` fails gracefully without the server extra.** Running it
   from a base `pip install driftguard` now prints `pip install "driftguard[server]"`
