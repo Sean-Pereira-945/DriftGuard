@@ -1,6 +1,6 @@
 # Progress report
 
-Last updated: 2026-10-20.
+Last updated: 2026-11-10.
 
 For the full list of changes, see [CHANGELOG.md](../CHANGELOG.md). For the
 long-term plan, see [roadmap.md](roadmap.md).
@@ -12,7 +12,7 @@ long-term plan, see [roadmap.md](roadmap.md).
 | 0.4.0 foundation rebuild | `refactor/foundation` | Merged into `main` (PR #8) |
 | Logs view, event kinds, content storage, Claude Code hook, showcase seeder, docs rewrite | `feature/logs` | Merged into `main` (PR #9) |
 | Team setup guide (`SETUP.md`) | `docs/team-setup` | Pushed. One commit ahead of `main`, no PR yet. |
-| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub, no PR yet. The follow-ups listed under "Dashboard follow-ups" below are committed locally and not yet pushed. |
+| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study, and the two rounds of follow-ups below | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub; see "Follow-ups round 2" for the PR. |
 
 The sections below keep the 0.4.0 record, then cover each later piece of work.
 The newest, the dashboard redesign, has its own section near the end.
@@ -203,16 +203,67 @@ checks in a row plus a cooldown. It is left for an explicit decision.
 - **Still open:** the panels below the Overview's first screen are still plain
   bordered boxes rather than plates, which is a matter of taste.
 
+## Follow-ups round 2 (2026-11-10)
+
+The open items from the progress report and the roadmap that didn't change
+what raises an alert. Each is its own commit with its docs and CHANGELOG entry.
+
+| # | What | How it was checked |
+| --- | --- | --- |
+| 1 | `startup.bat` (dev: API + Vite with hot reload) and the Claude Code hook templates committed and documented; the template path and key are placeholders | Read through; no key or machine path in the committed files |
+| 2 | **Frontend unit tests**: Vitest + jsdom, 36 tests over routing and shareable links, the keyboard shortcuts, validation, reported scores, baseline wording and the Policy preview (its maths moved to `lib/policyPreview.ts`). `npm test` runs in CI before the build | `npm test`, `npm run lint`, `npm run build` all pass; one test bleed (Testing Library not unmounting between tests) found and fixed by enabling Vitest globals |
+| 3 | **Bulk alerts endpoint** `PATCH /projects/{id}/alerts` (`ids`, `resolved`), one statement, ids from other projects reported as `missing`; the Alerts view's selection actions use it | 3 new tests (resolve, reopen, cross-project, validation, key refused); exercised in the browser, see below |
+| 4 | **View filters in the address**: Alerts `tab` and `severity`, Logs `q`, `kind`, `outcome`, `task`, through a new `useViewParam` hook that reads on mount, writes on change (defaults left out) and clears on unmount | 3 hook tests; a `#/logs?q=…&outcome=failed` link and `#/alerts?tab=resolved` opened filtered in the browser |
+| 5 | **Plate panels**: `Panel variant="plate"` (plate label over a sleeper rule) on the Overview's timeline, risk breakdown, root causes and open alerts, closing the last open review item | Screenshots at 1440 and 390 px |
+
+Python suite: **257 passed, 2 skipped**. Lint and format clean.
+
+### Verification run
+
+A fresh agent ran a written playbook against a throwaway database on port
+8010 and reported pass or fail per step with evidence. Its scripts drove
+headless Chrome over the DevTools Protocol.
+
+| Check | Result |
+| --- | --- |
+| `ruff check`, `ruff format --check`, bandit | Clean. Bandit notes that the eight `# nosec` comments in `driftguard/policy.py` no longer suppress anything. |
+| pip-audit | 17 advisories in three transitive packages of the local environment (certifi, filelock, opentelemetry-api), none in the project's own dependencies. The local environment was upgraded and is clean; CI installs fresh and gets the fixed versions. |
+| Python suite | 257 passed, 2 skipped |
+| `npm run lint`, `npm test`, `npm run build` | Pass; 36 tests at the time of the run, 38 after the fixes below |
+| Server on a throwaway SQLite file; account registered once; `seed_showcase.py` and `live_demo.py --no-pause` | Seeder: 421 telemetry events, 30 agent events, 8 tasks, 5 alerts. Live demo: drift alert raised, `fix-login-bug` blocked then recovered, its agent alert resolved itself. |
+| Bulk endpoint through the API | Two of three resolved in one call, a foreign id reported as missing, an empty list is 422, an API key is 401, `policy/defaults` is 200 |
+| Browser, 1440 px: Overview, Agent Diagnosis, Logs opened from `#/logs?q=…&outcome=failed`, Alerts bulk resolve of two (confirmed through the API), `#/alerts?tab=resolved` on a fresh load, the `?` sheet, Policy | Pass. Zero console errors, zero failed requests, no rate limiting. The plate labels render on the four lower Overview panels. |
+| Browser, 390 px: Overview and Alerts | No horizontal scroll |
+
+**Found and fixed afterwards:** a view's filters were read from the address only
+when the view mounted, so back and forward (or editing the address) left the
+screen behind; and the sidebar's link targets carried a Logs search into other
+views' links. Both have tests now, and the browser-run commit is before the fix,
+so the fix was checked with the unit tests and the build only.
+
+**Seen once, cause unknown:** in one of three bulk-resolve runs the Open list
+and the badge kept the two resolved alerts for at least 3 seconds after the
+success notification, although the API had them resolved; the other two runs
+refreshed within a second. Reloading shows the right list.
+
+**Cosmetic, left as is:** at 1440 px the header wraps to two rows on views with
+a vertical scrollbar; a tool failure rate past the gauge's 25% end is labelled
+"off scale"; on a phone each alert row stacks its checkbox, lamp and button on
+their own lines. The asyncio `ConnectionResetError` the server logs when a
+browser drops a connection mid-reload is Windows noise, not DriftGuard.
+
+### Demo
+
+`demo.bat` and `docs/demo.md` are unchanged. The deck is linked under
+"Slides" in [demo.md](demo.md). The Overview screenshot in `docs/images/` was
+retaken from the verification run (account `verify@driftguard.local`).
+
 ## What still needs to be done
 
 ### Before merging (owner decisions or quick tasks)
-1. **Merge the pending branches.** `docs/team-setup` and
-   `feature/signal-box-redesign` have no PR yet, and the redesign sits on top of
-   the setup guide. Both are on GitHub. Open one PR from the redesign branch, or
-   two with the setup guide first, and review the screenshots in `docs/images/`. The 0.4.0 and Logs PRs are
-   already merged. Local `main` is behind `origin/main`, so pull before branching.
-   I haven't checked the results of the GitHub Actions runs on those merges, so
-   look at the Actions tab.
+1. **Merge the pending branch.** `feature/signal-box-redesign` carries the
+   setup guide, the redesign and both rounds of follow-ups. PR_PLACEHOLDER
+   Review the screenshots in `docs/images/` and the Actions run before merging.
 2. **Repo name.** Done: the GitHub repo is now `DriftGuard`. The clone commands in
    `SETUP.md` and `docs/quickstart.md`, and the URLs in `pyproject.toml`, use the
    new name. GitHub redirects the old `tokepi` address.
@@ -252,17 +303,15 @@ against the running server and select the **Live Demo** project. The full
 walkthrough and talking points are in [demo.md](demo.md).
 
 ### Next for the dashboard (from the redesign review)
-1. **Fix the open items above.** Give the track diagram more scale, add gauges
-   and the same look to Agent Diagnosis and the lower Overview panels, and fix the
-   phone timeline legend and header.
-2. **Look at it with real data.** Run it against your own project and a task that
+1. **Look at it with real data.** Run it against your own project and a task that
    uses several tools, and confirm the track and the instruments read well.
-3. **Exercise the new controls in a browser.** Bulk resolve, arrow-key tabs and
-   the New alert form, with a keyboard only and with a screen reader.
-4. **Re-run `/impeccable critique`** on `frontend/src` to see the score move from
+2. **Exercise the remaining controls in a browser.** Arrow-key tabs and the New
+   alert form with a keyboard only, and a screen reader pass. Bulk resolve was
+   exercised in round 2.
+3. **Re-run `/impeccable critique`** on `frontend/src` to see the score move from
    25, and use `/impeccable polish` for the finishing pass.
-5. **Update Impeccable** from v4.4.0 to v4.7.0 with `npx impeccable update`.
-6. **Retake the screenshots** in `docs/images/` after any visual change.
+4. **Update Impeccable** from v4.4.0 to v4.7.0 with `npx impeccable update`.
+5. **Retake the screenshots** in `docs/images/` after any visual change.
 
 ### Open request
 - **Role-based agents** (critic, designer and developer, each with restricted
@@ -270,12 +319,8 @@ walkthrough and talking points are in [demo.md](demo.md).
   Waiting on whether you want it.
 
 ### Small follow-ups found during the work
-- Frontend has no unit tests yet. Only type-checking, the design detector and
-  the manual browser runs cover it. The shortcut and URL-filter logic
-  (`lib/shortcuts.ts`, `lib/route.ts`) and the Policy preview maths are the best
-  first candidates.
-- Alerts bulk actions send one request per alert. A bulk endpoint would be
-  cleaner if people select hundreds.
+- The frontend's pure logic under `src/lib/` has unit tests; the views still
+  rely on the type check, the build and browser runs.
 - The Policy preview counts only the events already loaded (up to 500) for the
   current filters. It doesn't replay stored history on the server.
 - Policy has **Restore defaults** (it loads the defaults for you to review and save).
