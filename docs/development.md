@@ -78,13 +78,28 @@ DRIFTGUARD_TEST_REDIS_URL=redis://localhost:56379/0 pytest tests
 so point it only at a throwaway database. The Redis tests are skipped unless
 `DRIFTGUARD_TEST_REDIS_URL` is set.
 
+The dashboard has unit tests too, run with [Vitest](https://vitest.dev) in a
+jsdom browser:
+
+```bash
+cd frontend && npm test             # once, as CI does
+cd frontend && npm run test:watch   # re-runs on save
+```
+
+They live next to the code as `src/**/*.test.ts(x)` and cover the pure logic:
+hash routing and shareable links (`lib/route.ts`), keyboard shortcuts
+(`lib/shortcuts.ts`), input validation, which scores a source reports, the
+baseline sentences and the Policy impact preview (`lib/policyPreview.ts`). The
+views themselves are still checked by the type check, the build and browser
+runs.
+
 ## Quality checks
 
 ```bash
 ruff check . && ruff format --check .
 bandit -c pyproject.toml -r driftguard
 pip-audit --skip-editable
-cd frontend && npm run lint && npm run build
+cd frontend && npm run lint && npm test && npm run build
 ```
 
 ## Continuous integration

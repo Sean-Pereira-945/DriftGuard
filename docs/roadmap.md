@@ -79,7 +79,8 @@ are for planning only; they aren't commitments.
 
 ### Dashboard redesign (October 2026, branch `feature/signal-box-redesign`, not merged)
 These are checked by the type check, the build, the design detector and browser
-runs, not by unit tests: the frontend has none yet.
+runs. The pure logic under `frontend/src/lib/` has unit tests since November
+2026; the views do not.
 
 - [x] **Signal box look.** A dark enamel panel where colour appears only where
   state deviates. `PRODUCT.md` and `DESIGN.md` record the product and the design.
@@ -108,6 +109,9 @@ runs, not by unit tests: the frontend has none yet.
   before the window, with a minimum sample of 10 events and a z-test, shown on the
   Overview as advice.
 - [x] Contrast, visible filter labels and grouped navigation.
+- [x] **Frontend unit tests** (Vitest, November 2026): routing and shareable links,
+  keyboard shortcuts, validation, reported scores, baseline wording and the Policy
+  impact preview. `npm test` runs in CI before the build.
 
 ## Next
 
@@ -127,8 +131,6 @@ runs, not by unit tests: the frontend has none yet.
 ### Dashboard
 - [ ] Give the panels below the Overview's first screen the same plate look as the
   status plate and instruments.
-- [ ] Frontend unit tests, starting with shortcuts, URL filters and the Policy
-  preview.
 - [ ] Saved views, and tab and search state in the address.
 - [ ] A bulk alerts endpoint, and a server-side impact preview for Policy that
   replays stored history instead of the loaded events.

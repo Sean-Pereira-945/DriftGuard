@@ -7,6 +7,12 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **Frontend unit tests.** The dashboard gains Vitest with jsdom: 33 tests over
+  hash routing and shareable links, the keyboard shortcuts (including the `g`
+  timeout, typing, modifiers and dialogs), input validation, which scores a
+  source reports, the baseline wording, and the Policy impact preview, whose
+  maths moved from the view into `lib/policyPreview.ts`. `npm test` runs in CI
+  before the build.
 - **`startup.bat`** for Windows development: creates the environment on first
   run, starts the API on port 8000 against the local SQLite file and the Vite dev
   server on port 5173 with hot reload. `demo.bat` stays the one-click demo.

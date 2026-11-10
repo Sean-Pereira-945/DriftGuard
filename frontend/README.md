@@ -26,12 +26,18 @@ npm run dev
 
 Open http://localhost:5173. Vite proxies `/auth`, `/projects`, `/events`, `/agent-events`, `/health` and the `/ws` WebSocket to `http://127.0.0.1:8000`, so everything is served from one origin, just as in production.
 
-## Build
+## Test and build
 
 ```sh
 npm run lint    # tsc --noEmit (strict)
+npm test        # vitest run: unit tests in src/**/*.test.ts(x), jsdom
 npm run build   # tsc --noEmit && vite build
 ```
+
+The unit tests cover the pure logic under `src/lib/` (routing and shareable
+links, keyboard shortcuts, validation, reported scores, baseline wording, the
+Policy impact preview). Add a `*.test.ts` file beside the code it tests;
+`vitest/globals` and Testing Library's `renderHook` are available.
 
 The build writes to `../driftguard/server/static/` (`index.html` plus `assets/`), and the server serves that folder at `/`. The folder is gitignored, so it gets built at release or packaging time.
 

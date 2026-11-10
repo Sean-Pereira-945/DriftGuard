@@ -8,6 +8,7 @@ import { ResourceView } from '../components/States';
 import { useToast } from '../components/Toasts';
 import { fmtInt, TIME_RANGE_LABELS } from '../lib/format';
 import { useResource } from '../lib/useResource';
+import { flagged } from '../lib/policyPreview';
 import { parseNumber } from '../lib/validation';
 import { useProjectQuery } from '../state/queries';
 import { useProject, useWorkspace } from '../state/workspace';
@@ -97,34 +98,6 @@ type Draft = Record<PolicyField, string>;
 
 function toDraft(policy: PolicyType): Draft {
   return Object.fromEntries(ALL_FIELDS.map((f) => [f.key, String(policy[f.key])])) as Draft;
-}
-
-/** How many of the loaded events or tasks a rule would flag at a given value. */
-/**
- * How many of the loaded events or tasks a rule would flag at a given value. An event that does
- * not carry the reading (a source that sends no retrieval score, or only some turns with a
- * quality score) is not counted in either number, so "54 of 417" never hides that only a few
- * events had the reading.
- */
-function flagged(key: PolicyField, value: number, events: TelemetryEvent[], tasks: AgentTask[]): { count: number; of: number; noun: string } | null {
-  const reading = (pick: (e: TelemetryEvent) => number | null, test: (v: number) => boolean) => {
-    const values = events.map(pick).filter((v): v is number => v !== null);
-    return { count: values.filter(test).length, of: values.length, noun: 'events' };
-  };
-  switch (key) {
-    case 'prompt_token_limit':
-      return reading((e) => e.prompt_tokens, (v) => v > value);
-    case 'context_length_limit':
-      return reading((e) => e.context_length, (v) => v > value);
-    case 'retrieval_score_floor':
-      return reading((e) => e.retrieval_score, (v) => v < value);
-    case 'response_quality_floor':
-      return reading((e) => e.response_quality, (v) => v < value);
-    case 'blocked_after_failures':
-      return { count: tasks.filter((t) => t.consecutive_failures >= value).length, of: tasks.length, noun: 'tasks' };
-    default:
-      return null;
-  }
 }
 
 interface Preview {
