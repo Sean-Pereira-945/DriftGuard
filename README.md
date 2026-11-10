@@ -26,6 +26,8 @@ quality.
   pushed live to the dashboard, Slack, or any webhook.
 - **Any agent, no code.** An `driftguard-mcp-proxy` gateway records any MCP
   client's tool calls from the middle of the stdio stream.
+- **Framework adapters.** LangChain/LangGraph callbacks, the OpenAI Agents SDK,
+  and the Claude Agent SDK, each one or two lines to wire in.
 - **Drop-in adapters.** A `@driftguard_tool` decorator, MCP session
   instrumentation, token extraction from OpenAI, Anthropic, and Gemini
   responses, and a no-code [Claude Code hook](integrations/claude_code/README.md).

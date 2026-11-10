@@ -146,8 +146,10 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   sits between any MCP client and its servers over stdio, forwarding every
   message and recording each `tools/call`. The most direct way to observe closed
   agents that support MCP.
-- [ ] Framework adapters: LangChain/LangGraph callbacks, the OpenAI Agents SDK,
-  and the Claude Agent SDK hooks.
+- [x] **Framework adapters** (November 2026): LangChain/LangGraph callbacks
+  (`DriftGuardCallbackHandler`), the OpenAI Agents SDK (`DriftGuardRunHooks`) and
+  the Claude Agent SDK (`DriftGuardClaudeAgentHooks`). Each records tool calls
+  and attributes model tokens, reusing the agent-event pipeline.
 - [ ] A JavaScript/TypeScript SDK.
 - [ ] A VS Code extension that reports on tools it controls and on MCP traffic.
   It can't read Copilot's private session; see

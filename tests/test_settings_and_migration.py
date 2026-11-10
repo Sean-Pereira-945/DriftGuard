@@ -115,3 +115,39 @@ def test_upgrades_a_v03_database(tmp_path):
     raw.close()
     # Running the migration again is a no-op.
     DriftGuardService(f"sqlite:///{path}", SECRET)
+
+
+def test_missing_server_extra_detects_server_deps():
+    from driftguard.server.cli import _missing_server_extra
+
+    assert _missing_server_extra(ModuleNotFoundError("No module named 'uvicorn'", name="uvicorn"))
+    assert _missing_server_extra(ModuleNotFoundError("No module named 'fastapi'", name="fastapi"))
+    assert not _missing_server_extra(ModuleNotFoundError("No module named 'pandas'", name="pandas"))
+
+
+def test_server_cli_reports_a_friendly_message_without_uvicorn(monkeypatch):
+    """When uvicorn is absent, the command exits with guidance, not a traceback."""
+    import builtins
+
+    from driftguard.server import cli
+
+    real_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "uvicorn":
+            raise ModuleNotFoundError("No module named 'uvicorn'", name="uvicorn")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    with pytest.raises(SystemExit) as excinfo:
+        cli.main(["--port", "8000"])
+    assert "driftguard[server]" in str(excinfo.value)
+
+
+def test_server_package_is_lazy_import():
+    """Importing driftguard.server must not require the server extra."""
+    import driftguard.server as server
+
+    assert "create_app" in server.__all__
+    with pytest.raises(AttributeError):
+        _ = server.nonexistent_symbol

@@ -300,6 +300,29 @@ startup via the additive migration.
 
 Python suite after both: **279 passed, 2 skipped**. Lint, format and bandit clean.
 
+### Framework adapters (LangChain, OpenAI Agents SDK, Claude Agent SDK)
+
+Three adapters so an agent on a framework is observed without the decorator,
+each reusing `AgentContext` and recording one agent event per tool call with its
+duration, outcome and attributed tokens:
+
+- `DriftGuardCallbackHandler` — a LangChain/LangGraph callback handler (pass it
+  in `callbacks`).
+- `DriftGuardRunHooks` — OpenAI Agents SDK run hooks (pass to `Runner.run`);
+  tokens come from the run context's cumulative usage, attributed by delta.
+- `DriftGuardClaudeAgentHooks` — Claude Agent SDK PreToolUse/PostToolUse hooks
+  (`recorder.options_hooks()` in `ClaudeAgentOptions`).
+
+None of the frameworks is a dependency: each adapter subclasses its framework's
+base class when installed and still records events when its methods are called
+directly, which is how they're tested. Signatures were taken from each project's
+current reference docs. **10 tests** drive the callbacks with faithful fakes
+(success, error, token attribution, content on/off, the delta-attribution across
+two tools). Not run against the live frameworks, since they aren't installed
+here; that's the one gap.
+
+Python suite after this: **289 passed, 2 skipped**. Lint, format and bandit clean.
+
 ## What still needs to be done
 
 ### Before merging (owner decisions or quick tasks)
@@ -375,7 +398,7 @@ walkthrough and talking points are in [demo.md](demo.md).
 - Password reset and email verification need an email provider.
 
 ### Next features (from [roadmap.md](roadmap.md))
-- LangChain/LangGraph, OpenAI Agents SDK, and Claude Agent SDK adapters; a JS/TS SDK
+- A JS/TS SDK
 - Trace waterfall view, per-project notification settings,
   cost from provider pricing
 - Teams and roles, Alembic migrations, secret-store integration, Helm chart,
