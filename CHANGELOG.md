@@ -7,6 +7,13 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
+- **`startup.bat`** for Windows development: creates the environment on first
+  run, starts the API on port 8000 against the local SQLite file and the Vite dev
+  server on port 5173 with hot reload. `demo.bat` stays the one-click demo.
+- **Claude Code templates** (`integrations/claude_code/templates/`): a
+  `driftguard.json` and a `settings.local.json` with all six hooks, ready to copy
+  into another repository's `.claude/` folder. Three placeholders to fill in; no
+  key is shipped.
 - **Signal box redesign of the dashboard.** The Overview now leads with one
   status plate, then a track diagram of the most urgent task, then four
   instruments.

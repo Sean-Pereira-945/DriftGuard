@@ -1,0 +1,7 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "project_id": "REPLACE_WITH_PROJECT_ID",
+  "api_key": "REPLACE_WITH_DG_LIVE_KEY",
+  "capture_content": true,
+  "session_events": true
+}

@@ -90,6 +90,12 @@ the whole session.
    script's absolute path.
 4. Start a new Claude Code session, or open `/hooks` once so the hooks load.
 
+**Shortcut for another repository:** [`templates/`](templates/) holds a
+ready-made `driftguard.json` and `settings.local.json` with all six hooks. Copy
+both into that repo's `.claude/` folder and fill in the three placeholders
+(project id, API key, path of this checkout). See
+[templates/README.md](templates/README.md).
+
 ## Behaviour and limits
 
 - **It never gets in Claude's way.** The script uses only the standard library

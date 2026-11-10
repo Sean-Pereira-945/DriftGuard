@@ -15,6 +15,12 @@ DATABASE_URL=sqlite:///./driftguard-local.db driftguard-server --reload   # API 
 cd frontend && npm run dev         # dashboard on http://localhost:5173, API calls proxied to :8000
 ```
 
+On Windows, `startup.bat` in the repo root does both: it creates `.venv` and
+installs the dashboard dependencies on first run, starts the API in its own
+window on port 8000 against `driftguard-local.db`, and runs the Vite dev server
+on port 5173 with hot reload. `demo.bat` is the one for showing the product;
+`startup.bat` is the one for working on it.
+
 To have the Python server host the dashboard at `:8000`, run `npm run build`,
 which writes to `driftguard/server/static/`. That folder is gitignored.
 
@@ -38,7 +44,8 @@ research/              baseline study (simulation) and Phase 1 drift prototypes,
 tests/                 SDK, server, adapter and hook tests
 docs/                  documentation, including PRODUCT.md; docs/images holds the diagram and screenshots
 DESIGN.md              dashboard design tokens and components
-demo.bat               one-click Windows demo
+demo.bat               one-click Windows demo (built dashboard, demo script)
+startup.bat            one-click Windows dev setup (API + Vite with hot reload)
 ```
 
 `DATABASE_URL` keeps local work on a local SQLite file even when `.env`

@@ -220,6 +220,9 @@ cd frontend
 npm run dev                              # http://localhost:5173, API calls go to :8000
 ```
 
+On Windows, `startup.bat` in the repo root starts both the server (port 8000,
+local SQLite file) and the Vite dev server (port 5173) for you.
+
 **Python changes** need a server restart (Ctrl+C, then start it again), or
 start it with `--reload` while you work.
 

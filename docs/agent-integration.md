@@ -157,6 +157,9 @@ handles it:
 
 Setup is a config file with the project key plus a hooks entry. See
 [integrations/claude_code/README.md](../integrations/claude_code/README.md).
+To watch another repository, copy the two files in
+[`integrations/claude_code/templates/`](../integrations/claude_code/templates/)
+into its `.claude/` folder and fill in the placeholders.
 
 ## Reading the diagnosis
 
