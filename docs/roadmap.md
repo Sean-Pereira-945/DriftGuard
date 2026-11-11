@@ -66,7 +66,7 @@ are for planning only; they aren't commitments.
 - [x] **Dashboard** rebuilt against the real API under the DriftGuard brand:
   sign-in, live alerts, agent diagnosis, and no mock data.
 
-### Activity log (merged as PR #9, not yet released)
+### Activity log (merged as PR #9, released in v0.5.0)
 - [x] **Logs view**: every agent activity newest first, with server-side search,
   kind and outcome filters, live updates, a detail drawer, and CSV/JSON export.
 - [x] **Event kinds** beyond tool calls: model calls, prompts, responses and

@@ -30,36 +30,34 @@ quality.
   and the Claude Agent SDK, each one or two lines to wire in.
 - **Drop-in adapters.** A `@driftguard_tool` decorator, MCP session
   instrumentation, token extraction from OpenAI, Anthropic, and Gemini
-  responses, and a no-code [Claude Code hook](integrations/claude_code/README.md).
+  responses, and a no-code [Claude Code hook](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/integrations/claude_code/README.md).
 - **Fast to operate.** A status plate and a track diagram tell you what is
   blocked first. Keyboard shortcuts, links that carry your filters, bulk
   resolve, and a Policy page that shows what each threshold would flag.
 - **Self-hostable.** A FastAPI server, a React dashboard, and SQLite or
   PostgreSQL, with Redis when you scale out. One `docker compose up`.
 
-![DriftGuard architecture](docs/images/architecture.svg)
-
 DriftGuard observes what your code reports, and it recommends actions rather
 than taking them. It doesn't intercept closed agents such as GitHub Copilot, and
 it never changes prompts or providers. See
-[what it can't observe](docs/agent-integration.md#what-driftguard-cannot-observe).
+[what it can't observe](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/agent-integration.md#what-driftguard-cannot-observe).
 
 ## Start here
 
 | I want to… | Do this |
 | --- | --- |
-| Set it up on a teammate's laptop | Follow **[SETUP.md](SETUP.md)** |
+| Set it up on a teammate's laptop | Follow **[SETUP.md](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/SETUP.md)** |
 | See it running in two minutes (Windows) | Double-click **`demo.bat`**. Sign in as `demo@driftguard.local` / `driftguard-demo`. |
-| Run it from this repo | `pip install -e ".[server]"`, `cd frontend && npm ci && npm run build`, then `driftguard-server`. Details in [Getting started](docs/quickstart.md#b-from-source-windows-macos-linux). |
+| Run it from this repo | `pip install -e ".[server]"`, `cd frontend && npm ci && npm run build`, then `driftguard-server`. Details in [Getting started](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/quickstart.md#b-from-source-windows-macos-linux). |
 | Fill the dashboard with sample data | `python examples/seed_showcase.py --api-key dg_live_... --project-id showcase` |
-| Watch my own Claude Code sessions | [Claude Code hook](integrations/claude_code/README.md) |
-| Watch any MCP client's tools (no code) | `driftguard-mcp-proxy` ([MCP gateway](docs/agent-integration.md#the-mcp-gateway-no-code-any-mcp-client)) |
-| Understand how it works | [How DriftGuard works](docs/concepts.md), then [Architecture](docs/architecture.md) |
-| Send retrieval and quality scores | [Measuring retrieval score and response quality](docs/scoring-guide.md) |
+| Watch my own Claude Code sessions | [Claude Code hook](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/integrations/claude_code/README.md) |
+| Watch any MCP client's tools (no code) | `driftguard-mcp-proxy` ([MCP gateway](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/agent-integration.md#the-mcp-gateway-no-code-any-mcp-client)) |
+| Understand how it works | [How DriftGuard works](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/concepts.md), then [Architecture](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/architecture.md) |
+| Send retrieval and quality scores | [Measuring retrieval score and response quality](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/scoring-guide.md) |
 
-![The Overview view, with sample data](docs/images/dashboard-overview.png)
-
-Every view is described in the [dashboard guide](docs/dashboard.md).
+Every view is described in the [dashboard guide](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/dashboard.md). The
+architecture diagram and dashboard screenshots are in
+[the docs](https://github.com/Sean-Pereira-945/DriftGuard/tree/main/docs/images).
 
 ## Quickstart (SDK)
 
@@ -96,32 +94,32 @@ client.fetch_agent_diagnosis()["diagnosis"]
 ```
 
 The SDK itself (`pip install driftguard-tokepi`) depends only on `httpx`. The full
-walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
+walkthrough, including Docker, is in [docs/quickstart.md](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/quickstart.md).
 
 ## Documentation
 
 | | |
 | --- | --- |
-| [Getting started](docs/quickstart.md) | Three ways to run it, four ways to send data, troubleshooting |
-| [How DriftGuard works](docs/concepts.md) | Plain-language concepts, scoring and diagnosis with worked examples |
-| [Giving a demo](docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
-| [What the package offers](docs/package-overview.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) |
-| [Using the package](docs/package-usage.md) | Install it and wire the SDK, adapters and gateway into your project |
-| [Using the dashboard](docs/using-the-dashboard.md) | Open, navigate and operate the web UI |
-| [Agent integration](docs/agent-integration.md) | Decorator, MCP, raw events, and what can't be observed |
-| [Dashboard guide](docs/dashboard.md) | Every view, card and column, with screenshots |
-| [Measuring scores](docs/scoring-guide.md) | How to calculate retrieval score and response quality, choosing floors, and what the numbers can't tell you |
-| [API reference](docs/api.md) | Every endpoint, with real request and response bodies |
-| [Architecture](docs/architecture.md) | Diagrams, components, request flows, algorithms, data model, security |
-| [Configuration](docs/configuration.md) | Environment variables and policy settings |
-| [Deployment](docs/deployment.md) | Docker Compose, TLS, scaling, backups, upgrading from 0.3 |
-| [Development](docs/development.md) | Repo layout, tests on SQLite/Postgres/Redis, CI, releasing |
-| [Design system](docs/design-system.md) | The dashboard's look, in plain language ([DESIGN.md](DESIGN.md) has the tokens) |
-| [Product context](docs/PRODUCT.md) | Who it is for, what it does, and the constraints work must keep |
-| [Research](research/README.md) | A simulation study of floors against the baseline comparison, plus the Phase 1 prototypes |
-| [Progress report](docs/progress.md) | What is done, what changed, and what is next |
-| [Roadmap](docs/roadmap.md) | What's done and what's next |
-| [Changelog](CHANGELOG.md) | Release history |
+| [Getting started](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/quickstart.md) | Three ways to run it, five ways to send data, troubleshooting |
+| [How DriftGuard works](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/concepts.md) | Plain-language concepts, scoring and diagnosis with worked examples |
+| [Giving a demo](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
+| [What the package offers](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/package-overview.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) |
+| [Using the package](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/package-usage.md) | Install it and wire the SDK, adapters and gateway into your project |
+| [Using the dashboard](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/using-the-dashboard.md) | Open, navigate and operate the web UI |
+| [Agent integration](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/agent-integration.md) | Decorator, MCP, raw events, and what can't be observed |
+| [Dashboard guide](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/dashboard.md) | Every view, card and column, with screenshots |
+| [Measuring scores](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/scoring-guide.md) | How to calculate retrieval score and response quality, choosing floors, and what the numbers can't tell you |
+| [API reference](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/api.md) | Every endpoint, with real request and response bodies |
+| [Architecture](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/architecture.md) | Diagrams, components, request flows, algorithms, data model, security |
+| [Configuration](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/configuration.md) | Environment variables and policy settings |
+| [Deployment](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/deployment.md) | Docker Compose, TLS, scaling, backups, upgrading from 0.3 |
+| [Development](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/development.md) | Repo layout, tests on SQLite/Postgres/Redis, CI, releasing |
+| [Design system](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/design-system.md) | The dashboard's look, in plain language ([DESIGN.md](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/DESIGN.md) has the tokens) |
+| [Product context](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/PRODUCT.md) | Who it is for, what it does, and the constraints work must keep |
+| [Research](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/research/README.md) | A simulation study of floors against the baseline comparison, plus the Phase 1 prototypes |
+| [Progress report](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/progress.md) | What is done, what changed, and what is next |
+| [Roadmap](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/docs/roadmap.md) | What's done and what's next |
+| [Changelog](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/CHANGELOG.md) | Release history |
 
 ## Repository layout
 
@@ -147,4 +145,4 @@ cd frontend && npm install && npm run dev
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](https://github.com/Sean-Pereira-945/DriftGuard/blob/main/LICENSE).

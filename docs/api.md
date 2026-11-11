@@ -50,11 +50,11 @@ return `detail` as a list of `{loc, msg, type}` objects.
 
 ### `GET /health`
 Checks that the server and its database are reachable. No auth. Returns `200`
-with `{"status": "ok", "database": "ok", "version": "0.4.0"}`, or `503` if the
+with `{"status": "ok", "database": "ok", "version": "0.5.0"}`, or `503` if the
 database is unreachable.
 
 ### `GET /auth/config`
-Public server settings for the dashboard: `{"allow_signup": true, "version": "0.4.0"}`.
+Public server settings for the dashboard: `{"allow_signup": true, "version": "0.5.0"}`.
 
 ## Auth
 

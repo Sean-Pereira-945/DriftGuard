@@ -133,7 +133,8 @@ several on the same server.
 | [1. Sample data](#1-sample-data-fills-every-view) | Exploring or presenting the dashboard | Every view |
 | [2. Live demo script](#2-live-demo-script-a-story-in-four-steps) | A live walkthrough | Every view, step by step |
 | [3. Claude Code](#3-claude-code-your-real-sessions-no-code) | Real data from your own coding sessions | Logs, Agent Diagnosis, Overview, Events, Analytics |
-| [4. Your own app (SDK)](#4-your-own-app-python-sdk) | Real LLM apps and agents | Every view |
+| [4. Your own app (SDK)](#4-your-own-app-python-sdk) | Real LLM apps and agents (incl. framework adapters) | Every view |
+| [5. MCP gateway](agent-integration.md#the-mcp-gateway-no-code-any-mcp-client) | Any MCP client, with no code | Logs, Agent Diagnosis, Overview |
 
 ### 1. Sample data (fills every view)
 

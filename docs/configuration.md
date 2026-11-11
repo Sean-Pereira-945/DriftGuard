@@ -80,6 +80,7 @@ environment. Change them in the dashboard's **Policy** view or with
 | `context_length_limit` | 4000 |
 | `retrieval_score_floor` | 0.5 |
 | `response_quality_floor` | 0.8 |
+| `latency_limit_ms` | 10000 |
 | `blocked_after_failures` | 3 |
 | `retry_window_minutes` | 60 |
 
