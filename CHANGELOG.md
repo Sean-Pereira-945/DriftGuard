@@ -6,8 +6,17 @@ All notable changes to DriftGuard are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-11
+
+A documentation release: brings the docs in line with 0.5.0 and makes the
+project's README render and navigate correctly on PyPI.
+
 ### Added
 - **Package guides**: [`docs/package-overview.md`](docs/package-overview.md) (what `pip install driftguard-tokepi` provides), [`docs/package-usage.md`](docs/package-usage.md) (install and wire in the SDK, adapters and gateway), and [`docs/using-the-dashboard.md`](docs/using-the-dashboard.md) (operate the web UI).
+
+### Changed
+- **Docs updated to the 0.5.0 state.** Latency is documented as a scoring rule (concepts, configuration, architecture); the MCP gateway and the framework adapters appear in the architecture diagram and component list; the quickstart lists the gateway as a way to send data.
+- **README reworked for PyPI.** Removed the embedded images (PyPI can't resolve repo-relative paths) and converted every relative link to an absolute GitHub URL, so [pypi.org/project/driftguard-tokepi](https://pypi.org/project/driftguard-tokepi/) renders cleanly and its links work.
 
 ## [0.5.0] - 2026-11-11
 
