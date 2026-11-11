@@ -100,6 +100,5 @@ driftguard/server/static/
 .claude/driftguard-state/
 .claude/driftguard-hook.log
 
-# Impeccable working files (screenshots, decision-page logs)
-.impeccable/review/
-.impeccable/questions/
+# Impeccable design tooling (local only)
+.impeccable/

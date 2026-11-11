@@ -11,7 +11,9 @@ New here? Read [How DriftGuard works](concepts.md), then
 - [How DriftGuard works](concepts.md): the problem, the data, scoring and diagnosis in plain language
 - [Dashboard guide](dashboard.md): every view, card and column, with screenshots
 - [Measuring retrieval score and response quality](scoring-guide.md): how to calculate the two scores, what to do without an evaluator, choosing floors, and what the numbers can't tell you
-- [The Python package](python-package.md): what `pip install driftguard-tokepi` gives you and how to use each part
+- [What the package offers](package-overview.md): what `pip install driftguard-tokepi` gives you
+- [Using the package](package-usage.md): install it and wire the SDK, adapters and gateway into your project
+- [Using the dashboard](using-the-dashboard.md): open, navigate and operate the web UI
 - [Agent integration](agent-integration.md): instrument an agent's tools (decorator, MCP, HTTP, Claude Code)
 - [Claude Code hook](../integrations/claude_code/README.md): report Claude Code sessions with no code
 - [Giving a demo](demo.md): a live demo, a presentation outline, talking points

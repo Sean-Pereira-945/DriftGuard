@@ -105,7 +105,9 @@ walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 | [Getting started](docs/quickstart.md) | Three ways to run it, four ways to send data, troubleshooting |
 | [How DriftGuard works](docs/concepts.md) | Plain-language concepts, scoring and diagnosis with worked examples |
 | [Giving a demo](docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
-| [The Python package](docs/python-package.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) and how to use it |
+| [What the package offers](docs/package-overview.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) |
+| [Using the package](docs/package-usage.md) | Install it and wire the SDK, adapters and gateway into your project |
+| [Using the dashboard](docs/using-the-dashboard.md) | Open, navigate and operate the web UI |
 | [Agent integration](docs/agent-integration.md) | Decorator, MCP, raw events, and what can't be observed |
 | [Dashboard guide](docs/dashboard.md) | Every view, card and column, with screenshots |
 | [Measuring scores](docs/scoring-guide.md) | How to calculate retrieval score and response quality, choosing floors, and what the numbers can't tell you |
@@ -132,7 +134,6 @@ tests/          SDK and server test suite
 examples/       runnable scripts, including the live demo (demo.bat runs it on Windows)
 docs/           documentation, including PRODUCT.md and the screenshots in docs/images
 DESIGN.md       the dashboard's design tokens and components
-.impeccable/    design direction and critique records
 ```
 
 ## Development
