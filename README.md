@@ -37,8 +37,6 @@ quality.
 - **Self-hostable.** A FastAPI server, a React dashboard, and SQLite or
   PostgreSQL, with Redis when you scale out. One `docker compose up`.
 
-![DriftGuard architecture](docs/images/architecture.svg)
-
 DriftGuard observes what your code reports, and it recommends actions rather
 than taking them. It doesn't intercept closed agents such as GitHub Copilot, and
 it never changes prompts or providers. See
@@ -57,9 +55,9 @@ it never changes prompts or providers. See
 | Understand how it works | [How DriftGuard works](docs/concepts.md), then [Architecture](docs/architecture.md) |
 | Send retrieval and quality scores | [Measuring retrieval score and response quality](docs/scoring-guide.md) |
 
-![The Overview view, with sample data](docs/images/dashboard-overview.png)
-
-Every view is described in the [dashboard guide](docs/dashboard.md).
+Every view is described in the [dashboard guide](docs/dashboard.md). The
+architecture diagram and dashboard screenshots are in
+[the docs](https://github.com/Sean-Pereira-945/DriftGuard/tree/main/docs/images).
 
 ## Quickstart (SDK)
 
