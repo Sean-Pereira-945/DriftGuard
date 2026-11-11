@@ -219,7 +219,7 @@ Code hook, the signal box dashboard redesign, the analytics (baseline comparison
 spread, latency as a first-class metric), frontend unit tests, the bulk alerts
 endpoint, view filters in the address, the MCP gateway (`driftguard-mcp-proxy`),
 and the framework adapters (LangChain, OpenAI Agents SDK, Claude Agent SDK). The
-new [Python package guide](python-package.md) describes the installed surface.
+new package guides — [what it offers](package-overview.md), [how to use it](package-usage.md) and [using the dashboard](using-the-dashboard.md) — describe the installed surface.
 
 ## Follow-ups round 2 (2026-11-10)
 

@@ -7,7 +7,7 @@ All notable changes to DriftGuard are recorded here. The format follows
 ## [Unreleased]
 
 ### Added
-- **Python package guide** (`docs/python-package.md`): what `pip install driftguard-tokepi` provides (SDK client, local scoring, agent instrumentation, the framework adapters, the MCP gateway and the server) and how to use each part.
+- **Package guides**: [`docs/package-overview.md`](docs/package-overview.md) (what `pip install driftguard-tokepi` provides), [`docs/package-usage.md`](docs/package-usage.md) (install and wire in the SDK, adapters and gateway), and [`docs/using-the-dashboard.md`](docs/using-the-dashboard.md) (operate the web UI).
 
 ## [0.5.0] - 2026-11-11
 
