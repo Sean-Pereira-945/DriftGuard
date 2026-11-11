@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "driftguard-tokepi"
-version = "0.5.0"
+version = "0.5.1"
 description = "Observability for LLM apps and AI agents: drift checks, failed-tool diagnosis, and wasted-token accounting"
 readme = "README.md"
 license = "MIT"

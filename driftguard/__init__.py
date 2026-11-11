@@ -8,7 +8,7 @@ from .agent_analysis import analyze_agent_events
 from .client import DriftGuardClient
 from .policy import DEFAULT_POLICY, evaluate_drift, recommend_mitigation
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 __all__ = [
     "DEFAULT_POLICY",
