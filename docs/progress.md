@@ -1,6 +1,6 @@
 # Progress report
 
-Last updated: 2026-11-10.
+Last updated: 2026-11-11.
 
 For the full list of changes, see [CHANGELOG.md](../CHANGELOG.md). For the
 long-term plan, see [roadmap.md](roadmap.md).
@@ -202,6 +202,24 @@ checks in a row plus a cooldown. It is left for an explicit decision.
   Range select stays readable.
 - **Still open:** the panels below the Overview's first screen are still plain
   bordered boxes rather than plates, which is a matter of taste.
+
+## Released: v0.5.0 (2026-11-11)
+
+The work on `feature/signal-box-redesign` was merged to `main` (PRs #11–#13) and
+published to PyPI as **`driftguard-tokepi` 0.5.0** — the first public release.
+`pip install driftguard-tokepi` gives the httpx-only SDK; the import name stays
+`driftguard`. The distribution is named `driftguard-tokepi` because `driftguard`
+was already taken on PyPI. Releasing is automated on a `v*` tag through GitHub
+Actions trusted publishing (no stored token); the steps are in
+[deployment.md](deployment.md#publishing-to-pypi). A clean-venv
+`pip install driftguard-tokepi` was verified to install and import as 0.5.0.
+
+What shipped in 0.5.0 beyond the 0.4.0 foundation: the activity log and Claude
+Code hook, the signal box dashboard redesign, the analytics (baseline comparison,
+spread, latency as a first-class metric), frontend unit tests, the bulk alerts
+endpoint, view filters in the address, the MCP gateway (`driftguard-mcp-proxy`),
+and the framework adapters (LangChain, OpenAI Agents SDK, Claude Agent SDK). The
+new [Python package guide](python-package.md) describes the installed surface.
 
 ## Follow-ups round 2 (2026-11-10)
 

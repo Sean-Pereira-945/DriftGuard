@@ -105,6 +105,7 @@ walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 | [Getting started](docs/quickstart.md) | Three ways to run it, four ways to send data, troubleshooting |
 | [How DriftGuard works](docs/concepts.md) | Plain-language concepts, scoring and diagnosis with worked examples |
 | [Giving a demo](docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
+| [The Python package](docs/python-package.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) and how to use it |
 | [Agent integration](docs/agent-integration.md) | Decorator, MCP, raw events, and what can't be observed |
 | [Dashboard guide](docs/dashboard.md) | Every view, card and column, with screenshots |
 | [Measuring scores](docs/scoring-guide.md) | How to calculate retrieval score and response quality, choosing floors, and what the numbers can't tell you |
