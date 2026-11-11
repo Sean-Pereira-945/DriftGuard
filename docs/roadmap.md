@@ -121,7 +121,22 @@ runs. The pure logic under `frontend/src/lib/` has unit tests since November
   keyboard shortcuts, validation, reported scores, baseline wording and the Policy
   impact preview. `npm test` runs in CI before the build.
 
+## Released
+
+- **v0.5.0 — 2026-11-11.** First release on PyPI as
+  [`driftguard-tokepi`](https://pypi.org/project/driftguard-tokepi/)
+  (`pip install driftguard-tokepi`; import name stays `driftguard`). It bundles
+  the 0.4.0 foundation, the activity log, the signal box dashboard, the analytics
+  (baseline comparison, spread, latency), the MCP gateway and the framework
+  adapters. Releasing is automated on a `v*` tag via trusted publishing; see
+  [deployment.md](deployment.md#publishing-to-pypi).
+
 ## Next
+
+The biggest open items, roughly in priority order, are the **JavaScript/TypeScript
+SDK** (so non-Python agents can report directly) and **alerting on a sustained
+drop from the baseline** (today the comparison is advice only). The rest:
+
 
 ### Analytics
 - [ ] Alert on a sustained drop from the baseline, with a rolling baseline and a
