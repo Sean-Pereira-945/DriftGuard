@@ -116,7 +116,9 @@ cd frontend && npm run lint && npm test && npm run build
 1. Bump `version` in `pyproject.toml`, `__version__` in
    `driftguard/__init__.py`, and `version` in `frontend/package.json`.
 2. Add a section to `CHANGELOG.md`.
-3. Commit, then `git tag v0.4.0 && git push origin v0.4.0`.
+3. Commit and merge to `main`, then `git tag v0.5.1 && git push origin v0.5.1`
+   (`release.yml` builds and publishes to PyPI). The full steps are in
+   [deployment.md](../docs/deployment.md#publishing-to-pypi).
 
 ## Conventions
 

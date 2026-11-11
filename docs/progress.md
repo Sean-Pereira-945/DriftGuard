@@ -11,8 +11,9 @@ long-term plan, see [roadmap.md](roadmap.md).
 | --- | --- | --- |
 | 0.4.0 foundation rebuild | `refactor/foundation` | Merged into `main` (PR #8) |
 | Logs view, event kinds, content storage, Claude Code hook, showcase seeder, docs rewrite | `feature/logs` | Merged into `main` (PR #9) |
-| Team setup guide (`SETUP.md`) | `docs/team-setup` | Pushed. One commit ahead of `main`, no PR yet. |
-| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study, and the two rounds of follow-ups below | `feature/signal-box-redesign` | On top of `docs/team-setup`, so it carries the setup guide too. Pushed to GitHub; see "Follow-ups round 2" for the PR. |
+| Team setup guide (`SETUP.md`) | `docs/team-setup` | Merged into `main` |
+| Dashboard redesign and analytics: signal box look, shortcuts, shared links, policy preview, baseline comparison, scoring guide, research study, and the two rounds of follow-ups below | `feature/signal-box-redesign` | Merged into `main` (PRs #11–#13) |
+| MCP gateway, latency metric, framework adapters, package guides | `feature/signal-box-redesign`, `docs/python-package` | Merged into `main`; **released to PyPI as `driftguard-tokepi` 0.5.0** |
 
 The sections below keep the 0.4.0 record, then cover each later piece of work.
 The newest, the dashboard redesign, has its own section near the end.
@@ -343,26 +344,19 @@ Python suite after this: **289 passed, 2 skipped**. Lint, format and bandit clea
 
 ## What still needs to be done
 
-### Before merging (owner decisions or quick tasks)
-1. **Merge the pending branch.** `feature/signal-box-redesign` carries the
-   setup guide, the redesign and both rounds of follow-ups. PR #11 (https://github.com/Sean-Pereira-945/DriftGuard/pull/11) is open against `main`.
-   Review the screenshots in `docs/images/` and the Actions run before merging.
-2. **Repo name.** Done: the GitHub repo is now `DriftGuard`. The clone commands in
-   `SETUP.md` and `docs/quickstart.md`, and the URLs in `pyproject.toml`, use the
-   new name. GitHub redirects the old `tokepi` address.
-3. **LICENSE.** An MIT `LICENSE` file was added to match what `pyproject.toml`
-   already declared. Confirm that's the licence you want.
-4. **PyPI trusted publishing.** Set up the `pypi` environment in GitHub before
-   tagging `v0.4.0`.
-5. **Your local `.env` needs a decision.**
-   - **Database:** its `DATABASE_URL` points at a remote PostgreSQL database.
-     The first 0.4 start migrates that database in place: it adds columns and
-     replaces plaintext API keys with hashes, which can't be undone. Back it up
-     before pointing 0.4 at it, or keep using a local SQLite file for
-     development.
-   - **Variable names:** it uses `API_SECRET` and `RATE_LIMIT_PER_MINUTE`. Those
-     still work but log deprecation warnings. Rename them to
-     `DRIFTGUARD_SECRET_KEY` and `DRIFTGUARD_RATE_LIMIT_PER_MINUTE`.
+### Shipped (v0.5.0)
+All of the pre-release tasks are done. The pending branches were merged
+(PRs #11–#15) and the project was **published to PyPI as `driftguard-tokepi`
+0.5.0**. The GitHub repo is `DriftGuard`, an MIT `LICENSE` is in place, and PyPI
+trusted publishing is configured. Future releases are a version bump plus a
+`v*` tag — see [deployment.md](deployment.md#publishing-to-pypi).
+
+**Still a local decision for you:** your `.env` `DATABASE_URL` points at a remote
+PostgreSQL database, and the first 0.4+ start migrates it in place (adds columns,
+hashes API keys — not reversible). Back it up first, or keep using a local
+SQLite file for development. The old `API_SECRET` / `RATE_LIMIT_PER_MINUTE` names
+still work but warn; rename them to `DRIFTGUARD_SECRET_KEY` /
+`DRIFTGUARD_RATE_LIMIT_PER_MINUTE`.
 
 ## Running it locally right now
 

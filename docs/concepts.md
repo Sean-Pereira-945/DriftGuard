@@ -64,7 +64,7 @@ Both are sent with the **project API key** and stored in the same database.
 
 ## How a telemetry event is scored
 
-Each event is checked against four rules in the project's policy. Each broken
+Each event is checked against five rules in the project's policy. Each broken
 rule adds a fixed amount of risk:
 
 | Rule | Broken when | Adds | Root cause it suggests |
@@ -73,6 +73,7 @@ rule adds a fixed amount of risk:
 | Retrieval score floor (0.50) | `retrieval_score` is **below** it | 0.35 | retrieval degradation |
 | Context length limit (4000) | `context_length` is **above** it | 0.20 | prompt context inflation |
 | Response quality floor (0.80) | `response_quality` is **below** it | 0.20 | response quality degradation |
+| Latency limit (10,000 ms) | `latency_ms` is **above** it | 0.15 | high response latency |
 
 The total is capped at 1.0. Then:
 

@@ -102,7 +102,7 @@ walkthrough, including Docker, is in [docs/quickstart.md](docs/quickstart.md).
 
 | | |
 | --- | --- |
-| [Getting started](docs/quickstart.md) | Three ways to run it, four ways to send data, troubleshooting |
+| [Getting started](docs/quickstart.md) | Three ways to run it, five ways to send data, troubleshooting |
 | [How DriftGuard works](docs/concepts.md) | Plain-language concepts, scoring and diagnosis with worked examples |
 | [Giving a demo](docs/demo.md) | A five-minute live demo, a presentation outline, talking points |
 | [What the package offers](docs/package-overview.md) | What `pip install driftguard-tokepi` provides (SDK, adapters, gateway) |
