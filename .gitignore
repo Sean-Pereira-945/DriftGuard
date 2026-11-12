@@ -102,3 +102,6 @@ driftguard/server/static/
 
 # Impeccable design tooling (local only)
 .impeccable/
+
+# Local Claude Code skills (not shared)
+.claude/skills/
